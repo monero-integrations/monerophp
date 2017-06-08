@@ -47,6 +47,14 @@
         echo $json_parsed.;
     }
   
+   /**
+    * Print Monero Address as JSON Array
+    */
+    public function address(){
+        $address = $this->_run('getaddress');
+        $this->_print($address);
+    }
+  
   }
     
     
