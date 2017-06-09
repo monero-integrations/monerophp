@@ -1,10 +1,12 @@
+<?php
 /**
  * jsonRPCClient.php
  *
  * Written using the JSON RPC specification -
  * http://json-rpc.org/wiki/specification
  *
- * @author Kacper Rowinski <krowinski@implix.com>
+ * @author Kacper Rowinski <krowinski@implix.com> with modifications by SerHack
+ * TODO: implement user/password
  * http://implix.com
  */
 class jsonRPCClient
