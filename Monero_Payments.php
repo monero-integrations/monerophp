@@ -55,11 +55,20 @@
         $this->_print($address);
     }
   
+   /*
+    * Print Monero Balance as JSON Array
+    */
+    public function getbalance(){
+         $balance = $this->_run('getbalance');
+         $this->_print($balance);
   }
-    
-    
-    
-     
-     
-     
+  
+  /*
+    * Print Monero Height as JSON Array
+    */
+    public function getheight(){
+         $height = $this->_run('getheight');
+         $this->_print($height);
+  }
+  
  
