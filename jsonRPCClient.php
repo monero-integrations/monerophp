@@ -5,29 +5,19 @@
  * Written using the JSON RPC specification -
  * http://json-rpc.org/wiki/specification
  *
- * @author Kacper Rowinski <krowinski@implix.com> with modifications by SerHack
- * TODO: implement user/password
+ * @author Kacper Rowinski <krowinski@implix.com>
  * http://implix.com
  */
 class jsonRPCClient
 {
-    protected $url = null, $is_debug = false, $parameters_structure = 'array';
-    /**
-     * Default options for curl
-     *
-     * @var array
-     */
+    protected $url = null, $is_debug = false, $parameters_structure = 'array'; 
+
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
         CURLOPT_TIMEOUT => 8
     );
-    /**
-     * Http error statuses
-     *
-     * Source: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-     *
-     * @var array
-     */
+    
+    
     private $httpErrors = array(
         400 => '400 Bad Request',
         401 => '401 Unauthorized',
@@ -40,50 +30,27 @@ class jsonRPCClient
         502 => '502 Bad Gateway',
         503 => '503 Service Unavailable'
     );
-    /**
-     * Takes the connection parameter and checks for extentions
-     *
-     * @param string $pUrl - url name like http://example.com/
-     */
+   
     public function __construct($pUrl)
     {
         $this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded for using this class!');
         $this->validate(false === extension_loaded('json'), 'The json extension must be loaded for using this class!');
-        // set an url to connect to
+    
         $this->url = $pUrl;
     }
-    /**
-     * Return http error message
-     *
-     * @param $pErrorNumber
-     *
-     * @return string|null
-     */
+   
     private function getHttpErrorMessage($pErrorNumber)
     {
         return isset($this->httpErrors[$pErrorNumber]) ? $this->httpErrors[$pErrorNumber] : null;
     }
-    /**
-     * Set debug mode
-     *
-     * @param boolean $pIsDebug
-     *
-     * @return jsonRPCClient
-     */
+    
     public function setDebug($pIsDebug)
     {
         $this->is_debug = !empty($pIsDebug);
         return $this;
     }
-    /**
-     * Set structure to use for parameters
-     *
-     * @param string $pParametersStructure 'array' or 'object'
-     *
-     * @throws UnexpectedValueException
-     * @return jsonRPCClient
-     */
-    public function setParametersStructure($pParametersStructure)
+   
+  /*  public function setParametersStructure($pParametersStructure)
     {
         if (in_array($pParametersStructure, array('array', 'object')))
         {
@@ -94,15 +61,8 @@ class jsonRPCClient
             throw new UnexpectedValueException('Invalid parameters structure type.');
         }
         return $this;
-    }
-    /**
-     * Set extra options for curl connection
-     *
-     * @param array $pOptionsArray
-     *
-     * @throws InvalidArgumentException
-     * @return jsonRPCClient
-     */
+    } */
+   
     public function setCurlOptions($pOptionsArray)
     {
         if (is_array($pOptionsArray))
@@ -115,25 +75,17 @@ class jsonRPCClient
         }
         return $this;
     }
-    /**
-     * Performs a request and gets the results
-     *
-     * @param string $pMethod - A String containing the name of the method to be invoked.
-     * @param array  $pParams - An Array of objects to pass as arguments to the method.
-     *
-     * @throws RuntimeException
-     * @return array
-     */
-    public function __call($pMethod, $pParams)
+    
+   public function _run($pMethod, $pParams)
     {
         static $requestId = 0;
         // generating uniuqe id per process
         $requestId++;
         // check if given params are correct
         $this->validate(false === is_scalar($pMethod), 'Method name has no scalar value');
-        $this->validate(false === is_array($pParams), 'Params must be given as array');
+       // $this->validate(false === is_array($pParams), 'Params must be given as array');
         // send params as an object or an array
-        $pParams = ($this->parameters_structure == 'object') ? $pParams[0] : array_values($pParams);
+        //$pParams = ($this->parameters_structure == 'object') ? $pParams[0] : array_values($pParams);
         // Request (method invocation)
         $request = json_encode(array('jsonrpc' => '2.0', 'method' => $pMethod, 'params' => $pParams, 'id' => $requestId));
         // if is_debug mode is true then add url and request to is_debug
@@ -162,15 +114,6 @@ class jsonRPCClient
         }
         return $responseDecoded['result'];
     }
-    /**
-     * When the method invocation completes, the service must reply with a response.
-     * The response is a single object serialized using JSON
-     *
-     * @param string $pRequest
-     *
-     * @throws RuntimeException
-     * @return string
-     */
     protected function & getResponse(&$pRequest)
     {
         // do the actual connection
@@ -185,7 +128,7 @@ class jsonRPCClient
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        /* HACK SSL */
+        
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         if ( !curl_setopt_array($ch, $this->curl_options))
         {
@@ -208,27 +151,15 @@ class jsonRPCClient
         curl_close($ch);
         return $response;
     }
-    /**
-     * Throws exception if validation is failed
-     *
-     * @param bool   $pFailed
-     * @param string $pErrMsg
-     *
-     * @throws RuntimeException
-     */
-    protected function validate($pFailed, $pErrMsg)
+    
+    public function validate($pFailed, $pErrMsg)
     {
         if ($pFailed)
         {
             throw new RuntimeException($pErrMsg);
         }
     }
-    /**
-     * For is_debug and performance stats
-     *
-     * @param string $pAdd
-     * @param bool   $pShow
-     */
+    
     protected function debug($pAdd, $pShow = false)
     {
         static $debug, $startTime;
@@ -254,12 +185,7 @@ class jsonRPCClient
             $debug = $startTime = null;
         }
     }
-    /**
-     * Getting JSON last error message
-     * Function json_last_error_msg exists from PHP 5.5
-     *
-     * @return string
-     */
+    
     function getJsonLastErrorMsg()
     {
         if (!function_exists('json_last_error_msg'))
@@ -289,4 +215,4 @@ class jsonRPCClient
             return null;
         }
     }
-}
+} 
