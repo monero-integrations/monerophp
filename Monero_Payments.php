@@ -71,4 +71,19 @@
          $this->_print($height);
   }
   
+  /*
+   * Incoming Transfer
+   * $type must be All 
+   */
+  public function incoming_transfer($type){
+   $incoming_parameters = array('transfer_type' => $type);
+   $incoming_transfer = $this->_run('incoming_transfer', $incoming_parameters);
+   $this->_print($incoming_transfer);
+  }
+  
+  public function get_transfers(){
+   $get_parameters = array('pool' => true);
+   $get_transfers = $this->_run('get_transfers', $get_parameters);
+   $this->_print($get_transfers);
+  }
  
