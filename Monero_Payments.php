@@ -105,7 +105,7 @@
      }
      
     public function split_integrated_address($integrated_address){
-        if(isset($integrated_address)){
+        if(!isset($integrated_address)){
             echo "Error: Integrated_Address mustn't be null";
         }
         else{
