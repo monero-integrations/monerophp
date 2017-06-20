@@ -9,7 +9,7 @@
  */
  
  /* WORK IN PROGRESS */
- 
+
  class Monero_Payments{
     private $url;
     private $client; 
@@ -34,7 +34,7 @@
       * @param  $method   Name of Method
       */
      private function _run($method,$params = null) {
-      $result = $this->client->$method(json_encode($params,JSON_UNESCAPED_SLASHES));
+      $result = $this->client->_run($method, $params);
        return $result;
     }
     
@@ -44,7 +44,7 @@
      */
      private function _print($json){
         $json_parsed = json_encode($json,  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        echo $json_parsed.;
+        echo $json_parsed;
     }
   
    /**
@@ -114,4 +114,5 @@
         $this->_print($split_methods);
         }
     }
+ }
  
