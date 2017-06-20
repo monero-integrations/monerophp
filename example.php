@@ -5,7 +5,7 @@ require_once('jsonRPCClient.php');
 require_once('Monero_Payments.php');
 
 /* Edit it with your ip and your port of Monero RPC */
-$monero_daemon = new Monero('127.0.0.1','18083');
+$monero_daemon = new Monero_Payments('127.0.0.1','18083');
 
 ?>
 <html>
