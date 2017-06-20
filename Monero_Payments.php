@@ -88,18 +88,15 @@
     }
      
      public function view_key(){
-    $query_key = array('key_type' => 'view_key');
-    $query_key_method = $this->_run('query_key', $query_key);
-    $this->_print($query_key_method);
+        $query_key = array('key_type' => 'view_key');
+        $query_key_method = $this->_run('query_key', $query_key);
+        $this->_print($query_key_method);
      }
      
+        /* A payment id can be passed as a string
+           A random payment id will be generatd if one is not given */
      public function make_integrated_address($payment_id){
-         if(isset($payment_id)){
-             $integrate_address_parameters = array('payment_id' => '');
-         }
-         else{
-             $integrate_address_parameters = array('payment_id' => $payment_id);
-         }
+        $integrate_address_parameters = array('payment_id' => $payment_id);
         $integrate_address_method = $this->_run('make_integrated_address', $integrate_address_parameters);
         $this->_print($integrate_address_method);
      }
