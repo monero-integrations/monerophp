@@ -75,10 +75,10 @@
      * Incoming Transfer
      * $type must be All 
      */
-   public function incoming_transfer($type){
+   public function incoming_transfers($type){
         $incoming_parameters = array('transfer_type' => $type);
-        $incoming_transfer = $this->_run('incoming_transfer', $incoming_parameters);
-        $this->_print($incoming_transfer);
+        $incoming_transfers = $this->_run('incoming_transfers', $incoming_parameters);
+        $this->_print($incoming_transfers);
     }
   
     public function get_transfers(){
