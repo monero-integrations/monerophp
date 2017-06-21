@@ -81,8 +81,8 @@
         $this->_print($incoming_transfers);
     }
   
-    public function get_transfers(){
-        $get_parameters = array('pool' => true);
+    public function get_transfers($input_type, $input_value){
+        $get_parameters = array($input_type => $input_value);
         $get_transfers = $this->_run('get_transfers', $get_parameters);
         $this->_print($get_transfers);
     }
