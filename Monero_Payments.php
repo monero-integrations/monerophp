@@ -21,7 +21,7 @@
      *  @param  $ip   IP of Monero RPC
      *  @param  $port Port of Monero RPC
      */
-    function __construct ($ip = '127.0.0.1', $port, $host){
+    function __construct ($ip, $port, $host){
         $this->ip = $ip;
         $this->port = $port;
         // I need to implement a sort of validating http or https
@@ -141,10 +141,10 @@
    $get_payments = $this->_run('get_payments', $get_payments_parameters);
    $this->_print($get_payments);
   }
-  
+   
      public function get_bulk_payments($payment_id, $min_block_height){
       $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
       $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
       $this->print($get_bulk_payments);
- }
- 
+  }
+} 
