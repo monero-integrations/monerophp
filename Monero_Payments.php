@@ -21,11 +21,11 @@
      *  @param  $ip   IP of Monero RPC
      *  @param  $port Port of Monero RPC
      */
-    function __construct ($ip = '127.0.0.1', $port, $protocol = 'http'){
+    function __construct ($ip = '127.0.0.1', $port, $host){
         $this->ip = $ip;
         $this->port = $port;
         // I need to implement a sort of validating http or https
-        $this->url = $protocol.'://'.$ip.':'.$port.'/json_rpc';
+        $this->url = $host.'://'.$ip.':'.$port.'/json_rpc';
         $this->client = new jsonRPCClient($this->url);
      }
      
