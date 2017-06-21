@@ -2,7 +2,7 @@
 
 /**
  *  Monero PHP API
- *  @author     Nicolò Altamura
+ *  @author     SerHack
  *  @version    0.1
  *  @year       2017
  *  
