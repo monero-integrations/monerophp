@@ -135,5 +135,16 @@
         $transfer_method = $this->_run('transfer', $transfer_parameters);
         $this->_print($transfer_method);
     }
+  
+  public function get_payments($payment_id){
+   $get_payments_parameters = array('payment_id' => $payment_id);
+   $get_payments = $this->_run('get_payments', $get_payments_parameters);
+   $this->_print($get_payments);
+  }
+  
+     public function get_bulk_payments($payment_id, $min_block_height){
+      $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
+      $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
+      $this->print($get_bulk_payments);
  }
  
