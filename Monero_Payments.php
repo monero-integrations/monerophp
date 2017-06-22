@@ -112,11 +112,11 @@
         }
     }
   
-  public function make_uri($address, $amount, $recipient_name, $description){
+  public function make_uri($address, $amount, $recipient_name = null, $description = null){
         // If I pass 1, it will be 0.0000001 xmr. Then 
-        $new_amount = $amount * 1000000;
+        $new_amount = $amount * 100000;
        
-         $uri_params = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipeint_name, 'tx_description' => $description);
+         $uri_params = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
         $uri = $this->_run('make_uri', $uri_params);
         $this->_print($uri);
     }
@@ -129,7 +129,7 @@
     }
      
     public function transfer($amount, $address){
-        $new_amount = $amount * 1000000;
+        $new_amount = $amount * 100000;
         $destinations = array('amount' => $new_amount, 'address' => $address);
         $transfer_parameters = array('destinations' => $destinations, 'mixin' => 4, 'get_tx_key' => true, 'unlock_time' => 0);
         $transfer_method = $this->_run('transfer', $transfer_parameters);
