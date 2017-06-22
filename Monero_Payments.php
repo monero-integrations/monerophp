@@ -21,11 +21,11 @@
      *  @param  $ip   IP of Monero RPC
      *  @param  $port Port of Monero RPC
      */
-    function __construct ($ip = '127.0.0.1', $port, $protocol = 'http'){
+    function __construct ($ip, $port, $host){
         $this->ip = $ip;
         $this->port = $port;
         // I need to implement a sort of validating http or https
-        $this->url = $protocol.'://'.$ip.':'.$port.'/json_rpc';
+        $this->url = $host.'://'.$ip.':'.$port.'/json_rpc';
         $this->client = new jsonRPCClient($this->url);
      }
      
@@ -114,7 +114,7 @@
   
   public function make_uri($address, $amount, $recipient_name, $description){
         // If I pass 1, it will be 0.0000001 xmr. Then 
-        $new_amount = $amount * 1000000;
+        $new_amount = $amount * 100000;
        
          $uri_params = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipeint_name, 'tx_description' => $description);
         $uri = $this->_run('make_uri', $uri_params);
@@ -129,7 +129,7 @@
     }
      
     public function transfer($amount, $address){
-        $new_amount = $amount * 1000000;
+        $new_amount = $amount * 100000;
         $destinations = array('amount' => $new_amount, 'address' => $address);
         $transfer_parameters = array('destinations' => $destinations, 'mixin' => 4, 'get_tx_key' => true, 'unlock_time' => 0);
         $transfer_method = $this->_run('transfer', $transfer_parameters);
@@ -141,10 +141,10 @@
    $get_payments = $this->_run('get_payments', $get_payments_parameters);
    $this->_print($get_payments);
   }
-  
+   
      public function get_bulk_payments($payment_id, $min_block_height){
       $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
       $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
       $this->print($get_bulk_payments);
- }
- 
+  }
+} 
