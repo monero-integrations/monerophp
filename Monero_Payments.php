@@ -128,10 +128,10 @@
         $this->_print($uri_pars);
     }
      
-    public function transfer($amount, $address){
+    public function transfer($amount, $address, $mixin = 4){
         $new_amount = $amount  * 1000000000000;
         $destinations = array('amount' => $new_amount, 'address' => $address);
-        $transfer_parameters = array('destinations' => $destinations, 'mixin' => 4, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
+        $transfer_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
         $transfer_method = $this->_run('transfer', $transfer_parameters);
         $this->_print($transfer_method);
     }
@@ -145,7 +145,7 @@
      public function get_bulk_payments($payment_id, $min_block_height){
       $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
       $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
-      $this->print($get_bulk_payments);
+      $this->_print($get_bulk_payments);
  }
  
  }
