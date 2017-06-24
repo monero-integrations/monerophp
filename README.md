@@ -30,4 +30,4 @@ monero-wallet-rpc --testnet --rpc-bind-port 28080 --disable-rpc-login --wallet-f
 Step 3: Edit example.php with your ip (127.0.0.1 for localhost) and port of Monero Wallet RPC (in the example it's 127.0.1 and 28080 port)
 
 
-Step 4: Open your browser with your ip of XMPP, apache or ngix server and execute example.php. If library works. it will print your address
+Step 4: Open your browser with your ip of XMPP, apache or nginx server and execute example.php. If library works. it will print your address
