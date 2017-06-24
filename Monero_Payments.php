@@ -129,9 +129,9 @@
     }
      
     public function transfer($amount, $address){
-        $new_amount = $amount * 100000000;
+        $new_amount = $amount  * 1000000000000;
         $destinations = array('amount' => $new_amount, 'address' => $address);
-        $transfer_parameters = array('destinations' => $destinations, 'mixin' => 4, 'get_tx_key' => true, 'unlock_time' => 0);
+        $transfer_parameters = array('destinations' => $destinations, 'mixin' => 4, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
         $transfer_method = $this->_run('transfer', $transfer_parameters);
         $this->_print($transfer_method);
     }
