@@ -37,6 +37,11 @@
       $result = $this->client->_run($method, $params);
        return $result;
     }
+  
+   private function _transform($amount){
+    $new_amount = $amount * 100000000;
+    return $new_amount;
+   }
     
     /**
      * Print json (for api)
@@ -131,7 +136,7 @@
     public function transfer($amount, $address, $mixin = 4){
         $new_amount = $amount  * 1000000000000;
         $destinations = array('amount' => $new_amount, 'address' => $address);
-        $transfer_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
+        $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
         $transfer_method = $this->_run('transfer', $transfer_parameters);
         $this->_print($transfer_method);
     }
