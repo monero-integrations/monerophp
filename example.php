@@ -5,7 +5,7 @@
 require_once('Monero_Payments.php');
 
 /* Edit it with your ip and your port of Monero RPC */
-$monero_daemon = new Monero_Payments('testnet.kasisto.io','28082');
+$monero_daemon = new Monero_Payments('127.0.0.1','2080');
 
 ?>
 <html>
@@ -14,25 +14,30 @@ $monero_daemon = new Monero_Payments('testnet.kasisto.io','28082');
 	<p>Welcome to Monero PHP and JSON Library, developed by SerHack! Please report any issue <a href="https://github.com/monero-integrations/monerophp/issues">here</a>
 	<h2>Informations</h2>
     <h3>Monero Address</h3>
-    <?php $monero_daemon->address(); ?>
+    <?php $address = $monero_daemon->address(); 
+	$monero_daemon->_print($address); ?>
     <h3>Balance</h3>
-    <?php $monero_daemon->getbalance(); ?>
+    <?php $balance = $monero_daemon->getbalance();
+	 $monero_daemon->_print($balance); ?>
 	<h3>Height</h3>
-	<?php $monero_daemon->getheight(); ?>
+	<?php $height = $monero_daemon->getheight();
+		$monero_daemon->_print($height); ?>
 	<h3>Incoming transfers</h3>
 	<h4>All</h4>
-	<?php $monero_daemon->incoming_transfer('all'); ?>
-	<h4>Avaiable</h4>
-	<?php $monero_daemon->incoming_transfer('available'); ?>
+	<?php $incoming_transfers = $monero_daemon->incoming_transfer('all'); 
+		$monero_daemon->_print($incoming_transfers); ?>
+	<h4>Available</h4>
+	<?php $available = $monero_daemon->incoming_transfer('available');
+		$monero_daemon->_print($available); ?>
 	<h4>Unavailable</h4>
-	<?php $monero_daemon->incoming_transfer('unavailable'); ?>
+	<?php $unavailable = $monero_daemon->incoming_transfer('unavailable');
+		$monero_daemon->_print($unavailable); ?>
 	<h3>Get transfers</h3>
-	<?php $monero_daemon->get_transfers();?>
+	<?php $get_transfers = $monero_daemon->get_transfers('pool', true);
+		$monero_daemon->_print($get_transfers); ?>
 	<h3>View key</h3>
-	<?php $monero_daemon->view_key(); ?>
-	<h3>Get Transfers</h3>
-	<?php $monero_daemon->get_transfers('pool', 'true'); ?>
-
+	<?php $view_key = $monero_daemon->view_key();
+		$monero_daemon->_print($view_key); ?>
 <?php	
 	/*
 	 *	Avaiable Function
