@@ -27,7 +27,7 @@
         // I need to implement a sort of validating http or https
         $this->url = $protocol.'://'.$ip.':'.$port.'/json_rpc';
         $this->user = $user;
-        $this->password = $password
+        $this->password = $password;
         $this->client = new jsonRPCClient($this->url, $this->user, $this->password);
      }
      
