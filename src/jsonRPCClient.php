@@ -11,7 +11,8 @@
 class jsonRPCClient
 {
     protected $url = null, $is_debug = false, $parameters_structure = 'array'; 
-
+private $username;
+    private $password;
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
         CURLOPT_TIMEOUT => 8
@@ -31,12 +32,15 @@ class jsonRPCClient
         503 => '503 Service Unavailable'
     );
    
-    public function __construct($pUrl)
+    public function __construct($pUrl, $pUser, $pPass)
     {
+        
         $this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded for using this class!');
         $this->validate(false === extension_loaded('json'), 'The json extension must be loaded for using this class!');
     
         $this->url = $pUrl;
+        $this->username = $pUser;
+        $this->password = $pPass;
     }
    
     private function getHttpErrorMessage($pErrorNumber)
@@ -123,12 +127,14 @@ class jsonRPCClient
             throw new RuntimeException('Could\'t initialize a cURL session');
         }
         curl_setopt($ch, CURLOPT_URL, $this->url);
+         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+ 	curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $pRequest);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        
+       
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         if ( !curl_setopt_array($ch, $this->curl_options))
         {
