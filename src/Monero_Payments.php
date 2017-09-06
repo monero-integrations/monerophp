@@ -154,4 +154,10 @@
       $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
       return $get_bulk_payments;
  }
+  
+  public function get_transfer_by_txid($txid){
+    $get_transfer_by_txid_parameters = array('txid' => $txid);
+   $get_transfer_by_txid = $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
+   return $get_transfer_by_txid;
+  }
 }
