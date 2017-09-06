@@ -40,7 +40,7 @@ $monero_daemon = new Monero_Payments('127.0.0.1','2080');
 		$monero_daemon->_print($view_key); ?>
 <?php	
 	/*
-	 *	Avaiable Function
+	 *	Available Function
 	 * --------------------------------------------------------------------
 	 *	make_integrated_address => make a integrated address
 	 *	$monero_daemon->make_integrated_address('');
