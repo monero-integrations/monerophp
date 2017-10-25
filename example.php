@@ -11,7 +11,7 @@ $monero_daemon = new Monero_Payments('127.0.0.1','2080');
 <html>
   <body>
     <h1>Example of Monero Library</h1>
-	<p>Welcome to Monero PHP and JSON Library, developed by SerHack! Please report any issue <a href="https://github.com/monero-integrations/monerophp/issues">here</a>
+	<p>Welcome to Monero PHP and JSON Library, developed by SerHack! Please report any issue <a href="https://github.com/monero-integrations/monerophp/issues">here</a></p>
 	<h2>Informations</h2>
     <h3>Monero Address</h3>
     <?php $address = $monero_daemon->address(); 
