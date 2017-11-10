@@ -3,7 +3,7 @@
 /**
  *  Monero PHP API
  *  @author     SerHack
- *  @version    0.1
+ *  @version    0.2
  *  @year       2017
  *  
  */
@@ -37,17 +37,17 @@
       */
      private function _run($method,$params = null) {
       $result = $this->client->_run($method, $params);
-       return $result;
+      return $result;
     }
   
-   private function _transform($amount){
-    $new_amount = $amount * 100000000;
-    return $new_amount;
-   }
+     private function _transform($amount){
+      $new_amount = $amount * 100000000;
+      return $new_amount;
+     }
     
     /**
      * Print json (for api)
-     * @return $json
+     * @return $json_parsed
      */
      public function _print($json){
         $json_parsed = json_encode($json,  JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -56,6 +56,7 @@
   
    /**
     * Print Monero Address as JSON Array
+    * @return $address
     */
     public function address(){
         $address = $this->_run('getaddress');
@@ -160,4 +161,20 @@
    $get_transfer_by_txid = $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
    return $get_transfer_by_txid;
   }
+  
+  public function rescan_blockchain(){
+   $rescan_blockchain = $this->run('rescan_blockchain');
+   return $rescan_blockchain;
 }
+  
+  public function create_wallet($filename = 'monero_wallet', $password){
+   $create_wallet_parameters = array('filename' => $filename, 'password' => $password, 'language' => 'English');
+   $create_wallet_method = $this->run('create_wallet', $create_wallet_parameters);
+   return $create_wallet_method;
+  }
+
+  public function open_wallet($filename, $password){
+  }
+  
+ }  
+  
