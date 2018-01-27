@@ -1,7 +1,7 @@
 <?php
     require_once "SHA3.php";
     
-    class cryptonote
+    class Cryptonote
     { 
         
         public function keccak_256($message)
@@ -16,5 +16,7 @@
             $bytes = random_bytes(64);
             return bin2hex($bytes);
         }
+        
+        
         
     }
