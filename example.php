@@ -14,7 +14,7 @@ $monero_rpc = new Monero_Payments('127.0.0.1','18082');
 	<p>Welcome to Monero PHP and JSON Library, developed by SerHack! Please report any issue <a href="https://github.com/monero-integrations/monerophp/issues">here</a></p>
 	<h2>Informations</h2>
     <h3>Monero Address</h3>
-    <?php $address = $monero_rpc->address(); 
+    <?php $address = $monero_rpc->getaddress(); 
 	$monero_rpc->_print($address); ?>
     <h3>Balance</h3>
     <?php $balance = $monero_rpc->getbalance();
