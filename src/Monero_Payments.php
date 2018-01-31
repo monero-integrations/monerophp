@@ -58,7 +58,7 @@
     * Print Monero Address as JSON Array
     * @return $address
     */
-    public function address(){
+    public function getaddress(){
         $address = $this->_run('getaddress');
         return $address;
     }
