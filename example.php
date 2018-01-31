@@ -5,7 +5,7 @@
 require_once('src/Monero_Payments.php');
 
 /* Edit it with your ip and your port of Monero RPC */
-$monero_daemon = new Monero_Payments('127.0.0.1','2080');
+$monero_daemon = new Monero_Payments('127.0.0.1','18082');
 
 ?>
 <html>
