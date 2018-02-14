@@ -35,4 +35,21 @@ Copyright (c) 2018 Monero-Integrations
             return $result;
         }
         
+        public function derive_viewKey($spendKey)
+        {
+            $hashed = $this->keccak_256($spendKey);
+            $viewKey = $this->sc_reduce($hashed);
+            return $viewKey;
+        }
+        
+        public function gen_private_keys($seed)
+        {
+            $spendKey = $this->sc_reduce($seed);
+            $viewKey = $this->derive_viewKey($spendKey);
+            $result = array("spendKey" => $spendKey,
+                            "viewKey" => $viewKey);
+
+            return $result;
+        }
+        
     }
