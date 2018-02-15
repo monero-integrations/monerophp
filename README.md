@@ -13,7 +13,7 @@ Monero RPC Daemon has a json api that can communicate with the Monero Library. T
  - PC + internet
  - Ubuntu or Debian
  - Monero daemon
- - PHP server like XMPP; Apache or ngix
+ - PHP server like XMPP, Apache or NGINX
  
 ###
 
@@ -27,7 +27,7 @@ Step 2: Start the Monero Wallet RPC
 monero-wallet-rpc --testnet --rpc-bind-port 28080 --disable-rpc-login --wallet-file /path/walletfile
 ```
 
-Step 3: Edit example.php with your ip (127.0.0.1 for localhost) and port of Monero Wallet RPC (in the example it's 127.0.1 and 28080 port)
+Step 3: Edit example.php with your ip (`127.0.0.1` for localhost) and port of Monero Wallet RPC (in the example it's `127.0.0.1:28080`)
 
 
-Step 4: Open your browser with your ip of XMPP, apache or nginx server and execute example.php. If the library works, it will print your address
+Step 4: Open your browser with your ip of XMPP, apache or NGINX server and execute example.php. If the library works, it will print your Monero address
