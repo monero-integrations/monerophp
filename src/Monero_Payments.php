@@ -8,7 +8,6 @@
  *  
  */
  
- /* WORK IN PROGRESS */
 
  class Monero_Payments{
     private $url;
