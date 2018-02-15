@@ -2,7 +2,7 @@
 
 /**
  *  Monero PHP API
- *  @author     SerHack
+ *  Copyright (c) 2017-2018 Monero Integrations
  *  @version    0.2
  *  @year       2017
  *  
