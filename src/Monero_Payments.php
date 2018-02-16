@@ -173,6 +173,15 @@
   }
 
   public function open_wallet($filename, $password){
+   $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
+   $open_wallet_method = $this->run('open_wallet',$open_wallet_parameters);
+   return $open_wallet_method;
+  }
+  
+  public function sign($data){
+   $sign_parameters = array('string' => $data);
+   $sign_method = $this->run('sign',$sign_parameters);
+   return $sign_method;
   }
   
  }  
