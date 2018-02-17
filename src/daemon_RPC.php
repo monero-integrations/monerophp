@@ -38,4 +38,9 @@ class Daemon_RPC
 	    $hard_fork_info_method = $this->run("hard_fork_info");
 	    return $hard_fork_info_method;
 	}
+	
+	public function getbans(){
+	    $getbans_method = $this->run("getbans");
+	    return $getbans_method;
+	}
 }
