@@ -15,30 +15,46 @@ class Daemon_RPC
 	    $result = $this->client->_run($method, $params);
             return $result;
         }
-	
-	public function get_info(){
-		$get_info_method = $this->run("get_info");
-		return $get_info_method;
-	}
 
 	public function getblockcount()
 	{
-	    $getblockcount_method = $this->_run("getblockcount");
-	    return $getblockcount_method;
+	    $result = $this->_run("getblockcount");
+	    return $result["count"];
 	}
-	
-	public function on_getblockhash($block_height)
+
+	public function get_info()
 	{
-	    $on_getblockhash_parameters = array($block_height);
-	    $on_getblockhash_method = $this->run("on_getblockhash", $on_getblockhash_parameters);
-	    return $on_getblockhash_method;
+	    $result =  $this->_run("get_info");
+	    return $result;
 	}
-	
-	public function hard_fork_info(){
-	    $hard_fork_info_method = $this->run("hard_fork_info");
-	    return $hard_fork_info_method;
+
+	public function hardfork_info()
+	{
+	    return $this->_run("hard_fork_info");
 	}
-	
+
+	public function getlastblockheader()
+	{
+	    return $this->_run("getlastblockheader");
+	}
+
+	public function getblockheaderbyhash($hash)
+	{
+	    return $this->_run("getlastblockheader", $hash);
+	}
+
+	public function getblock_by_hash($hash)
+	{
+	    return $this->_run("getblock", $hash);
+	}
+
+	// getblock_by_height is basically an alias for getblock_by_hash
+	public function getblock_by_height($height)
+	{
+	    $heightString = (string) $height;
+	    return $this->_run("getblock", $heightString);
+	}
+
 	public function getbans(){
 	    $getbans_method = $this->run("getbans");
 	    return $getbans_method;
