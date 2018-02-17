@@ -2,10 +2,10 @@
 
 /* Example of Monero Payment  */
  require_once('src/jsonRPCClient.php');
-require_once('src/Monero_Payments.php');
+require_once('src/Monero_RPC.php');
 
 /* Edit it with your ip and your port of Monero RPC */
-$monero_rpc = new Monero_Payments('127.0.0.1','18082');
+$monero_rpc = new Monero_RPC('127.0.0.1','18082');
 
 ?>
 <html>
