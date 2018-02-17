@@ -9,7 +9,7 @@
  */
  
 
- class Monero_Payments{
+ class Monero_RPC{
     private $url;
     private $client; 
     private $ip;
