@@ -52,4 +52,11 @@ Copyright (c) 2018 Monero-Integrations
             return $result;
         }
         
+        public function pk_from_sk($pubKey)
+        {
+	        $keyInt = $this->ed25519->decodeint(hex2bin($pubKey));
+	        $aG = $this->ed25519->scalarmult_base($keyInt);
+	        return bin2hex($this->ed25519->encodepoint($aG));
+	    }
+        
     }
