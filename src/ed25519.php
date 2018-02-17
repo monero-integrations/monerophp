@@ -319,5 +319,20 @@ class ed25519
 
         return $this->scalarmult($this->B, $S) == $this->edwards($R, $this->scalarmult($A, $h));
     }
-}
 
+    // The code below is by the Monero-Integrations team
+
+    public function scalarmult_base($e)
+    {
+        if ($e == 0) {
+            return array(0, 1);
+        }
+        $Q = $this->scalarmult($this->B, bcdiv($e, 2, 0));
+        $Q = $this->edwards($Q, $Q);
+        if (substr($e, -1)%2 == 1) {
+            $Q = $this->edwards($Q, $this->B);
+        }
+
+        return $Q;
+    }
+}
