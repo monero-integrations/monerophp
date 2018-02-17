@@ -1,6 +1,6 @@
 <?php
 
-class Daemon
+class Daemon_RPC
 {
 	private $client;
 
@@ -32,5 +32,10 @@ class Daemon
 	    $on_getblockhash_parameters = array($block_height);
 	    $on_getblockhash_method = $this->run("on_getblockhash", $on_getblockhash_parameters);
 	    return $on_getblockhash_method;
+	}
+	
+	public function hard_fork_info(){
+	    $hard_fork_info_method = $this->run("hard_fork_info");
+	    return $hard_fork_info_method;
 	}
 }
