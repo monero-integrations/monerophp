@@ -1,5 +1,5 @@
 # Monero Library
-A Monero library written in PHP by the Moner-Integrations team.
+A Monero library written in PHP by the Monero-Integrations team.
 
 ## How It Works
 This library has 2 parts. The first is a wrapper for the monero-wallet-rpc JSON RPC API. (Monero_Payments.php)
