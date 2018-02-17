@@ -1,9 +1,9 @@
 # Monero Library
-The Monero Library is built by SerHack with PHP and lots of coffee!
+A Monero library written in PHP by the Moner-Integrations team.
 
 ## How It Works
-The Monero Library (aka Monero_Payments.php) will try to connect to your Monero RPC Daemon (monero-wallet-rpc). See the next section for how to use it and for more information).
-Monero RPC Daemon has a json api that can communicate with the Monero Library. The Monero Library will automatically know your address and other things.
+This library has 2 parts. The first is a wrapper for the monero-wallet-rpc JSON RPC API. (Monero_Payments.php)
+The second is a Monero/Cryptonote toolbox (cryptonote.php) with both lower level functions used in Monero related cryptograhy and higher level methods for things like generating Monero private/public keys.
 
 ## Preview
 ![Preview](http://i.imgur.com/fyfRCOS.png)
