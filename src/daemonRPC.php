@@ -15,9 +15,22 @@ class Daemon
 	    $result = $this->client->_run($method, $params);
             return $result;
         }
+	
+	public function get_info(){
+		$get_info_method = $this->run("get_info");
+		return $get_info_method;
+	}
 
 	public function getblockcount()
 	{
-	    return $this->_run("getblockcount");
+	    $getblockcount_method = $this->_run("getblockcount");
+	    return $getblockcount_method;
+	}
+	
+	public function on_getblockhash($block_height)
+	{
+	    $on_getblockhash_parameters = array($block_height);
+	    $on_getblockhash_method = $this->run("on_getblockhash", $on_getblockhash_parameters);
+	    return $on_getblockhash_method;
 	}
 }
