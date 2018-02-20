@@ -3,14 +3,14 @@
 Copyright (c) 2018 Monero-Integrations
 */
     require_once("SHA3.php");
-    require_once("ed25519_gmp.php");
+    require_once("ed25519.php");
     
-    class CryptonoteGMP
+    class Cryptonote
     {
         protected $ed25519;
         public function __construct()
         {
-            $this->ed25519 = new ed25519GMP();
+            $this->ed25519 = new ed25519();
         }
         public function keccak_256($message)
         {

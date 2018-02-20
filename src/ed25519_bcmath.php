@@ -61,6 +61,11 @@ class ed25519BCMath
             "15112221349535400772501151409588531511454012693041857206046113283949847762202",
             "46316835694926478169428394003475163141307993866256225615783033603165251855960"
         ); //array(bcmod($this->Bx,$this->q),bcmod($this->By,$this->q));
+
+        // Detect if GMP extension is installed; if it is, use it instead of BCMath.
+        if (extension_loaded('gmp')) {
+            
+        }
     }
 
     public function H($m)
