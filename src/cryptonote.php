@@ -29,7 +29,7 @@ Copyright (c) 2018 Monero-Integrations
         {
             $integer = $this->ed25519->decodeint(hex2bin($input));
             
-            $modulo = gmp_mod($integer , $this->ed25519->l);
+            $modulo = bcmod($integer , $this->ed25519->l);
             
             $result = bin2hex($this->ed25519->encodeint($modulo));
             return $result;
