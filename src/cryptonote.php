@@ -4,13 +4,15 @@ Copyright (c) 2018 Monero-Integrations
 */
     require_once("SHA3.php");
     require_once("ed25519.php");
-    
+    require_once("base58.php");
+
     class Cryptonote
     {
         protected $ed25519;
         public function __construct()
         {
             $this->ed25519 = new ed25519();
+	    $this->base58 = new base58();
         }
         public function keccak_256($message)
         {
@@ -54,9 +56,16 @@ Copyright (c) 2018 Monero-Integrations
         
         public function pk_from_sk($pubKey)
         {
-	        $keyInt = $this->ed25519->decodeint(hex2bin($pubKey));
-	        $aG = $this->ed25519->scalarmult_base($keyInt);
-	        return bin2hex($this->ed25519->encodepoint($aG));
-	    }
-        
+	    $keyInt = $this->ed25519->decodeint(hex2bin($pubKey));
+	    $aG = $this->ed25519->scalarmult_base($keyInt);
+            return bin2hex($this->ed25519->encodepoint($aG));
+        }
+
+	public function encode_address($pSpendKey, $pViewKey)
+	{
+	    // mainnet network byte is 18 (0x12)
+	    $data = "12" . $pSpendKey . $pViewKey;
+	    $encoded = $this->base58->encode($data);
+	    return $encoded;
+	}
     }
