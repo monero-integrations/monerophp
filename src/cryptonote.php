@@ -68,4 +68,32 @@ Copyright (c) 2018 Monero-Integrations
 	    $encoded = $this->base58->encode($data);
 	    return $encoded;
 	}
+
+	// param (string) $address = base58 encoded monero address
+	public function decode_address($address)
+        {
+            $decoded = $this->base58->decode($address);
+
+	    $network_byte = substr($decoded, 0, 2);
+	    $public_spendKey = substr($decoded, 2, 64);
+	    $public_viewKey = substr($decoded, 66, 64);
+
+	    $result = array("networkByte" => $network_byte,
+			    "spendKey" => $public_spendKey,
+			    "viewKey" => $public_viewKey);
+            return $result;
+        }
+
+	public function address_from_seed($hex_seed)
+	{
+	    $private_keys = $this->gen_private_keys($hex_seed);
+	    $private_viewKey = $private_keys["viewKey"];
+	    $private_spendKey = $private_keys["spendKey"];
+
+	    $public_spendKey = $this->pk_from_sk($private_spendKey);
+	    $public_viewKey = $this->pk_from_sk($private_viewKey);
+
+	    $address = $this->encode_address($public_spendKey, $public_viewKey);
+	    return $address;
+	}
     }
