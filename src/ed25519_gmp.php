@@ -30,7 +30,7 @@
  *
  * @link   http://ed25519.cr.yp.to/software.html Other ED25519 implementations this is referenced from
  */
-class ed25519
+class ed25519GMP
 {
     public $b;
 
@@ -51,16 +51,16 @@ class ed25519
     public function __construct()
     {
         $this->b = 256;
-        $this->q = "57896044618658097711785492504343953926634992332820282019728792003956564819949"; //bcsub(bcpow(2, 255),19);
-        $this->l = "7237005577332262213973186563042994240857116359379907606001950938285454250989"; //bcadd(bcpow(2,252),27742317777372353535851937790883648493);
-        $this->d = "-4513249062541557337682894930092624173785641285191125241628941591882900924598840740"; //bcmul(-121665,$this->inv(121666));
-        $this->I = "19681161376707505956807079304988542015446066515923890162744021073123829784752"; //$this->expmod(2,  bcdiv((bcsub($this->q,1)),4),$this->q);
-        $this->By = "46316835694926478169428394003475163141307993866256225615783033603165251855960"; //bcmul(4,$this->inv(5));
+        $this->q = "57896044618658097711785492504343953926634992332820282019728792003956564819949"; //gmp_sub(gmp_pow(2, 255),19);
+        $this->l = "7237005577332262213973186563042994240857116359379907606001950938285454250989"; //gmp_add(gmp_pow(2,252),27742317777372353535851937790883648493);
+        $this->d = "-4513249062541557337682894930092624173785641285191125241628941591882900924598840740"; //gmp_mul(-121665,$this->inv(121666));
+        $this->I = "19681161376707505956807079304988542015446066515923890162744021073123829784752"; //$this->expmod(2,  gmp_div((gmp_sub($this->q,1)),4),$this->q);
+        $this->By = "46316835694926478169428394003475163141307993866256225615783033603165251855960"; //gmp_mul(4,$this->inv(5));
         $this->Bx = "15112221349535400772501151409588531511454012693041857206046113283949847762202"; //$this->xrecover($this->By);
         $this->B = array(
             "15112221349535400772501151409588531511454012693041857206046113283949847762202",
             "46316835694926478169428394003475163141307993866256225615783033603165251855960"
-        ); //array(bcmod($this->Bx,$this->q),bcmod($this->By,$this->q));
+        ); //array(gmp_mod($this->Bx,$this->q),gmp_mod($this->By,$this->q));
     }
 
     public function H($m)
@@ -71,9 +71,9 @@ class ed25519
     //((n % M) + M) % M //python modulus craziness
     public function pymod($x, $m)
     {
-        $mod = bcmod($x, $m);
-        if ($mod[0] === '-') {
-            $mod = bcadd($mod, $m);
+        $mod = gmp_mod($x, $m);
+        if ($mod < 0) {
+            $mod = gmp_add($mod, $m);
         }
 
         return $mod;
@@ -82,9 +82,9 @@ class ed25519
     public function expmod($b, $e, $m)
     {
         //if($e==0){return 1;}
-        $t = bcpowmod($b, $e, $m);
-        if ($t[0] === '-') {
-            $t = bcadd($t, $m);
+        $t = gmp_powm($b, $e, $m);
+        if ($t < 0) {
+            $t = gmp_add($t, $m);
         }
 
         return $t;
@@ -92,19 +92,19 @@ class ed25519
 
     public function inv($x)
     {
-        return $this->expmod($x, bcsub($this->q, 2), $this->q);
+        return $this->expmod($x, gmp_sub($this->q, 2), $this->q);
     }
 
     public function xrecover($y)
     {
-        $y2 = bcpow($y, 2);
-        $xx = bcmul(bcsub($y2, 1), $this->inv(bcadd(bcmul($this->d, $y2), 1)));
-        $x = $this->expmod($xx, bcdiv(bcadd($this->q, 3), 8, 0), $this->q);
-        if ($this->pymod(bcsub(bcpow($x, 2), $xx), $this->q) != 0) {
-            $x = $this->pymod(bcmul($x, $this->I), $this->q);
+        $y2 = gmp_pow($y, 2);
+        $xx = gmp_mul(gmp_sub($y2, 1), $this->inv(gmp_add(gmp_mul($this->d, $y2), 1)));
+        $x = $this->expmod($xx, gmp_div(gmp_add($this->q, 3), 8, 0), $this->q);
+        if ($this->pymod(gmp_sub(gmp_pow($x, 2), $xx), $this->q) != 0) {
+            $x = $this->pymod(gmp_mul($x, $this->I), $this->q);
         }
         if (substr($x, -1)%2 != 0) {
-            $x = bcsub($this->q, $x);
+            $x = gmp_sub($this->q, $x);
         }
 
         return $x;
@@ -114,11 +114,11 @@ class ed25519
     {
         list($x1, $y1) = $P;
         list($x2, $y2) = $Q;
-        $xmul = bcmul($x1, $x2);
-        $ymul = bcmul($y1, $y2);
-        $com = bcmul($this->d, bcmul($xmul, $ymul));
-        $x3 = bcmul(bcadd(bcmul($x1, $y2), bcmul($x2, $y1)), $this->inv(bcadd(1, $com)));
-        $y3 = bcmul(bcadd($ymul, $xmul), $this->inv(bcsub(1, $com)));
+        $xmul = gmp_mul($x1, $x2);
+        $ymul = gmp_mul($y1, $y2);
+        $com = gmp_mul($this->d, gmp_mul($xmul, $ymul));
+        $x3 = gmp_mul(gmp_add(gmp_mul($x1, $y2), gmp_mul($x2, $y1)), $this->inv(gmp_add(1, $com)));
+        $y3 = gmp_mul(gmp_add($ymul, $xmul), $this->inv(gmp_sub(1, $com)));
 
         return array($this->pymod($x3, $this->q), $this->pymod($y3, $this->q));
     }
@@ -128,7 +128,7 @@ class ed25519
         if ($e == 0) {
             return array(0, 1);
         }
-        $Q = $this->scalarmult($P, bcdiv($e, 2, 0));
+        $Q = $this->scalarmult($P, gmp_div($e, 2, 0));
         $Q = $this->edwards($Q, $Q);
         if (substr($e, -1)%2 == 1) {
             $Q = $this->edwards($Q, $P);
@@ -143,7 +143,7 @@ class ed25519
         $loopE = $e;
         while ($loopE > 0) {
             array_unshift($temp, $loopE);
-            $loopE = bcdiv($loopE, 2, 0);
+            $loopE = gmp_div($loopE, 2, 0);
         }
         $Q = array();
         foreach ($temp as $e) {
@@ -179,8 +179,8 @@ class ed25519
         $binary_i = '';
         do {
             $binary_i = substr($decimal_i, -1)%2 .$binary_i;
-            $decimal_i = bcdiv($decimal_i, '2', 0);
-        } while (bccomp($decimal_i, '0'));
+            $decimal_i = gmp_div($decimal_i, '2', 0);
+        } while (gmp_cmp($decimal_i, '0'));
 
         return ($binary_i);
     }
@@ -203,7 +203,7 @@ class ed25519
 
     public function bit($h, $i)
     {
-        return (ord($h[(int) bcdiv($i, 8, 0)]) >> substr($i, -3)%8) & 1;
+        return (ord($h[(int) gmp_div($i, 8, 0)]) >> substr($i, -3)%8) & 1;
     }
 
     /**
@@ -218,9 +218,9 @@ class ed25519
         $h = $this->H($sk);
         $sum = 0;
         for ($i = 3; $i < $this->b-2; $i++) {
-            $sum = bcadd($sum, bcmul(bcpow(2, $i), $this->bit($h, $i)));
+            $sum = gmp_add($sum, gmp_mul(gmp_pow(2, $i), $this->bit($h, $i)));
         }
-        $a = bcadd(bcpow(2, $this->b-2), $sum);
+        $a = gmp_add(gmp_pow(2, $this->b-2), $sum);
         $A = $this->scalarmult($this->B, $a);
         $data = $this->encodepoint($A);
 
@@ -232,7 +232,7 @@ class ed25519
         $h = $this->H($m);
         $sum = 0;
         for ($i = 0; $i < $this->b*2; $i++) {
-            $sum = bcadd($sum, bcmul(bcpow(2, $i), $this->bit($h, $i)));
+            $sum = gmp_add($sum, gmp_mul(gmp_pow(2, $i), $this->bit($h, $i)));
         }
 
         return $sum;
@@ -241,14 +241,14 @@ class ed25519
     public function signature($m, $sk, $pk)
     {
         $h = $this->H($sk);
-        $a = bcpow(2, (bcsub($this->b, 2)));
+        $a = gmp_pow(2, (gmp_sub($this->b, 2)));
         for ($i = 3; $i < $this->b-2; $i++) {
-            $a = bcadd($a, bcmul(bcpow(2, $i), $this->bit($h, $i)));
+            $a = gmp_add($a, gmp_mul(gmp_pow(2, $i), $this->bit($h, $i)));
         }
         $r = $this->Hint(substr($h, $this->b/8, ($this->b/4-$this->b/8)).$m);
         $R = $this->scalarmult($this->B, $r);
         $encR = $this->encodepoint($R);
-        $S = $this->pymod(bcadd($r, bcmul($this->Hint($encR.$pk.$m), $a)), $this->l);
+        $S = $this->pymod(gmp_add($r, gmp_mul($this->Hint($encR.$pk.$m), $a)), $this->l);
 
         return $encR.$this->encodeint($S);
     }
@@ -256,17 +256,17 @@ class ed25519
     public function isoncurve($P)
     {
         list($x, $y) = $P;
-        $x2 = bcpow($x, 2);
-        $y2 = bcpow($y, 2);
+        $x2 = gmp_pow($x, 2);
+        $y2 = gmp_pow($y, 2);
 
-        return $this->pymod(bcsub(bcsub(bcsub($y2, $x2), 1), bcmul($this->d, bcmul($x2, $y2))), $this->q) == 0;
+        return $this->pymod(gmp_sub(gmp_sub(gmp_sub($y2, $x2), 1), gmp_mul($this->d, gmp_mul($x2, $y2))), $this->q) == 0;
     }
 
     public function decodeint($s)
     {
         $sum = 0;
         for ($i = 0; $i < $this->b; $i++) {
-            $sum = bcadd($sum, bcmul(bcpow(2, $i), $this->bit($s, $i)));
+            $sum = gmp_add($sum, gmp_mul(gmp_pow(2, $i), $this->bit($s, $i)));
         }
 
         return $sum;
@@ -286,11 +286,11 @@ class ed25519
     {
         $y = 0;
         for ($i = 0; $i < $this->b-1; $i++) {
-            $y = bcadd($y, bcmul(bcpow(2, $i), $this->bit($s, $i)));
+            $y = gmp_add($y, gmp_mul(gmp_pow(2, $i), $this->bit($s, $i)));
         }
         $x = $this->xrecover($y);
         if (substr($x, -1)%2 != $this->bit($s, $this->b-1)) {
-            $x = bcsub($this->q, $x);
+            $x = gmp_sub($this->q, $x);
         }
         $P = array($x, $y);
         if (!$this->isoncurve($P)) {
@@ -327,7 +327,7 @@ class ed25519
         if ($e == 0) {
             return array(0, 1);
         }
-        $Q = $this->scalarmult($this->B, bcdiv($e, 2, 0));
+        $Q = $this->scalarmult($this->B, gmp_div($e, 2, 0));
         $Q = $this->edwards($Q, $Q);
         if (substr($e, -1)%2 == 1) {
             $Q = $this->edwards($Q, $this->B);
