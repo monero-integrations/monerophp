@@ -25,7 +25,7 @@ class base58 {
    * @return   array
    *
    */
-  public function hex_to_bin($hex) {
+  private function hex_to_bin($hex) {
     if (gettype($hex) != 'string') {
       throw new Exception('base58->hex_to_bin(): Invalid input type (must be a string)');
     }
@@ -48,7 +48,7 @@ class base58 {
    * @return   string
    *
    */
-  public function bin_to_hex($bin) {
+  private function bin_to_hex($bin) {
     if (gettype($bin) != 'array') {
       throw new Exception('base58->bin_to_hex(): Invalid input type (must be an array)');
     }
@@ -68,7 +68,7 @@ class base58 {
    * @return   array
    *
    */
-  public function str_to_bin($str) {
+  private function str_to_bin($str) {
     if (gettype($str) != 'string') {
       throw new Exception('base58->str_to_bin(): Invalid input type (must be a string)');
     }
@@ -88,7 +88,7 @@ class base58 {
    * @return   string
    *
    */
-  public function bin_to_str($bin) {
+  private function bin_to_str($bin) {
     if (gettype($bin) != 'array') {
       throw new Exception('base58->bin_to_str(): Invalid input type (must be an array)');
     }
@@ -108,7 +108,7 @@ class base58 {
    * @return   number
    *
    */
-  public function uint8_be_to_64($data) {
+  private function uint8_be_to_64($data) {
     if (gettype($data) != 'array') {
       throw new Exception ('base58->uint8_be_to_64(): Invalid input type (must be an array)');
     }
@@ -148,7 +148,7 @@ class base58 {
    * @return   array
    *
    */
-  public function uint64_to_8_be($num, $size) {
+  private function uint64_to_8_be($num, $size) {
     if (gettype($num) != ('integer' || 'double')) {
       throw new Exception ('base58->uint64_to_8_be(): Invalid input type ($num must be a number)');
     }
@@ -177,7 +177,7 @@ class base58 {
    * @return   array
    *
    */
-  public function encode_block($data, $buf, $index) {
+  private function encode_block($data, $buf, $index) {
     if (gettype($data) != 'array') {
       throw new Exception('base58->encode_block(): Invalid input type ($data must be an array)');
     }
@@ -250,7 +250,7 @@ class base58 {
    * @return   array
    *
    */
-  public function decode_block($data, $buf, $index) {
+  private function decode_block($data, $buf, $index) {
     if (gettype($data) != 'array') {
       throw new Exception('base58->decode_block(): Invalid input type ($data must be an array)');
     }
