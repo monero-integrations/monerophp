@@ -23,8 +23,8 @@
  * $daemonRPC = new daemonRPC();
  * 
  * // Examples:
- * $daemonRPC->getblockcount();
- * $daemonRPC->getblock_by_height(1);
+ * $height = $daemonRPC->getblockcount();
+ * $block = $daemonRPC->getblock_by_height(1);
  * 
  */
 
