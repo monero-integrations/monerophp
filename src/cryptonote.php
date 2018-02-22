@@ -69,10 +69,28 @@ Copyright (c) 2018 Monero-Integrations
 	    return $encoded;
 	}
 
+	public function verify_checksum($address)
+	{
+	    $decoded = $this->base58->decode($address);
+	    $checksum = substr($decoded, -8);
+	    $test = substr($decoded, 0, 130);
+	    $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
+	    $calculated = substr($checksum_hash, 0, 8);
+	    if($checksum == $calculated){
+	    	return true;
+	    }
+	    else
+		return false;
+	}
+
 	// param (string) $address = base58 encoded monero address
 	public function decode_address($address)
         {
             $decoded = $this->base58->decode($address);
+
+	    if(!$this->verify_checksum($address)){
+		throw new Exception("Error: invalid checksum");
+	    }
 
 	    $network_byte = substr($decoded, 0, 2);
 	    $public_spendKey = substr($decoded, 2, 64);
