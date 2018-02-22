@@ -52,6 +52,8 @@ class daemonRPC {
    *
    */
   function __construct($host = '127.0.0.1', $port = 18081, $protocol = 'http', $user = null, $password = null) {
+    // TODO input validation
+    
     $this->host = $host;
     $this->port = $port;
     $this->protocol = $protocol; // TODO: validate protocol (http, https, etc.)
@@ -73,6 +75,8 @@ class daemonRPC {
    *
    */
   protected function _run($method, $params = null) {
+    // TODO input validation
+    
     return $this->client->_run($method, $params);
   }
 
@@ -188,6 +192,8 @@ class daemonRPC {
    *
    */
   public function getblockheaderbyhash($hash) {
+    // TODO input validation
+    
     return $this->_run('getlastblockheader', $hash);
   }
 
@@ -218,6 +224,8 @@ class daemonRPC {
    *
    */
   public function getblock_by_hash($hash) {
+    // TODO input validation
+    
     return $this->_run('getblock', $hash);
   }
 
@@ -248,6 +256,8 @@ class daemonRPC {
    *
    */
   public function getblock_by_height($height) {
+    // TODO input validation
+    
     $heightString = (string) $height; // Cast input to string
     return $this->_run('getblock', $heightString);
   }
