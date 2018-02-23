@@ -255,6 +255,40 @@ class daemonRPC {
 
   /**
    *
+   * Similar to getblockheaderbyhash() above, this method includes a block's height as an input parameter to retrieve basic information about the block.
+   *
+   * @param  int     $height  The block's height
+   *
+   * @return object  Example: {
+   *   "block_header": {
+   *     "depth": 78376,
+   *     "difficulty": 815625611,
+   *     "hash": "e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6",
+   *     "height": 912345,
+   *     "major_version": 1,
+   *     "minor_version": 2,
+   *     "nonce": 1646,
+   *     "orphan_status": false,
+   *     "prev_hash": "b61c58b2e0be53fad5ef9d9731a55e8a81d972b8d90ed07c04fd37ca6403ff78",
+   *     "reward": 7388968946286,
+   *     "timestamp": 1452793716
+   *   },
+   *   "status": "OK"
+   * }
+   *
+   */
+  public function getblockheaderbyheight($height) {
+    // TODO full input validation
+
+    if (!isset($height)) {
+      throw new Exception('Error: Block height required');
+    }
+    
+    return $this->_run('getblockheaderbyheight', $height);
+  }
+
+  /**
+   *
    * Get block information by its SHA256 hash
    *
    * @param  string  The block's SHA256 hash
