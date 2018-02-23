@@ -484,4 +484,25 @@ class daemonRPC {
     return $this->_run('/is_key_image_spent', $params);
   }
 
+  /**
+   *
+   * Broadcast a raw transaction to the network.
+   *
+   * @param  string  $tx_as_hex  Full transaction information as hexidecimal string.
+   *
+   * @return object  // TODO: example result
+   *
+   */
+  public function sendrawtransaction($tx_as_hex) {
+    // TODO full input validation
+
+    if (!isset($)) {
+      throw new Exception('Error: Transaction required');
+    }
+
+    $params = array('tx_as_hex' => $tx_as_hex);
+
+    return $this->_run('/sendrawtransaction', $params);
+  }
+
 }
