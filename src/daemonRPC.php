@@ -133,6 +133,38 @@ class daemonRPC {
 
   /**
    *
+   * Retrieve a block template that can be mined upon
+   *
+   * @param  string  $wallet_address  Address of wallet to receive coinbase transactions if block is successfully mined
+   * @param  int     $reserve_size   Reserve size 
+   *
+   * @return object  Example: {
+   *   "blocktemplate_blob": "01029af88cb70568b84a11dc9406ace9e635918ca03b008f7728b9726b327c1b482a98d81ed83000000000018bd03c01ffcfcf3c0493d7cec7020278dfc296544f139394e5e045fcda1ba2cca5b69b39c9ddc90b7e0de859fdebdc80e8eda1ba01029c5d518ce3cc4de26364059eadc8220a3f52edabdaf025a9bff4eec8b6b50e3d8080dd9da417021e642d07a8c33fbe497054cfea9c760ab4068d31532ff0fbb543a7856a9b78ee80c0f9decfae01023ef3a7182cb0c260732e7828606052a0645d3686d7a03ce3da091dbb2b75e5955f01ad2af83bce0d823bf3dbbed01ab219250eb36098c62cbb6aa2976936848bae53023c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001f12d7c87346d6b84e17680082d9b4a1d84e36dd01bd2c7f3b3893478a8d88fb3",
+   *   "difficulty": 982540729,
+   *   "height": 993231,
+   *   "prev_hash": "68b84a11dc9406ace9e635918ca03b008f7728b9726b327c1b482a98d81ed830",
+   *   "reserved_offset": 246,
+   *   "status": "OK"
+   * }
+   *
+   */
+  public function getblocktemplate($wallet_address, $reserve_size) {
+    // TODO full input validation
+    
+    if (!isset($wallet_address)) {
+      throw new Exception('Error: Wallet address required');
+    }
+    if (!isset($reserve_size)) {
+      throw new Exception('Error: Reserve size required');
+    }
+       
+    $params = array('wallet_address' => $wallet_address, 'reserve_size' => $reserve_size);
+
+    return $this->client->_run('getblocktemplate', $params);
+  }
+
+  /**
+   *
    * Look up information regarding hard fork voting and readiness.
    *
    * @return object  Example: {
