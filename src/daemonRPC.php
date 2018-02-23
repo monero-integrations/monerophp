@@ -539,4 +539,17 @@ class daemonRPC {
     return $this->_run('/get_transaction_pool');
   }
 
+  /**
+   *
+   * Send a command to the daemon to safely disconnect and shut down.
+   *
+   * @return object  Example: {
+   *   "status": "OK"
+   * }
+   *
+   */
+  public function stop_daemon() {
+    return $this->_run('/stop_daemon');
+  }
+
 }
