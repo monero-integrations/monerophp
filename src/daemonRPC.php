@@ -460,4 +460,28 @@ class daemonRPC {
     return $this->_run('/gettransactions', $params);
   }
 
+  /**
+   *
+   * Check if outputs have been spent using the key image associated with the output.
+   *
+   * @param  array   $key_images  List of key image hex strings to check.
+   *
+   * @return object  Example: {
+   *   "spent_status": [1,2],
+   *   "status": "OK"
+   * }
+   *
+   */
+  public function is_key_image_spent($key_images) {
+    // TODO full input validation
+
+    if (!isset($key_images)) {
+      throw new Exception('Error: Key image(s) required');
+    }
+
+    $params = array('key_images' => $key_images);
+
+    return $this->_run('/is_key_image_spent', $params);
+  }
+
 }
