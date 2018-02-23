@@ -122,6 +122,27 @@ class daemonRPC {
 
   /**
    *
+   * Look up information regarding hard fork voting and readiness.
+   *
+   * @return object  Example: {
+   *   "earliest_height": 1009827,
+   *   "enabled": false,
+   *   "state": 2,
+   *   "status": "OK",
+   *   "threshold": 0,
+   *   "version": 1,
+   *   "votes": 7277,
+   *   "voting": 2,
+   *   "window": 10080
+   * }
+   *
+   */
+  public function hardfork_info() {
+    return $this->_run('hard_fork_info');
+  }
+
+  /**
+   *
    * Look up a block's hash by its height
    *
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
@@ -174,27 +195,6 @@ class daemonRPC {
    */
   public function submitblock() {
     return $this->_run('submitblock');
-  }
-
-  /**
-   *
-   * Look up information regarding hard fork voting and readiness.
-   *
-   * @return object  Example: {
-   *   "earliest_height": 1009827,
-   *   "enabled": false,
-   *   "state": 2,
-   *   "status": "OK",
-   *   "threshold": 0,
-   *   "version": 1,
-   *   "votes": 7277,
-   *   "voting": 2,
-   *   "window": 10080
-   * }
-   *
-   */
-  public function hardfork_info() {
-    return $this->_run('hard_fork_info');
   }
 
   /**
