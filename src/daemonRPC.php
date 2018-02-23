@@ -122,6 +122,17 @@ class daemonRPC {
 
   /**
    *
+   * Look up a block's hash by its height
+   *
+   * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
+   *
+   */
+  public function on_getblockhash() {
+    return $this->_run('on_getblockhash');
+  }
+
+  /**
+   *
    * Look up information regarding hard fork voting and readiness.
    *
    * @return object  Example: {
