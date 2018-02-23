@@ -165,6 +165,19 @@ class daemonRPC {
 
   /**
    *
+   * Submit a mined block to the network.
+   *
+   * @param  string  $block  Block blob data string
+   *
+   * @return string  // TODO: example
+   *
+   */
+  public function submitblock() {
+    return $this->_run('submitblock');
+  }
+
+  /**
+   *
    * Look up information regarding hard fork voting and readiness.
    *
    * @return object  Example: {
