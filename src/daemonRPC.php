@@ -96,53 +96,6 @@ class daemonRPC {
 
   /**
    *
-   * Retrieve general information about the state of your node and the network.
-   *
-   * @return object  Example: {
-   *   "alt_blocks_count": 5,
-   *   "difficulty": 972165250,
-   *   "grey_peerlist_size": 2280,
-   *   "height": 993145,
-   *   "incoming_connections_count": 0,
-   *   "outgoing_connections_count": 8,
-   *   "status": "OK",
-   *   "target": 60,
-   *   "target_height": 993137,
-   *   "testnet": false,
-   *   "top_block_hash": "",
-   *   "tx_count": 564287,
-   *   "tx_pool_size": 45,
-   *   "white_peerlist_size": 529
-   * }
-   *
-   */
-  public function get_info() {
-    return $this->_run('get_info');
-  }
-
-  /**
-   *
-   * Look up information regarding hard fork voting and readiness.
-   *
-   * @return object  Example: {
-   *   "earliest_height": 1009827,
-   *   "enabled": false,
-   *   "state": 2,
-   *   "status": "OK",
-   *   "threshold": 0,
-   *   "version": 1,
-   *   "votes": 7277,
-   *   "voting": 2,
-   *   "window": 10080
-   * }
-   *
-   */
-  public function hardfork_info() {
-    return $this->_run('hard_fork_info');
-  }
-
-  /**
-   *
    * Look up a block's hash by its height
    *
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
@@ -383,6 +336,53 @@ class daemonRPC {
    */
   public function get_connections() {
     return $this->_run('get_connections');
+  }
+
+  /**
+   *
+   * Retrieve general information about the state of your node and the network.
+   *
+   * @return object  Example: {
+   *   "alt_blocks_count": 5,
+   *   "difficulty": 972165250,
+   *   "grey_peerlist_size": 2280,
+   *   "height": 993145,
+   *   "incoming_connections_count": 0,
+   *   "outgoing_connections_count": 8,
+   *   "status": "OK",
+   *   "target": 60,
+   *   "target_height": 993137,
+   *   "testnet": false,
+   *   "top_block_hash": "",
+   *   "tx_count": 564287,
+   *   "tx_pool_size": 45,
+   *   "white_peerlist_size": 529
+   * }
+   *
+   */
+  public function get_info() {
+    return $this->_run('get_info');
+  }
+
+  /**
+   *
+   * Look up information regarding hard fork voting and readiness.
+   *
+   * @return object  Example: {
+   *   "earliest_height": 1009827,
+   *   "enabled": false,
+   *   "state": 2,
+   *   "status": "OK",
+   *   "threshold": 0,
+   *   "version": 1,
+   *   "votes": 7277,
+   *   "voting": 2,
+   *   "window": 10080
+   * }
+   *
+   */
+  public function hardfork_info() {
+    return $this->_run('hard_fork_info');
   }
 
   /**
