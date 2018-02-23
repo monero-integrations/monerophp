@@ -354,6 +354,39 @@ class daemonRPC {
 
   /**
    *
+   * Retrieve information about incoming and outgoing connections to your node.
+   *
+   * @return object  Example: {
+   *   "connections": [{
+   *     "avg_download": 0,
+   *     "avg_upload": 0,
+   *     "current_download": 0,
+   *     "current_upload": 0,
+   *     "incoming": false,
+   *     "ip": "76.173.170.133",
+   *     "live_time": 1865,
+   *     "local_ip": false,
+   *     "localhost": false,
+   *     "peer_id": "3bfe29d6b1aa7c4c",
+   *     "port": "18080",
+   *     "recv_count": 116396,
+   *     "recv_idle_time": 23,
+   *     "send_count": 176893,
+   *     "send_idle_time": 1457726610,
+   *     "state": "state_normal"
+   *   },{
+   *   ...
+   *   }],
+   *   "status": "OK"
+   * }
+   *
+   */
+  public function get_connections() {
+    return $this->_run('get_connections');
+  }
+
+  /**
+   *
    * Get list of banned IPs
    *
    * @return object  Example: {
