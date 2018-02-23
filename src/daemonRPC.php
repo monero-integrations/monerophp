@@ -131,7 +131,7 @@ class daemonRPC {
     if (!isset($reserve_size)) {
       throw new Exception('Error: Reserve size required');
     }
-       
+    
     $params = array('wallet_address' => $wallet_address, 'reserve_size' => $reserve_size);
 
     return $this->client->_run('getblocktemplate', $params);
@@ -433,6 +433,31 @@ class daemonRPC {
    */
   public function getheight() {
     return $this->_run('/getheight');
+  }
+
+  /**
+   *
+   * Look up one or more transactions by hash.  If set to decode as JSON, will return field 'element_as_json'
+   *
+   * @param  array    $txs_hashes      An array of transactions hashes
+   * @param  boolean  $decode_as_json  Decode as JSON rather than binary  (optional)
+   *
+   * @return object  Example: {
+   *   "status": "OK",
+   *   "txs_as_hex": ["..."]
+   * }
+   *
+   */
+  public function gettransactions($txs_hashes, $decode_as_json = false) {
+    // TODO full input validation
+
+    if (!isset($txs_hashes)) {
+      throw new Exception('Error: Transaction hash(es) required');
+    }
+
+    $params = array('txs_hashes' => $txs_hashes, 'decode_as_json' => $decode_as_json);
+
+    return $this->_run('/gettransactions', $params);
   }
 
 }
