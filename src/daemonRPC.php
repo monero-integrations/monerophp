@@ -421,4 +421,18 @@ class daemonRPC {
     return $this->run('getbans');
   }
 
+  /**
+   *
+   * Get the node's current height
+   *
+   * @return object  Example: {
+   *   "height": 993488,
+   *   "status": "OK"
+   * }
+   *
+   */
+  public function getheight() {
+    return $this->_run('/getheight');
+  }
+
 }
