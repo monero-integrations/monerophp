@@ -42,7 +42,7 @@ class daemonRPC {
 
   /**
    *
-   * Start a connection with the Monero daemon
+   * Start a connection with the Monero daemon.
    * 
    * @param  string  $host      IP address of Monero daemon to connect to  (optional)
    * @param  int     $port      Port to use when accessing Monero daemon   (optional)
@@ -66,7 +66,7 @@ class daemonRPC {
 
   /**
    *
-   * Execute command on the Monero RPC API
+   * Execute command on the Monero RPC API.
    *
    * @param  string  $method  RPC method to call
    * @param  string  $params  Options to include (optional)
@@ -96,7 +96,7 @@ class daemonRPC {
 
   /**
    *
-   * Look up a block's hash by its height
+   * Look up a block's hash by its height.
    *
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
    *
@@ -107,7 +107,7 @@ class daemonRPC {
 
   /**
    *
-   * Retrieve a block template that can be mined upon
+   * Retrieve a block template that can be mined upon.
    *
    * @param  string  $wallet_address  Address of wallet to receive coinbase transactions if block is successfully mined
    * @param  int     $reserve_size   Reserve size 
@@ -242,7 +242,7 @@ class daemonRPC {
 
   /**
    *
-   * Get block information by its SHA256 hash
+   * Get block information by its SHA256 hash.
    *
    * @param  string  The block's SHA256 hash
    *
@@ -274,7 +274,7 @@ class daemonRPC {
 
   /**
    *
-   * Get block information by its height
+   * Get block information by its height.
    *
    * @param  int     $height  The block's height
    *
@@ -406,7 +406,7 @@ class daemonRPC {
 
   /**
    *
-   * Get list of banned IPs
+   * Get list of banned IPs.
    *
    * @return object  Example: {
    *   "bans": [{
@@ -423,7 +423,7 @@ class daemonRPC {
 
   /**
    *
-   * Get the node's current height
+   * Get the node's current height.
    *
    * @return object  Example: {
    *   "height": 993488,
