@@ -387,6 +387,25 @@ class daemonRPC {
 
   /**
    *
+   * Ban another node by IP.
+   *
+   * @return object  Example: {
+   *   "status": "OK"
+   * }
+   *
+   */
+  public function setbans($ip) {
+    // TODO full input validation
+
+    if (!isset($ip)) {
+      throw new Exception('Error: IP address required');
+    }
+
+    return $this->_run('setbans', $ip);
+  }
+
+  /**
+   *
    * Get list of banned IPs
    *
    * @return object  Example: {
