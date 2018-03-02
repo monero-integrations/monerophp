@@ -496,7 +496,7 @@ class daemonRPC {
   public function sendrawtransaction($tx_as_hex) {
     // TODO full input validation
 
-    if (!isset($)) {
+    if (!isset($tx_as_hex)) {
       throw new Exception('Error: Transaction required');
     }
 
