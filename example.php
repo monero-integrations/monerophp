@@ -23,34 +23,34 @@ $get_info = $daemonRPC->get_info();
 <html>
   <body>
     <h1><a href="https://github.com/monero-integrations/monerophp">MoneroPHP</a></h1>   
-    <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations</a> team! Please report any issues or request additional features at <a href="https://github.com/monero-integrations/monerophp/issues">github.com/monero-integrations/monerophp</a>.</p>
+    <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations team</a>! Please report any issues or request additional features at <a href="https://github.com/monero-integrations/monerophp/issues">github.com/monero-integrations/monerophp</a>.</p>
 
     <h2><tt>daemonRPC.php</tt> example</h2>
     <p><i>Note: not all methods shown, nor all results from each method.</i></p>
     <dl>
       <dt><tt>getblockcount()</tt></dt>
       <dd>
-        <p>Status: <?php echo $getblockcount['status']; ?></p>
-        <p>Height: <?php echo $getblockcount['count']; ?></p>
+        <p>Status: <tt><?php echo $getblockcount['status']; ?></tt></p>
+        <p>Height: <tt><?php echo $getblockcount['count']; ?></tt></p>
       </dd>
       <dt><tt>on_getblockhash(42069)</tt></dt>
       <dd>
-        <p>Block hash: <?php echo $on_getblockhash; ?></p>
+        <p>Block hash: <tt><?php echo $on_getblockhash; ?></tt></p>
       </dd>
       <dt><tt>getlastblockheader()</tt></dt>
       <dd>
-        <p>Current block hash: <?php echo $getlastblockheader['block_header']['hash']; ?></p>
-        <p>Previous block hash: <?php echo $getlastblockheader['block_header']['prev_hash']; ?></p>
+        <p>Current block hash: <tt><?php echo $getlastblockheader['block_header']['hash']; ?></tt></p>
+        <p>Previous block hash: <tt><?php echo $getlastblockheader['block_header']['prev_hash']; ?></tt></p>
       </dd>
       <dt><tt>get_connections()</tt></dt>
       <dd>
         <p>Connections: <?php echo count($get_connections['connections']); ?></p>
-        <?php foreach ($get_connections['connections'] as $peer) { echo '<p>' . $peer['address'] . ' (' . ( $peer['height'] == $getblockcount['count'] ? 'synced' : ( $peer['height'] > $getblockcount['count'] ? 'ahead; syncing' : 'behind; syncing') ). ')</p>'; } ?>
+        <?php foreach ($get_connections['connections'] as $peer) { echo '<p><tt>' . $peer['address'] . ' (' . ( $peer['height'] == $getblockcount['count'] ? 'synced' : ( $peer['height'] > $getblockcount['count'] ? 'ahead; syncing' : 'behind; syncing') ). ')</tt></p>'; } ?>
       </dd>
       <dt><tt>get_info()</tt></dt>
       <dd>
-        <p>Difficulty: <?php echo $get_info['difficulty']; ?></p>
-        <p>Cumulative difficulty: <?php echo $get_info['cumulative_difficulty']; ?></p>
+        <p>Difficulty: <tt><?php echo $get_info['difficulty']; ?></tt></p>
+        <p>Cumulative difficulty: <tt><?php echo $get_info['cumulative_difficulty']; ?></tt></p>
       </dd>
     </dl>
   </body>
@@ -86,10 +86,13 @@ $get_info = $daemonRPC->get_info();
         transform-origin: bottom left;
       }
 
-      dl tt {
+      dt tt {
         padding: 0.42em;
         background: #4c4c4c;
         text-shadow: 1px 1px 0px #000;
+      }
+      dd tt {
+        font-size: 14px;
       }
     </style>
   </head>
