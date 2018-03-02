@@ -2,8 +2,8 @@
 
 require_once('src/jsonRPCClient.php');
 require_once('src/daemonRPC.php');
-$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon's IP address and port
 
+$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon's IP address and port
 $getblockcount = $daemonRPC->getblockcount();
 $on_getblockhash = $daemonRPC->on_getblockhash(42069);
 // $getblocktemplate = $daemonRPC->getblocktemplate($wallet_address);
@@ -23,7 +23,7 @@ $get_info = $daemonRPC->get_info();
 <html>
   <body>
     <h1><a href="https://github.com/monero-integrations/monerophp">MoneroPHP</a></h1>   
-    <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations</a> team! Please report any issues or request additional features <a href="https://github.com/monero-integrations/monerophp/issues">here</a>.</p>
+    <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations</a> team! Please report any issues or request additional features at <a href="https://github.com/monero-integrations/monerophp/issues">github.com/monero-integrations/monerophp</a>.</p>
 
     <h2><tt>daemonRPC.php</tt> example</h2>
     <p><i>Note: not all methods shown, nor all results from each method.</i></p>
@@ -54,4 +54,43 @@ $get_info = $daemonRPC->get_info();
       </dd>
     </dl>
   </body>
+  <!-- ignore the code below, it's just CSS styling -->
+  <head>
+    <style>
+      body {
+        color: #fff;
+        background: #000;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      a, a:active, a:hover, a:visited {
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        color: #ff6600;
+      }
+      a::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #ff6600;
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+      }
+      a:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+      }
+
+      dl tt {
+        padding: 0.42em;
+        background: #4c4c4c;
+        text-shadow: 1px 1px 0px #000;
+      }
+    </style>
+  </head>
 </html>
