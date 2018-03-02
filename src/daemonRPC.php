@@ -98,11 +98,21 @@ class daemonRPC {
    *
    * Look up a block's hash by its height.
    *
+   * @param  array   $height   Height of block to look up 
+   *
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
    *
    */
-  public function on_getblockhash() {
-    return $this->_run('on_getblockhash');
+  public function on_getblockhash($height) {
+    // TODO full input validation
+    
+    if (!isset($height)) {
+      throw new Exception('Error: Height required');
+    }
+
+    $params = array($height);
+
+    return $this->_run('on_getblockhash', $params);
   }
 
   /**
