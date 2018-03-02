@@ -153,6 +153,35 @@ class walletRPC {
   
   /**
    *
+   * Look up transfers
+   *
+   * @param  string  $input_type   Transfer type; must be 'in', 'out', 'pending', 'failed', 'pool', 'filter_by_height', 'min_height', or 'max_height'
+   * @param  string  $input_value  Input value of above
+   *
+   * @return object  Example: {
+   *   "pool": [{
+   *     "amount": 500000000000,
+   *     "fee": 0,
+   *     "height": 0,
+   *     "note": "",
+   *     "payment_id": "758d9b225fda7b7f",
+   *     "timestamp": 1488312467,
+   *     "txid": "da7301d5423efa09fabacb720002e978d114ff2db6a1546f8b820644a1b96208",
+   *     "type": "pool"
+   *   }]
+   * }
+   *
+   */
+  public function get_transfers($input_type, $input_value) {
+    // TODO input validation
+
+    $get_parameters = array($input_type => $input_value);
+    $get_transfers = $this->_run('get_transfers', $get_parameters);
+    return $get_transfers;
+  }
+  
+  /**
+   *
    * Look up incoming transfers
    *
    * @param  string  $type  Type of transfer to look up; must be 'all', 'available', or 'unavailable' (incoming transfers which have already been spent)
@@ -189,35 +218,6 @@ class walletRPC {
   
   /**
    *
-   * Look up transfers
-   *
-   * @param  string  $input_type   Transfer type; must be 'in', 'out', 'pending', 'failed', 'pool', 'filter_by_height', 'min_height', or 'max_height'
-   * @param  string  $input_value  Input value of above
-   *
-   * @return object  Example: {
-   *   "pool": [{
-   *     "amount": 500000000000,
-   *     "fee": 0,
-   *     "height": 0,
-   *     "note": "",
-   *     "payment_id": "758d9b225fda7b7f",
-   *     "timestamp": 1488312467,
-   *     "txid": "da7301d5423efa09fabacb720002e978d114ff2db6a1546f8b820644a1b96208",
-   *     "type": "pool"
-   *   }]
-   * }
-   *
-   */
-  public function get_transfers($input_type, $input_value) {
-    // TODO input validation
-
-    $get_parameters = array($input_type => $input_value);
-    $get_transfers = $this->_run('get_transfers', $get_parameters);
-    return $get_transfers;
-  }
-  
-  /**
-   *
    * Look up wallet view key
    *
    * @return object  Example: {
@@ -227,6 +227,21 @@ class walletRPC {
    */
   public function view_key() {
     $query_key = array('key_type' => 'view_key');
+    $query_key_method = $this->_run('query_key', $query_key);
+    return $query_key_method;
+  }
+  
+  /**
+   *
+   * Look up wallet spend key
+   *
+   * @return object  Example: {
+   *   "key": "2ab810..."
+   * }
+   *
+   */
+  public function spend_key() {
+    $query_key = array('key_type' => 'spend_key');
     $query_key_method = $this->_run('query_key', $query_key);
     return $query_key_method;
   }
