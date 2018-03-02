@@ -379,15 +379,31 @@ class daemonRPC {
    * Look up information regarding hard fork voting and readiness.
    *
    * @return object  Example: {
-   *   "earliest_height": 1009827,
-   *   "enabled": false,
-   *   "state": 2,
-   *   "status": "OK",
-   *   "threshold": 0,
-   *   "version": 1,
-   *   "votes": 7277,
-   *   "voting": 2,
-   *   "window": 10080
+   *   "alt_blocks_count": 0,
+   *   "block_size_limit": 600000,
+   *   "block_size_median": 85,
+   *   "bootstrap_daemon_address": ?,
+   *   "cumulative_difficulty": 40859323048,
+   *   "difficulty": 57406,
+   *   "free_space": 888592449536,
+   *   "grey_peerlist_size": 526,
+   *   "height": 1066107,
+   *   "height_without_bootstrap": 1066107,
+   *   "incoming_connections_count": 1,
+   *   "offline":  ?,
+   *   "outgoing_connections_count": 1,
+   *   "rpc_connections_count": 1,
+   *   "start_time": 1519963719,
+   *   "status": OK,
+   *   "target": 120,
+   *   "target_height": 1066073,
+   *   "testnet": 1,
+   *   "top_block_hash": e438aae56de8e5e5c8e0d230167fcb58bc8dde09e369ff7689a4af146040a20e,
+   *   "tx_count": 52632,
+   *   "tx_pool_size": 0,
+   *   "untrusted": ?,
+   *   "was_bootstrap_ever_used: ?,
+   *   "white_peerlist_size": 5
    * }
    *
    */
