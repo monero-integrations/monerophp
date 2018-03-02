@@ -447,6 +447,8 @@ class daemonRPC {
     return $this->run('getbans');
   }
 
+  // TODO: the methods below are "Other RPC Methods" (see https://getmonero.org/resources/developer-guides/daemon-rpc.html#other-daemon-rpc-calls) only accessible via their own extension; see https://github.com/monero-integrations/monerophp/issues/34
+
   // /**
   //  *
   //  * Get the node's current height.
