@@ -468,7 +468,7 @@ class walletRPC {
    *
    */
   public function rescan_blockchain() {
-    return $this->run('rescan_blockchain');
+    return $this->_run('rescan_blockchain');
   }
   
   /**
@@ -482,7 +482,7 @@ class walletRPC {
   public function create_wallet($filename = 'monero_wallet', $password = null) {
     // TODO test "You need to have set the argument "–wallet-dir" when launching monero-wallet-rpc to make this work."
     $create_wallet_parameters = array('filename' => $filename, 'password' => $password, 'language' => 'English');
-    $create_wallet_method = $this->run('create_wallet', $create_wallet_parameters);
+    $create_wallet_method = $this->_run('create_wallet', $create_wallet_parameters);
     return $create_wallet_method;
   }
   
@@ -496,10 +496,10 @@ class walletRPC {
    * @return object  Example: 
    *
    */
-  public function open_wallet($filename, $password) {
+  public function open_wallet($filename = 'monero_wallet', $password = null) {
     // TODO test "You need to have set the argument "–wallet-dir" when launching monero-wallet-rpc to make this work."
     $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
-    $open_wallet_method = $this->run('open_wallet',$open_wallet_parameters);
+    $open_wallet_method = $this->_run('open_wallet',$open_wallet_parameters);
     return $open_wallet_method;
   }
   
@@ -518,7 +518,7 @@ class walletRPC {
     // TODO input validation
     
     $sign_parameters = array('string' => $data);
-    $sign_method = $this->run('sign',$sign_parameters);
+    $sign_method = $this->_run('sign',$sign_parameters);
     return $sign_method;
   }
   
