@@ -68,6 +68,21 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex($this->ed25519->encodepoint($res));
         }
 
+        // this is a one way function used for both encrypting and "decrypting" 8 byte payment IDs
+        public function stealth_payment_id($payment_id, $tx_pub_key, $viewkey)
+        {
+            if(strlen($payment_id) != 16)
+            {
+               throw new Exception("Error: Incorrect payment ID size. Should be 8 bytes");
+            }
+            $der = $this->gen_key_derivation($tx_pub_key, $viewkey);
+            $data = $der . '8d';
+            $hash = $this->keccak_256($data);
+            $key = substr($hash, 0, 16);
+            $result = bin2hex(pack('H*',$payment_id) ^ pack('H*',$key));
+            return $result;
+        }
+
 	public function encode_address($pSpendKey, $pViewKey)
 	{
 	    // mainnet network byte is 18 (0x12)
