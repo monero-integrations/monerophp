@@ -83,6 +83,26 @@ Copyright (c) 2018 Monero-Integrations
             return $result;
         }
 
+        // takes transaction extra field as hex string and returns transaction public key 'R' as hex string
+        public function txpub_from_extra($extra)
+        {
+            $parsed = array_map("hexdec", str_split($extra, 2));
+
+            if($parsed[0] == 1)
+            {
+                return substr($extra, 2, 64);
+            }
+
+            if($parsed[0] == 2)
+            {
+                if($parsed[0] == 2 || $parsed[2] == 1)
+                {
+                    $offset = (($parsed[1] + 2) *2) + 2;
+                    return substr($extra, (($parsed[1] + 2) *2) + 2, 64);
+                }
+            }
+        }
+
 	public function encode_address($pSpendKey, $pViewKey)
 	{
 	    // mainnet network byte is 18 (0x12)
@@ -95,7 +115,6 @@ Copyright (c) 2018 Monero-Integrations
 	{
 	    $decoded = $this->base58->decode($address);
 	    $checksum = substr($decoded, -8);
-	    $test = substr($decoded, 0, 130);
 	    $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
 	    $calculated = substr($checksum_hash, 0, 8);
 	    if($checksum == $calculated){
