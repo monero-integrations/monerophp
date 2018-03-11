@@ -143,6 +143,15 @@ Copyright (c) 2018 Monero-Integrations
             return $result;
         }
 
+        public function integrated_addr_from_keys($public_spendkey, $public_viewkey, $payment_id)
+        {
+            // 0x13 is the mainnet network byte for integrated addresses
+            $data = "13".$public_spendkey.$public_viewkey.$payment_id;
+            $checksum = substr($this->keccak_256($data), 0, 8);
+            $result = $this->base58->encode($data.$checksum);
+            return $result;
+        }
+
 	public function address_from_seed($hex_seed)
 	{
 	    $private_keys = $this->gen_private_keys($hex_seed);
