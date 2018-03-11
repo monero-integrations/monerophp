@@ -61,6 +61,13 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex($this->ed25519->encodepoint($aG));
         }
 
+        public function gen_key_derivation($public, $private)
+        {
+            $point = $this->ed25519->scalarmult($this->ed25519->decodepoint(hex2bin($public)), $this->ed25519->decodeint(hex2bin($private)));
+            $res = $this->ed25519->scalarmult($point, 8);
+            return bin2hex($this->ed25519->encodepoint($res));
+        }
+
 	public function encode_address($pSpendKey, $pViewKey)
 	{
 	    // mainnet network byte is 18 (0x12)
