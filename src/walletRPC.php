@@ -373,7 +373,7 @@ class walletRPC {
       throw new Exception('Error: Address required');
     }
 
-    $this->rescan_spent(); // workaround to make sure that transfer isn't rejected due to double spend
+    $this->rescan_spent(); // Workaround to make sure that transfer isn't rejected due to double spend
     
     // Convert from moneroj to tacoshi (piconero)
     $new_amount = $amount  * 1000000000000;
@@ -381,6 +381,9 @@ class walletRPC {
     $destinations = array('amount' => $new_amount, 'address' => $address);
     $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
     $transfer_method = $this->_run('transfer', $transfer_parameters);
+
+    // $save = $this->store(); // Save wallet state after transfer
+
     return $transfer_method;
   }
   
@@ -480,6 +483,15 @@ class walletRPC {
    */
   public function rescan_spent() {
     return $this->_run('rescan_spent');
+  }
+  
+  /**
+   *
+   * Save wallet.
+   *
+   */
+  public function store() {
+    return $this->_run('store');
   }
   
   /**
