@@ -473,6 +473,15 @@ class walletRPC {
   
   /**
    *
+   * Rescan spent outputs.
+   *
+   */
+  public function rescan_spent() {
+    return $this->_run('rescan_spent');
+  }
+  
+  /**
+   *
    * Create a new wallet
    *
    * @param  string  $filename  Filename to use for new wallet
