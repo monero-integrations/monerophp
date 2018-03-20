@@ -389,6 +389,15 @@ class walletRPC {
   
   /**
    *
+   * Save wallet.
+   *
+   */
+  public function store() {
+    return $this->_run('store');
+  }
+  
+  /**
+   *
    * Get a list of incoming payments using a given payment id.
    *
    * @param  string  $payment_id  Payment ID to look up
@@ -478,24 +487,6 @@ class walletRPC {
   
   /**
    *
-   * Rescan spent outputs.
-   *
-   */
-  public function rescan_spent() {
-    return $this->_run('rescan_spent');
-  }
-  
-  /**
-   *
-   * Save wallet.
-   *
-   */
-  public function store() {
-    return $this->_run('store');
-  }
-  
-  /**
-   *
    * Create a new wallet
    *
    * @param  string  $filename  Filename to use for new wallet
@@ -543,6 +534,15 @@ class walletRPC {
     $sign_parameters = array('string' => $data);
     $sign_method = $this->_run('sign',$sign_parameters);
     return $sign_method;
+  }
+  
+  /**
+   *
+   * Rescan spent outputs.
+   *
+   */
+  public function rescan_spent() {
+    return $this->_run('rescan_spent');
   }
   
 }
