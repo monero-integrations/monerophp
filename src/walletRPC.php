@@ -363,7 +363,7 @@ class walletRPC {
    * }
    *
    */
-  public function transfer($amount, $address, $mixin = 4) {
+  public function transfer($amount, $address, $mixin = 6) {
     // TODO full input validation
     
     if (!isset($amount)) {
