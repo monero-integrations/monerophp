@@ -364,7 +364,6 @@ class walletRPC {
    *
    */
   public function transfer($amount, $address, $mixin = 4) {
-    $this->rescan_spent(); // workaround to make sure that transfer isn't rejected due to double spend
     // TODO full input validation
     
     if (!isset($amount)) {
@@ -373,6 +372,8 @@ class walletRPC {
     if (!isset($address)) {
       throw new Exception('Error: Address required');
     }
+
+    $this->rescan_spent(); // workaround to make sure that transfer isn't rejected due to double spend
     
     // Convert from moneroj to tacoshi (piconero)
     $new_amount = $amount  * 1000000000000;
