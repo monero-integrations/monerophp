@@ -3,7 +3,7 @@
 require_once('src/jsonRPCClient.php');
 require_once('src/daemonRPC.php');
 
-$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon's IP address and port
+$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon (monerod) IP address and port
 $getblockcount = $daemonRPC->getblockcount();
 $on_getblockhash = $daemonRPC->on_getblockhash(42069);
 // $getblocktemplate = $daemonRPC->getblocktemplate($wallet_address);
@@ -18,6 +18,18 @@ $get_info = $daemonRPC->get_info();
 // $hardfork_info = $daemonRPC->hardfork_info();
 // $setbans = $daemonRPC->setbans($ip);
 // $getbans = $daemonRPC->getbans();
+
+require_once('src/walletRPC.php');
+
+$walletRPC = new walletRPC('127.0.0.1', '28079'); // Change to match your wallet (monero-wallet-rpc) IP address and port
+// $create_wallet = $walletRPC->create_wallet();
+$open_wallet = $walletRPC->open_wallet();
+$getaddress = $walletRPC->getaddress();
+$getbalance = $walletRPC->getbalance();
+// $getheight = $walletRPC->getheight();
+$transfer = $walletRPC->transfer(1, '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn') // first account generated from mnemonic 'gang dying lipstick wonders howls begun uptight humid thirsty irony adept umpire dusted update grunt water iceberg timber aloof fudge rift clue umpire venomous thirsty'
+
+// $transfer = $walletRPC->transfer({'destinations': [{'amount': 5, 'address': 'BcXKsfrvffKYVoNGN4HUFfaruAMRdk5DrLZDmJBnYgXrTFrXyudn81xMj7rsmU5P9dX56kRZGqSaigUxUYoaFETo9gfDKx5'}]});
 
 ?>
 <html>
@@ -51,6 +63,19 @@ $get_info = $daemonRPC->get_info();
       <dd>
         <p>Difficulty: <tt><?php echo $get_info['difficulty']; ?></tt></p>
         <p>Cumulative difficulty: <tt><?php echo $get_info['cumulative_difficulty']; ?></tt></p>
+      </dd>
+    </dl>
+    <h2><tt>walletRPC.php</tt> example</h2>
+    <p><i>Note: not all methods shown, nor all results from each method.</i></p>
+    <dl>
+      <dt><tt>getaddress()</tt></dt>
+      <dd>
+        <?php foreach ($getaddress['addresses'] as $account) { echo '<p>' . $account['label'] . ': <tt>' . $account['address'] . '</tt></p>'; } ?>
+      </dd>
+      <dt><tt>getbalance()</tt></dt>
+      <dd>
+        <p>Balance: <tt><?php echo number_format($getbalance['balance'] / pow(10, 12), 12, '.', '0'); ?></tt></p>
+        <p>Unlocked balance: <tt><?php echo number_format($getbalance['unlocked_balance'] / pow(10, 12), 12, '.', '0'); ?></tt></p>
       </dd>
     </dl>
   </body>
@@ -97,3 +122,4 @@ $get_info = $daemonRPC->get_info();
     </style>
   </head>
 </html>
+ 
