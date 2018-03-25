@@ -2,16 +2,12 @@
 A Monero library written in PHP by the Monero-Integrations team.
 
 ## How It Works
-This library has 3 main parts:
-
-1. A Monero daemon JSON RPC API wrapper, `daemonRPC.php`
-2. A Monero wallet (monero-wallet-rpc) JSON RPC API wrapper, `walletRPC.php`
-3. A Monero/Cryptonote toolbox, `cryptonote.php`, with both lower level functions used in Monero related cryptograhy and higher level methods for things like generating Monero private/public keys.
+This library has 2 main parts, a Monero daemon JSON RPC API wrapper, `daemonRPC.php`, and a Monero/Cryptonote toolbox, `cryptonote.php` (with both lower level functions used in Monero related cryptograhy and higher level methods for things like generating Monero private/public keys.)
 
 In addition to these features, there are other lower-level libraries included for portability, *eg.* an ed25519 library, a SHA3 library, *etc.*
 
 ## Preview
-![Preview](http://i.imgur.com/fyfRCOS.png)
+![Preview](https://user-images.githubusercontent.com/4107993/37871070-c2ab36a8-2f99-11e8-9860-bc208230e47e.png)
 
 ## Configuration
 ### Requirements
@@ -24,16 +20,11 @@ In addition to these features, there are other lower-level libraries included fo
  
 ###
 
-Step 1: Start the Monero Daemon as Testnet
+Step 1: Start monerod on testnet
 ```bash
 monerod --testnet --detach
 ```
 
-Step 2: Start the Monero Wallet RPC
-```bash
-monero-wallet-rpc --testnet --rpc-bind-port 28080 --disable-rpc-login --wallet-file /path/walletfile
-```
+Step 2: Edit `example.php` with your ip (`127.0.0.1` for localhost) and port of your monerod (in the example it's `127.0.0.1:28080`)
 
-Step 3: Edit example.php with your ip (`127.0.0.1` for localhost) and port of Monero Wallet RPC (in the example it's `127.0.0.1:28080`)
-
-Step 4: Open your browser with your ip of XMPP, apache or NGINX server and execute example.php. If the library works, it will print your Monero address
+Step 3: Open your browser with the IP address of XMPP, apache or NGINX server (or just "localhost") and execute example.php.  If everything has been set up correctly, it will print information from your Monero daemon
