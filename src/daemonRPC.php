@@ -156,8 +156,14 @@ class daemonRPC {
    * @return string  // TODO: example
    *
    */
-  public function submitblock() {
-    return $this->_run('submitblock');
+  public function submitblock($block) {
+    // TODO full input validation
+    
+    if (!isset($block)) {
+      throw new Exception('Error: Block blob required');
+    }
+
+    return $this->_run('submitblock', $block);
   }
 
   /**
