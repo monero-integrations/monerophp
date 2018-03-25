@@ -601,6 +601,15 @@ class walletRPC {
   
   /**
    *
+   * Send all dust outputs back to the wallet's, to make them easier to spend (and mix).
+   *
+   */
+  public function sweep_dust() {
+    return $this->_run('sweep_dust');
+  }
+  
+  /**
+   *
    * Get a list of incoming payments using a given payment id.
    *
    * @param  string  $payment_id  Payment ID to look up
