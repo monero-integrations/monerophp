@@ -76,8 +76,8 @@ $getbalance = $walletRPC->getbalance();
       </dd>
       <dt><tt>getbalance()</tt></dt>
       <dd>
-        <p>Balance: <tt><?php echo number_format($getbalance['balance'] / pow(10, 12), 12, '.', '0'); ?></tt></p>
-        <p>Unlocked balance: <tt><?php echo number_format($getbalance['unlocked_balance'] / pow(10, 12), 12, '.', '0'); ?></tt></p>
+        <p>Balance: <tt><?php echo $getbalance['balance'] / pow(10, 12); ?></tt></p>
+        <p>Unlocked balance: <tt><?php echo $getbalance['unlocked_balance'] / pow(10, 12); ?></tt></p>
       </dd>
     </dl>
   </body>
