@@ -344,7 +344,7 @@ class walletRPC {
   
   /**
    *
-   * Send monero to a number of recipients.
+   * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an object (as listed at bottom)
    * 
    * @param  string  $amount       Amount to transfer
    * @param  string  $address      Address to transfer to
@@ -353,6 +353,10 @@ class walletRPC {
    * @param  number  $priority     Payment ID                                  (optional)
    * @param  string  $pid          Payment ID                                  (optional)
    * @param  number  $unlock_time  UNIX time or block height to unlock output  (optional)
+   * 
+   *   OR
+   * 
+   * @param  object  $params        Array containing any of the options listed above, where only amount and address are required
    *
    * @return object  Example: {
    *   "amount": "1000000000000",
@@ -362,15 +366,42 @@ class walletRPC {
    * }
    *
    */
-  public function transfer($amount, $address, $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
-    if (!isset($amount)) {
-      throw new Exception('Error: Amount required');
+  public function transfer($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+    if (is_array($amount)) { // Parameters passed in as object
+      $params = $amount;
+      if (array_key_exists('amount', $params)) {
+        $amount = $params['amount'];
+      } else {
+        throw new Exception('Error: Amount required');
+      }
+      if (array_key_exists('address', $params)) {
+        $address = $params['address'];
+      } else {
+        throw new Exception('Error: Address required');
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('index', $params)) {
+        $index = $params['index'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
+      if (array_key_exists('pid', $params)) {
+        $pid = $params['pid'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+    } else { // Legacy parameters used
+      if (!isset($amount)) {
+        throw new Exception('Error: Amount required');
+      }
+      if (!isset($address) || !$address) {
+        throw new Exception('Error: Address required');
+      }
     }
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-
-    $this->rescan_spent(); // Workaround to make sure that transfer isn't rejected due to double spend
     
     // Convert from moneroj to tacoshi (piconero)
     $new_amount = $amount  * 1000000000000;
@@ -382,6 +413,9 @@ class walletRPC {
     }
     if ($pid) {
       $transfer_parameters['payment_id'] = $pid;
+    }
+    if ($priority) {
+      $transfer_parameters['priority'] = $priority;
     }
     if ($unlock_time) {
       $transfer_parameters['payment_id'] = $unlock_time;
