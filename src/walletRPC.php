@@ -344,7 +344,7 @@ class walletRPC {
   
   /**
    *
-   * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an object (as listed at bottom)
+   * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an array (as listed at bottom.)  If multiple destinations are required, use the array format and use
    * 
    * @param  string  $amount       Amount to transfer
    * @param  string  $address      Address to transfer to
@@ -369,15 +369,32 @@ class walletRPC {
   public function transfer($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
     if (is_array($amount)) { // Parameters passed in as object
       $params = $amount;
-      if (array_key_exists('amount', $params)) {
-        $amount = $params['amount'];
+
+      if (array_key_exists('destinations', $params)) {
+        $destinations = $params['destinations'];
+
+        foreach ($destinations as $key => $amount) {
+          if ($key == 'amount') {
+            // Convert from moneroj to tacoshi (piconero)
+            $destinations[$key] = $amount * 1000000000000;
+          }
+        }
       } else {
-        throw new Exception('Error: Amount required');
-      }
-      if (array_key_exists('address', $params)) {
-        $address = $params['address'];
-      } else {
-        throw new Exception('Error: Address required');
+        if (array_key_exists('amount', $params)) {
+          $amount = $params['amount'];
+        } else {
+          throw new Exception('Error: Amount required');
+        }
+        if (array_key_exists('address', $params)) {
+          $address = $params['address'];
+        } else {
+          throw new Exception('Error: Address required');
+        }
+    
+        // Convert from moneroj to tacoshi (piconero)
+        $new_amount = $amount  * 1000000000000;
+
+        $destinations = array('amount' => $new_amount, 'address' => $address);
       }
       if (array_key_exists('mixin', $params)) {
         $mixin = $params['mixin'];
@@ -394,6 +411,15 @@ class walletRPC {
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
+      if (array_key_exists('new_algorithm', $params)) {
+        $new_algorithm = $params['new_algorithm'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('do_not_relay', $params)) {
+        $do_not_relay = $params['do_not_relay'];
+      }
     } else { // Legacy parameters used
       if (!isset($amount)) {
         throw new Exception('Error: Amount required');
@@ -401,27 +427,163 @@ class walletRPC {
       if (!isset($address) || !$address) {
         throw new Exception('Error: Address required');
       }
-    }
     
-    // Convert from moneroj to tacoshi (piconero)
-    $new_amount = $amount  * 1000000000000;
+      // Convert from moneroj to tacoshi (piconero)
+      $new_amount = $amount  * 1000000000000;
 
-    $destinations = array('amount' => $new_amount, 'address' => $address);
+      $destinations = array('amount' => $new_amount, 'address' => $address);
+    }
+
     $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
-    if ($index) {
-      $transfer_parameters['index'] = $index;
+    if (isset($index)) {
+      if ($index) {
+        $transfer_parameters['index'] = $index;
+      }
     }
-    if ($pid) {
-      $transfer_parameters['payment_id'] = $pid;
+    if (isset($pid)) {
+      if ($pid) {
+        $transfer_parameters['payment_id'] = $pid;
+      }
     }
-    if ($priority) {
-      $transfer_parameters['priority'] = $priority;
+    if (isset($priority)) {
+      if ($priority) {
+        $transfer_parameters['priority'] = $priority;
+      }
     }
-    if ($unlock_time) {
-      $transfer_parameters['payment_id'] = $unlock_time;
+    if (isset($unlock_time)) {
+      if ($unlock_time) {
+        $transfer_parameters['unlock_time'] = $unlock_time;
+      }
+    }
+    if (isset($new_algorithm)) {
+      if ($new_algorithm) {
+        $transfer_parameters['new_algorithm'] = $new_algorithm;
+      }
+    }
+    if (isset($do_not_relay)) {
+      if ($do_not_relay) {
+        $transfer_parameters['do_not_relay'] = $do_not_relay;
+      }
     }
 
     $transfer_method = $this->_run('transfer', $transfer_parameters);
+
+    $save = $this->store(); // Save wallet state after transfer
+
+    return $transfer_method;
+  }
+  
+  /**
+   *
+   * Same as transfer, but splits transfer into more than one transaction if necessary.
+   *
+   */
+  public function transfer_split($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+    if (is_array($amount)) { // Parameters passed in as object
+      $params = $amount;
+
+      if (array_key_exists('destinations', $params)) {
+        $destinations = $params['destinations'];
+
+        foreach ($destinations as $destination => $recipient) {
+          if (!array_key_exists('amount', $destinations[$destination])) {
+            throw new Exception('Error: Amount required for each destination');
+          }
+          if (!array_key_exists('address', $destinations[$destination])) {
+            throw new Exception('Error: Address required for each destination');
+          }
+
+          // Convert from moneroj to tacoshi (piconero)
+          $destinations[$destination]['amount'] = $destinations[$destination]['amount'] * 1000000000000;
+        }
+      } else {
+        if (array_key_exists('amount', $params)) {
+          $amount = $params['amount'];
+        } else {
+          throw new Exception('Error: Amount required');
+        }
+        if (array_key_exists('address', $params)) {
+          $address = $params['address'];
+        } else {
+          throw new Exception('Error: Address required');
+        }
+    
+        // Convert from moneroj to tacoshi (piconero)
+        $new_amount = $amount  * 1000000000000;
+
+        $destinations = array('amount' => $new_amount, 'address' => $address);
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('index', $params)) {
+        $index = $params['index'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
+      if (array_key_exists('pid', $params)) {
+        $pid = $params['pid'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('new_algorithm', $params)) {
+        $new_algorithm = $params['new_algorithm'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('do_not_relay', $params)) {
+        $do_not_relay = $params['do_not_relay'];
+      }
+    } else { // Legacy parameters used
+      if (!isset($amount)) {
+        throw new Exception('Error: Amount required');
+      }
+      if (!isset($address) || !$address) {
+        throw new Exception('Error: Address required');
+      }
+    
+      // Convert from moneroj to tacoshi (piconero)
+      $new_amount = $amount  * 1000000000000;
+
+      $destinations = array('amount' => $new_amount, 'address' => $address);
+    }
+
+    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
+    if (isset($index)) {
+      if ($index) {
+        $transfer_parameters['index'] = $index;
+      }
+    }
+    if (isset($pid)) {
+      if ($pid) {
+        $transfer_parameters['payment_id'] = $pid;
+      }
+    }
+    if (isset($priority)) {
+      if ($priority) {
+        $transfer_parameters['priority'] = $priority;
+      }
+    }
+    if (isset($unlock_time)) {
+      if ($unlock_time) {
+        $transfer_parameters['unlock_time'] = $unlock_time;
+      }
+    }
+    if (isset($new_algorithm)) {
+      if ($new_algorithm) {
+        $transfer_parameters['new_algorithm'] = $new_algorithm;
+      }
+    }
+    if (isset($do_not_relay)) {
+      if ($do_not_relay) {
+        $transfer_parameters['do_not_relay'] = $do_not_relay;
+      }
+    }
+
+    $transfer_method = $this->_run('transfer_split', $transfer_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
 
