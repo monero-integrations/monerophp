@@ -374,7 +374,7 @@ class walletRPC {
     $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
     $transfer_method = $this->_run('transfer', $transfer_parameters);
 
-    // $save = $this->store(); // Save wallet state after transfer
+    $save = $this->store(); // Save wallet state after transfer
 
     return $transfer_method;
   }
