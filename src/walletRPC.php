@@ -411,9 +411,6 @@ class walletRPC {
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
-      if (array_key_exists('new_algorithm', $params)) {
-        $new_algorithm = $params['new_algorithm'];
-      }
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
@@ -453,11 +450,6 @@ class walletRPC {
     if (isset($unlock_time)) {
       if ($unlock_time) {
         $transfer_parameters['unlock_time'] = $unlock_time;
-      }
-    }
-    if (isset($new_algorithm)) {
-      if ($new_algorithm) {
-        $transfer_parameters['new_algorithm'] = $new_algorithm;
       }
     }
     if (isset($do_not_relay)) {
@@ -509,7 +501,7 @@ class walletRPC {
         }
     
         // Convert from moneroj to tacoshi (piconero)
-        $new_amount = $amount  * 1000000000000;
+        $new_amount = $amount * 1000000000000;
 
         $destinations = array('amount' => $new_amount, 'address' => $address);
       }
@@ -528,9 +520,6 @@ class walletRPC {
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
-      if (array_key_exists('new_algorithm', $params)) {
-        $new_algorithm = $params['new_algorithm'];
-      }
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
@@ -546,7 +535,7 @@ class walletRPC {
       }
     
       // Convert from moneroj to tacoshi (piconero)
-      $new_amount = $amount  * 1000000000000;
+      $new_amount = $amount * 1000000000000;
 
       $destinations = array('amount' => $new_amount, 'address' => $address);
     }
@@ -570,11 +559,6 @@ class walletRPC {
     if (isset($unlock_time)) {
       if ($unlock_time) {
         $transfer_parameters['unlock_time'] = $unlock_time;
-      }
-    }
-    if (isset($new_algorithm)) {
-      if ($new_algorithm) {
-        $transfer_parameters['new_algorithm'] = $new_algorithm;
       }
     }
     if (isset($do_not_relay)) {
@@ -606,6 +590,115 @@ class walletRPC {
    */
   public function sweep_dust() {
     return $this->_run('sweep_dust');
+  }
+  
+  /**
+   *
+   * Send all unlocked balance to an address.
+   * 
+   * @param  string  $address       Address to transfer to
+   * @param  number  $below_amount  Only send outputs below this amount         (optional)
+   * @param  number  $mixin         Mixin number                                (optional)
+   * @param  number  $index         Account to send from                        (optional)
+   * @param  number  $priority      Payment ID                                  (optional)
+   * @param  string  $pid           Payment ID                                  (optional)
+   * @param  number  $unlock_time   UNIX time or block height to unlock output  (optional)
+   * 
+   *   OR
+   * 
+   * @param  object  $params        Array containing any of the options listed above, where only amount and address are required
+   *
+   * @return object  Example: {
+   *   "amount": "1000000000000",
+   *   "fee": "1000020000",
+   *   "tx_hash": "c60a64ddae46154a75af65544f73a7064911289a7760be8fb5390cb57c06f2db",
+   *   "tx_key": "805abdb3882d9440b6c80490c2d6b95a79dbc6d1b05e514131a91768e8040b04"
+   * }
+   *
+   */
+  public function sweep_all($address, $below_amount = 0, $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+    if (is_array($address)) { // Parameters passed in as object
+      $params = $address;
+
+      if (array_key_exists('address', $params)) {
+        $address = $params['address'];
+      } else {
+        throw new Exception('Error: Address required');
+      }
+
+      if (array_key_exists('below_amount', $params)) {
+        $below_amount = $params['below_amount'];
+
+        // Convert from moneroj to tacoshi (piconero)
+        $new_below_amount = $below_amount * 1000000000000;
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('index', $params)) {
+        $index = $params['index'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
+      if (array_key_exists('pid', $params)) {
+        $pid = $params['pid'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('do_not_relay', $params)) {
+        $do_not_relay = $params['do_not_relay'];
+      }
+    } else { // Legacy parameters used
+      if (!isset($address) || !$address) {
+        throw new Exception('Error: Address required');
+      }
+
+      // Convert from moneroj to tacoshi (piconero)
+      $new_below_amount = $below_amount * 1000000000000;
+    }
+
+    $transfer_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true);
+    if (isset($new_below_amount)) {
+      if ($new_below_amount) {
+        $transfer_parameters['below_amount'] = $new_below_amount;
+      }
+    }
+    if (isset($index)) {
+      if ($index) {
+        $transfer_parameters['index'] = $index;
+      }
+    }
+    if (isset($pid)) {
+      if ($pid) {
+        $transfer_parameters['payment_id'] = $pid;
+      }
+    }
+    if (isset($priority)) {
+      if ($priority) {
+        $transfer_parameters['priority'] = $priority;
+      }
+    }
+    if (isset($unlock_time)) {
+      if ($unlock_time) {
+        $transfer_parameters['unlock_time'] = $unlock_time;
+      }
+    }
+    if (isset($do_not_relay)) {
+      if ($do_not_relay) {
+        $transfer_parameters['do_not_relay'] = $do_not_relay;
+      }
+    }
+
+    $sweep_all_method = $this->_run('sweep_all', $transfer_parameters);
+
+    $save = $this->store(); // Save wallet state after transfer
+
+    return $sweep_all_method;
   }
   
   /**
