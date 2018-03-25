@@ -52,11 +52,9 @@ class daemonRPC {
    *
    */
   function __construct($host = '127.0.0.1', $port = 18081, $protocol = 'http', $user = null, $password = null) {
-    // TODO input validation
-    
     $this->host = $host;
     $this->port = $port;
-    $this->protocol = $protocol; // TODO: validate protocol (http, https, etc.)
+    $this->protocol = $protocol; 
     $this->user = $user;
     $this->password = $password;
 
@@ -75,8 +73,6 @@ class daemonRPC {
    *
    */
   protected function _run($method, $params = null) {
-    // TODO input validation
-    
     return $this->client->_run($method, $params);
   }
 
@@ -104,8 +100,6 @@ class daemonRPC {
    *
    */
   public function on_getblockhash($height) {
-    // TODO full input validation
-    
     if (!isset($height)) {
       throw new Exception('Error: Height required');
     }
@@ -133,8 +127,6 @@ class daemonRPC {
    *
    */
   public function getblocktemplate($wallet_address, $reserve_size) {
-    // TODO full input validation
-    
     if (!isset($wallet_address)) {
       throw new Exception('Error: Wallet address required');
     }
@@ -157,8 +149,6 @@ class daemonRPC {
    *
    */
   public function submitblock($block) {
-    // TODO full input validation
-    
     if (!isset($block)) {
       throw new Exception('Error: Block blob required');
     }
@@ -217,8 +207,6 @@ class daemonRPC {
    *
    */
   public function getblockheaderbyhash($hash) {
-    // TODO full input validation
-    
     if (!isset($hash)) {
       throw new Exception('Error: Block hash required');
     }
@@ -253,8 +241,6 @@ class daemonRPC {
    *
    */
   public function getblockheaderbyheight($height) {
-    // TODO full input validation
-
     if (!isset($height)) {
       throw new Exception('Error: Block height required');
     }
@@ -289,8 +275,6 @@ class daemonRPC {
    *
    */
   public function getblock_by_hash($hash) {
-    // TODO input validation
-    
     return $this->_run('getblock', $hash);
   }
 
@@ -321,8 +305,6 @@ class daemonRPC {
    *
    */
   public function getblock_by_height($height) {
-    // TODO input validation
-    
     $heightString = (string) $height; // Cast input to string
     return $this->_run('getblock', $heightString);
   }

@@ -55,7 +55,7 @@ class walletRPC {
     
     $this->host = $host;
     $this->port = $port;
-    $this->protocol = $protocol; // TODO: validate protocol (http, https, etc.)
+    $this->protocol = $protocol;
     $this->user = $user;
     $this->password = $password;
 
@@ -74,8 +74,6 @@ class walletRPC {
    *
    */
   private function _run($method, $params = null) {
-    // TODO input validation
-
     $result = $this->client->_run($method, $params);
     return $result;
   }
@@ -90,8 +88,6 @@ class walletRPC {
    *
    */
   private function _transform($amount) {
-    // TODO input validation
-
     // Convert from moneroj to tacoshi (piconero)
     $new_amount = $amount * 100000000;
     return $new_amount;
@@ -105,7 +101,6 @@ class walletRPC {
    *
    */
   public function _print($json) {
-    // TODO input validation
 
     $json_parsed = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     echo $json_parsed;
@@ -173,7 +168,12 @@ class walletRPC {
    *
    */
   public function get_transfers($input_type, $input_value) {
-    // TODO input validation
+    if (!isset($input_type)) {
+      throw new Exception('Error: Input type required');
+    }
+    if (!isset($input_value)) {
+      throw new Exception('Error: Input value required');
+    }
 
     $get_parameters = array($input_type => $input_value);
     $get_transfers = $this->_run('get_transfers', $get_parameters);
@@ -209,8 +209,6 @@ class walletRPC {
    * }
    */
   public function incoming_transfers($type = 'all') {
-    // TODO input validation
-
     $incoming_parameters = array('transfer_type' => $type);
     $incoming_transfers = $this->_run('incoming_transfers', $incoming_parameters);
     return $incoming_transfers;
@@ -258,8 +256,6 @@ class walletRPC {
    *
    */
   public function make_integrated_address($payment_id = null) {
-    // TODO input validation
-
     $integrate_address_parameters = array('payment_id' => $payment_id);
     $integrate_address_method = $this->_run('make_integrated_address', $integrate_address_parameters);
     return $integrate_address_method;
@@ -278,7 +274,9 @@ class walletRPC {
    *
    */
   public function split_integrated_address($integrated_address) {
-    // TODO full input validation
+    if (!isset($integrated_address)) {
+      throw new Exception('Error: Integrated address required');
+    }
     
     if (!isset($integrated_address)) {
       throw new Exception('Error: Integrated address required');
@@ -302,8 +300,6 @@ class walletRPC {
    *
    */
   public function make_uri($address, $amount, $recipient_name = null, $description = null) {
-    // TODO full input validation
-    
     if (!isset($address)) {
       throw new Exception('Error: Address required');
     }
@@ -337,8 +333,6 @@ class walletRPC {
    *
    */
   public function parse_uri($uri) {
-    // TODO input validation
-    
     if (!isset($uri)) {
       throw new Exception('Error: Payment URI required');
     }
@@ -364,8 +358,6 @@ class walletRPC {
    *
    */
   public function transfer($amount, $address, $mixin = 6) {
-    // TODO full input validation
-    
     if (!isset($amount)) {
       throw new Exception('Error: Amount required');
     }
@@ -414,7 +406,9 @@ class walletRPC {
    *
    */
   public function get_payments($payment_id) {
-    // TODO input validation
+    if (!isset($payment_id)) {
+      throw new Exception('Error: Payment ID required');
+    }
 
     $get_payments_parameters = array('payment_id' => $payment_id);
     $get_payments = $this->_run('get_payments', $get_payments_parameters);
@@ -440,7 +434,12 @@ class walletRPC {
    *
    */
   public function get_bulk_payments($payment_id, $min_block_height) {
-    // TODO input validation
+    if (!isset($payment_id)) {
+      throw new Exception('Error: Payment ID required');
+    }
+    if (!isset($min_block_height)) {
+      throw new Exception('Error: Minimum block height required');
+    }
 
     $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
     $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
@@ -468,7 +467,9 @@ class walletRPC {
    *
    */
   public function get_transfer_by_txid($txid) {
-    // TODO input validation
+    if (!isset($txid)) {
+      throw new Exception('Error: TX ID required');
+    }
 
     $get_transfer_by_txid_parameters = array('txid' => $txid);
     $get_transfer_by_txid = $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
@@ -494,7 +495,6 @@ class walletRPC {
    *
    */
   public function create_wallet($filename = 'monero_wallet', $password = null) {
-    // TODO test "You need to have set the argument "–wallet-dir" when launching monero-wallet-rpc to make this work."
     $create_wallet_parameters = array('filename' => $filename, 'password' => $password, 'language' => 'English');
     $create_wallet_method = $this->_run('create_wallet', $create_wallet_parameters);
     return $create_wallet_method;
@@ -511,7 +511,6 @@ class walletRPC {
    *
    */
   public function open_wallet($filename = 'monero_wallet', $password = null) {
-    // TODO test "You need to have set the argument "–wallet-dir" when launching monero-wallet-rpc to make this work."
     $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
     $open_wallet_method = $this->_run('open_wallet',$open_wallet_parameters);
     return $open_wallet_method;
@@ -529,7 +528,9 @@ class walletRPC {
    *
    */
   public function sign($data) {
-    // TODO input validation
+    if (!isset($data)) {
+      throw new Exception('Error: Data to sign required');
+    }
     
     $sign_parameters = array('string' => $data);
     $sign_method = $this->_run('sign',$sign_parameters);
