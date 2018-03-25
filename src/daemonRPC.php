@@ -217,9 +217,15 @@ class daemonRPC {
    *
    */
   public function getblockheaderbyhash($hash) {
-    // TODO input validation
+    // TODO full input validation
     
-    return $this->_run('getlastblockheader', $hash);
+    if (!isset($hash)) {
+      throw new Exception('Error: Block hash required');
+    }
+    
+    $params = array('hash' => $hash);
+
+    return $this->_run('getblockheaderbyhash', $params);
   }
 
   /**
