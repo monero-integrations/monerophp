@@ -345,19 +345,24 @@ class walletRPC {
   /**
    *
    * Send monero to a number of recipients.
-   *
-   * @param  string  $amount   Amount to transfer
-   * @param  string  $address  Address to transfer to
-   * @param  string  $mixin    Mixin number            (optional)
+   * 
+   * @param  string  $amount       Amount to transfer
+   * @param  string  $address      Address to transfer to
+   * @param  number  $mixin        Mixin number                                (optional)
+   * @param  number  $index        Account to send from                        (optional)
+   * @param  number  $priority     Payment ID                                  (optional)
+   * @param  string  $pid          Payment ID                                  (optional)
+   * @param  number  $unlock_time  UNIX time or block height to unlock output  (optional)
    *
    * @return object  Example: {
-   *   "fee": 48958481211,
-   *   "tx_hash": "985180f468637bc6d2f72ee054e1e34b8d5097988bb29a2e0cb763e4464db23c",
-   *   "tx_key": "8d62e5637f1fcc9a8904057d6bed6c697618507b193e956f77c31ce662b2ee07"
+   *   "amount": "1000000000000",
+   *   "fee": "1000020000",
+   *   "tx_hash": "c60a64ddae46154a75af65544f73a7064911289a7760be8fb5390cb57c06f2db",
+   *   "tx_key": "805abdb3882d9440b6c80490c2d6b95a79dbc6d1b05e514131a91768e8040b04"
    * }
    *
    */
-  public function transfer($amount, $address, $mixin = 6) {
+  public function transfer($amount, $address, $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
     if (!isset($amount)) {
       throw new Exception('Error: Amount required');
     }
@@ -371,7 +376,17 @@ class walletRPC {
     $new_amount = $amount  * 1000000000000;
 
     $destinations = array('amount' => $new_amount, 'address' => $address);
-    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
+    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
+    if ($index) {
+      $transfer_parameters['index'] = $index;
+    }
+    if ($pid) {
+      $transfer_parameters['payment_id'] = $pid;
+    }
+    if ($unlock_time) {
+      $transfer_parameters['payment_id'] = $unlock_time;
+    }
+
     $transfer_method = $this->_run('transfer', $transfer_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
