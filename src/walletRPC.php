@@ -50,7 +50,7 @@ class walletRPC {
    * @param  string  $password  Password                                       (optional)
    *
    */
-  function __construct ($host = '127.0.0.1', $port = '18081', $protocol = 'http', $user = null, $password = null) {
+  function __construct ($host = '127.0.0.1', $port = '18080', $protocol = 'http', $user = null, $password = null) {
     // TODO input validation
     
     $this->host = $host;
