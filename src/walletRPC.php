@@ -456,6 +456,25 @@ class walletRPC {
 
     return $this->_run('import_key_images', $import_parameters);
   }
+  
+  /**
+   *
+   * Retrieve entries from the address book.
+   *
+   * @param  array   $entries  Array of indices to return from the address book
+   *
+   * @return array   $entries  Array of entries returned from the address book
+   * 
+   */
+  public function get_address_book($entries) {
+    if (!isset($entries)) {
+      throw new Exception('Error: Entry indices required');
+    }
+
+    $entries_parameters = array('entries' => $entries);
+
+    return $this->_run('get_address_book', $entries_parameters);
+  }
 
   /**
    *
