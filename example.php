@@ -1,5 +1,10 @@
 <?php
 
+// Make sure to display all errors 
+ini_set('display_errors', 1); 
+ini_set('display_startup_errors', 1); 
+error_reporting(E_ALL); 
+
 require_once('src/jsonRPCClient.php');
 require_once('src/daemonRPC.php');
 
@@ -36,6 +41,8 @@ $getbalance = $walletRPC->getbalance();
 ?>
 <html>
   <body>
+    <?php print_r($sweep_all); ?>
+    <!--
     <h1><a href="https://github.com/monero-integrations/monerophp">MoneroPHP</a></h1>   
     <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations team</a>! Please report any issues or request additional features at <a href="https://github.com/monero-integrations/monerophp/issues">github.com/monero-integrations/monerophp</a>.</p>
 
@@ -67,6 +74,7 @@ $getbalance = $walletRPC->getbalance();
         <p>Cumulative difficulty: <tt><?php echo $get_info['cumulative_difficulty']; ?></tt></p>
       </dd>
     </dl>
+    -->
     <h2><tt>walletRPC.php</tt> example</h2>
     <p><i>Note: not all methods shown, nor all results from each method.</i></p>
     <dl>
