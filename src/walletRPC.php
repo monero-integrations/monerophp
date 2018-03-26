@@ -400,6 +400,33 @@ class walletRPC {
   
   /**
    *
+   * Verify a signature on a string.
+   *
+   * @param  string   $data       Signed data
+   * @param  string   $address    Address that signed data
+   * @param  string   $signature  Signature to verify
+   *
+   * @return boolean  $good       Verification status
+   * 
+   */
+  public function verify($data, $address, $signature) {
+    if (!isset($data)) {
+      throw new Exception('Error: Signed data required');
+    }
+    if (!isset($address)) {
+      throw new Exception('Error: Signing address required');
+    }
+    if (!isset($signature)) {
+      throw new Exception('Error: Signature required');
+    }
+
+    $notes_parameters = array('data' => $data, 'address' => $address, 'signature' => $signature);
+
+    return $this->_run('verify', $notes_parameters);
+  }
+
+  /**
+   *
    * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an array (as listed at bottom.)  If multiple destinations are required, use the array format and use
    * 
    * @param  string  $amount       Amount to transfer
