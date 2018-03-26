@@ -3,7 +3,7 @@
  * 
  * monerophp/daemonRPC
  * 
- * A class for making calls to Monero's RPC API using PHP.
+ * A class for making calls to Monero's RPC API using PHP
  * https://github.com/monero-integrations/monerophp
  *
  * Using work from
@@ -42,7 +42,7 @@ class daemonRPC {
 
   /**
    *
-   * Start a connection with the Monero daemon.
+   * Start a connection with the Monero daemon
    * 
    * @param  string  $host      IP address of Monero daemon to connect to  (optional)
    * @param  int     $port      Port to use when accessing Monero daemon   (optional)
@@ -64,7 +64,7 @@ class daemonRPC {
 
   /**
    *
-   * Execute command on the Monero RPC API.
+   * Execute command on the Monero RPC API
    *
    * @param  string  $method  RPC method to call
    * @param  string  $params  Options to include (optional)
@@ -78,7 +78,7 @@ class daemonRPC {
 
   /**
    *
-   * Look up how many blocks are in the longest chain known to the node.
+   * Look up how many blocks are in the longest chain known to the node
    *
    * @return object  Example: {  
    *   "count": 993163,  
@@ -92,7 +92,7 @@ class daemonRPC {
 
   /**
    *
-   * Look up a block's hash by its height.
+   * Look up a block's hash by its height
    *
    * @param  array   $height   Height of block to look up 
    *
@@ -111,7 +111,7 @@ class daemonRPC {
 
   /**
    *
-   * Retrieve a block template that can be mined upon.
+   * Retrieve a block template that can be mined upon
    *
    * @param  string  $wallet_address  Address of wallet to receive coinbase transactions if block is successfully mined
    * @param  int     $reserve_size   Reserve size 
@@ -141,7 +141,7 @@ class daemonRPC {
 
   /**
    *
-   * Submit a mined block to the network.
+   * Submit a mined block to the network
    *
    * @param  string  $block  Block blob data string
    *
@@ -158,7 +158,7 @@ class daemonRPC {
 
   /**
    *
-   * Block header information for the most recent block is easily retrieved with this method.
+   * Block header information for the most recent block is easily retrieved with this method
    *
    * @return object  Example: {
    *   "block_header": {
@@ -184,7 +184,7 @@ class daemonRPC {
 
   /**
    *
-   * Block header information can be retrieved using either a block's hash or height.
+   * Block header information can be retrieved using either a block's hash or height
    *
    * @param  string  $hash  The block's SHA256 hash
    *
@@ -218,7 +218,7 @@ class daemonRPC {
 
   /**
    *
-   * Similar to getblockheaderbyhash() above, this method includes a block's height as an input parameter to retrieve basic information about the block.
+   * Similar to getblockheaderbyhash() above, this method includes a block's height as an input parameter to retrieve basic information about the block
    *
    * @param  int     $height  The block's height
    *
@@ -250,7 +250,7 @@ class daemonRPC {
 
   /**
    *
-   * Get block information by its SHA256 hash.
+   * Get block information by its SHA256 hash
    *
    * @param  string  The block's SHA256 hash
    *
@@ -280,7 +280,7 @@ class daemonRPC {
 
   /**
    *
-   * Get block information by its height.
+   * Get block information by its height
    *
    * @param  int     $height  The block's height
    *
@@ -311,7 +311,7 @@ class daemonRPC {
 
   /**
    *
-   * Retrieve information about incoming and outgoing connections to your node.
+   * Retrieve information about incoming and outgoing connections to your node
    *
    * @return object  Example: {
    *   "connections": [{
@@ -332,7 +332,7 @@ class daemonRPC {
    *     "send_idle_time": 1457726610,
    *     "state": "state_normal"
    *   },{
-   *   ...
+   *   ..
    *   }],
    *   "status": "OK"
    * }
@@ -344,7 +344,7 @@ class daemonRPC {
 
   /**
    *
-   * Retrieve general information about the state of your node and the network.
+   * Retrieve general information about the state of your node and the network
    *
    * @return object  Example: {
    *   "alt_blocks_count": 5,
@@ -370,7 +370,7 @@ class daemonRPC {
 
   /**
    *
-   * Look up information regarding hard fork voting and readiness.
+   * Look up information regarding hard fork voting and readiness
    *
    * @return object  Example: {
    *   "alt_blocks_count": 0,

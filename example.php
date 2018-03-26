@@ -26,7 +26,7 @@ $get_info = $daemonRPC->get_info();
 
 require_once('src/walletRPC.php');
 
-$walletRPC = new walletRPC('127.0.0.1', '28079'); // Change to match your wallet (monero-wallet-rpc) IP address and port
+$walletRPC = new walletRPC('127.0.0.1', '28080'); // Change to match your wallet (monero-wallet-rpc) IP address and port
 // $create_wallet = $walletRPC->create_wallet();
 $open_wallet = $walletRPC->open_wallet();
 $getaddress = $walletRPC->getaddress();
@@ -37,12 +37,13 @@ $getbalance = $walletRPC->getbalance();
 // $transfer = $walletRPC->transfer(['destinations' => ['amount' => 1, 'address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'amount' => 2, 'address' => 'BhASuWq4HcBL1KAwt4wMBDhkpwseFe6pNaq5DWQnMwjBaFL8isMZzcEfcF7x6Vqgz9EBY66g5UBrueRFLCESojoaHaTPsjh'], 'priority' => 1]); // Multiple payments in one transaction
 // $sweep_all = $walletRPC->sweep_all('9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn');
 // $sweep_all = $walletRPC->sweep_all(['address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'priority' => 1]);
+// $get_transfers = $walletRPC->get_transfers('in', true);
+// $incoming_transfers = $walletRPC->incoming_transfers('all');
+// $mnemonic = $walletRPC->mnemonic();
 
 ?>
 <html>
   <body>
-    <?php print_r($sweep_all); ?>
-    <!--
     <h1><a href="https://github.com/monero-integrations/monerophp">MoneroPHP</a></h1>   
     <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations team</a>! Please report any issues or request additional features at <a href="https://github.com/monero-integrations/monerophp/issues">github.com/monero-integrations/monerophp</a>.</p>
 
@@ -74,7 +75,6 @@ $getbalance = $walletRPC->getbalance();
         <p>Cumulative difficulty: <tt><?php echo $get_info['cumulative_difficulty']; ?></tt></p>
       </dd>
     </dl>
-    -->
     <h2><tt>walletRPC.php</tt> example</h2>
     <p><i>Note: not all methods shown, nor all results from each method.</i></p>
     <dl>
