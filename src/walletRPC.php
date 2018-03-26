@@ -246,6 +246,21 @@ class walletRPC {
   
   /**
    *
+   * Look up wallet spend key
+   *
+   * @return object  Example: {
+   *   "key": "2ab810..."
+   * }
+   *
+   */
+  public function mnemonic() {
+    $query_key = array('key_type' => 'mnemonic');
+    $query_key_method = $this->_run('query_key', $query_key);
+    return $query_key_method;
+  }
+  
+  /**
+   *
    * Make an integrated address from the wallet address and a payment ID
    *
    * @param  string  $payment_id  Payment ID to use when generating an integrated address (optional)
