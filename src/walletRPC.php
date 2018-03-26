@@ -282,8 +282,8 @@ class walletRPC {
       throw new Exception('Error: Integrated address required');
     }
 
-    $split_params = array('integrated_address' => $integrated_address);
-    $split_methods = $this->_run('split_integrated_address', $split_params);
+    $split_parameters = array('integrated_address' => $integrated_address);
+    $split_methods = $this->_run('split_integrated_address', $split_parameters);
     return $split_methods;
   }
   
@@ -319,8 +319,8 @@ class walletRPC {
     // Convert from moneroj to tacoshi (piconero)
     $new_amount = $amount * 1000000000000;
        
-    $uri_params = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
-    $uri = $this->_run('make_uri', $uri_params);
+    $uri_parameters = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
+    $uri = $this->_run('make_uri', $uri_parameters);
     return $uri;
   }
 
@@ -358,6 +358,27 @@ class walletRPC {
    */
   public function rescan_blockchain() {
     return $this->_run('rescan_blockchain');
+  }
+  
+  /**
+   *
+   * Set arbitrary string notes for transactions.
+   *
+   * @param  array  $txids  Array of transaction IDs (strings) to apply notes to
+   * @param  array  $notes  Array of notes (strings) to add 
+   *
+   */
+  public function set_tx_notes($txids, $notes) {
+    if (!isset($txids)) {
+      throw new Exception('Error: Transaction IDs required');
+    }
+    if (!isset($notes)) {
+      throw new Exception('Error: Notes required');
+    }
+
+    $notes_parameters = array('txids' => $txids, 'notes' => $notes);
+
+    return $this->_run('set_tx_notes', $notes_parameters);
   }
   
   /**
