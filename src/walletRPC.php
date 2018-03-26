@@ -532,6 +532,31 @@ class walletRPC {
   public function rescan_spent() {
     return $this->_run('rescan_spent');
   }
+  
+  /**
+   *
+   * Start mining in the Monero daemon
+   *
+   * @param  number   $threads_count         Number of threads with which to mine
+   * @param  boolean  $do_background_mining  Mine in backgound?
+   * @param  boolean  $ignore_battery        Ignore battery?  
+   * 
+   */
+  public function start_mining($threads_count, $do_background_mining, $ignore_battery) {
+    if (!isset($threads_count)) {
+      throw new Exception('Error: Threads required');
+    }
+    if (!isset($do_background_mining)) {
+      throw new Exception('Error: Background mining boolean required');
+    }
+    if (!isset($ignore_battery)) {
+      throw new Exception('Error: Inore battery boolean required');
+    }
+
+    $mining_parameters = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
+
+    return $this->_run('start_mining', $mining_parameters);
+  }
 
   /**
    *
@@ -1039,15 +1064,6 @@ class walletRPC {
     $sign_parameters = array('string' => $data);
     $sign_method = $this->_run('sign',$sign_parameters);
     return $sign_method;
-  }
-  
-  /**
-   *
-   * Rescan spent outputs
-   *
-   */
-  public function rescan_spent() {
-    return $this->_run('rescan_spent');
   }
   
 }
