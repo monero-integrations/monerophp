@@ -36,12 +36,17 @@ Copyright (c) 2018 Monero-Integrations
             $result = bin2hex($this->ed25519->encodeint($modulo));
             return $result;
         }
+
+        public function hash_to_scalar($data)
+        {
+            $hash = $this->keccak_256($data);
+            $scalar = $this->sc_reduce($hash);
+            return $scalar;
+        }
         
         public function derive_viewKey($spendKey)
         {
-            $hashed = $this->keccak_256($spendKey);
-            $viewKey = $this->sc_reduce($hashed);
-            return $viewKey;
+            return $this->hash_to_scalar($spendkey);
         }
         
         public function gen_private_keys($seed)
@@ -68,7 +73,35 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex($this->ed25519->encodepoint($res));
         }
 
-        // this is a one way function used for both encrypting and "decrypting" 8 byte payment IDs
+        public function encode_varint($data)
+        {
+            $orig = $data;
+
+            if ($data < 0x80)
+            {
+               return bin2hex(pack('C', $data));
+            }
+
+            $encodedBytes = [];
+            while ($data > 0)
+            {
+               $encodedBytes[] = 0x80 | ($data & 0x7f);
+               $data >>= 7;
+            }
+
+            $encodedBytes[count($encodedBytes)-1] &= 0x7f;
+            $bytes = call_user_func_array('pack', array_merge(array('C*'), $encodedBytes));;
+            return bin2hex($bytes);
+        }
+
+        public function derivation_to_scalar($der, $index)
+        {
+            $encoded = $this->encode_varint($index);
+            $data = $der . $encoded;
+            return $this->hash_to_scalar($data);
+        }
+
+        // this is a one way function used for both encrypting and decrypting 8 byte payment IDs
         public function stealth_payment_id($payment_id, $tx_pub_key, $viewkey)
         {
             if(strlen($payment_id) != 16)
