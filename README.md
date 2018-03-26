@@ -34,6 +34,6 @@ Step 2: Start monero-wallet-rpc
 monero-wallet-rpc --testnet --rpc-bind-port 28080 --disable-rpc-login --wallet-file /path/walletfile
 ```
 
-Step 3: Edit example.php with your the IP address of monerod and monero-wallet-rpc (in the example it's `127.0.0.1:28081` and `127.0.0.1:28080`, respectively)
+Step 3: Edit example.php with your the IP address of monerod and monero-wallet-rpc (use `127.0.0.1:28081` and `127.0.0.1:28080`, respectively, for testnet)
 
 Step 4: Open your browser with your IP address of local webserver (*eg.* XMPP, Apache/Apache2, NGINX, *etc.*) and execute example.php.  If everything has been set up correctly, information from your Monero daemon and wallet will be displayed
