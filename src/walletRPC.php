@@ -475,6 +475,37 @@ class walletRPC {
 
     return $this->_run('get_address_book', $entries_parameters);
   }
+  
+  /**
+   *
+   * Retrieve entries from the address book.
+   *
+   * @param  string  $address      Address to add to address book
+   * @param  string  $payment_id   Payment ID to use with address in address book (optional)
+   * @param  string  $description  Description of address                         (optional)
+   *
+   * @return number  $index        Index of address in address book
+   * 
+   */
+  public function add_address_book($address, $payment_id, $description) {
+    if (!isset($address)) {
+      throw new Exception('Error: Address required');
+    }
+    if (isset($payment_id)) {
+      if ($payment_id) {
+        $transfer_parameters['payment_id'] = $payment_id;
+      }
+    }
+    if (isset($description)) {
+      if ($description) {
+        $transfer_parameters['description'] = $description;
+      }
+    }
+
+    $address_parameters = array('address' => $address);
+
+    return $this->_run('add_address_book', $address_parameters);
+  }
 
   /**
    *
