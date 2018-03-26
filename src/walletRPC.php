@@ -435,6 +435,27 @@ class walletRPC {
   public function export_key_images() {
     return $this->_run('export_key_images');
   }
+  
+  /**
+   *
+   * Import a signed set of key images.
+   *
+   * @param  array   $signed_key_images  Array of signed key images
+   *
+   * @return number  $height
+   * @return number  $spent
+   * @return number  $unspent
+   * 
+   */
+  public function import_key_images($signed_key_images) {
+    if (!isset($signed_key_images)) {
+      throw new Exception('Error: Signed key images required');
+    }
+
+    $import_parameters = array('signed_key_images' => $signed_key_images);
+
+    return $this->_run('import_key_images', $import_parameters);
+  }
 
   /**
    *
