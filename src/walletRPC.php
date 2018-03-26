@@ -424,6 +424,17 @@ class walletRPC {
 
     return $this->_run('verify', $notes_parameters);
   }
+  
+  /**
+   *
+   * Export a signed set of key images.
+   *
+   * @return  array  $signed_key_images  Array of signed key images
+   *
+   */
+  public function export_key_images() {
+    return $this->_run('export_key_images');
+  }
 
   /**
    *
