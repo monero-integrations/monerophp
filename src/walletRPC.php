@@ -353,6 +353,15 @@ class walletRPC {
   
   /**
    *
+   * Rescan blockchain from scratch.
+   *
+   */
+  public function rescan_blockchain() {
+    return $this->_run('rescan_blockchain');
+  }
+  
+  /**
+   *
    * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an array (as listed at bottom.)  If multiple destinations are required, use the array format and use
    * 
    * @param  string  $amount       Amount to transfer
