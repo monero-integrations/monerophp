@@ -1,80 +1,135 @@
 <?php
 
-/* Example of Monero Payment  */
- require_once('src/jsonRPCClient.php');
-require_once('src/Monero_RPC.php');
+// Make sure to display all errors 
+ini_set('display_errors', 1); 
+ini_set('display_startup_errors', 1); 
+error_reporting(E_ALL); 
 
-/* Edit it with your ip and your port of Monero RPC */
-$monero_rpc = new Monero_RPC('127.0.0.1','18082');
+require_once('src/jsonRPCClient.php');
+require_once('src/daemonRPC.php');
+
+$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet
+$getblockcount = $daemonRPC->getblockcount();
+$on_getblockhash = $daemonRPC->on_getblockhash(42069);
+// $getblocktemplate = $daemonRPC->getblocktemplate($wallet_address);
+// $submitblock = $daemonRPC->submitblock();
+$getlastblockheader = $daemonRPC->getlastblockheader();
+// $getblockheaderbyhash = $daemonRPC->getblockheaderbyhash($hash);
+// $getblockheaderbyheight = $daemonRPC->getblockheaderbyheight($height);
+// $getblock_by_hash = $daemonRPC->getblock_by_hash($hash);
+// $getblock_by_height = $daemonRPC->getblock_by_height($height);
+$get_connections = $daemonRPC->get_connections();
+$get_info = $daemonRPC->get_info();
+// $hardfork_info = $daemonRPC->hardfork_info();
+// $setbans = $daemonRPC->setbans($ip);
+// $getbans = $daemonRPC->getbans();
+
+require_once('src/walletRPC.php');
+
+$walletRPC = new walletRPC('127.0.0.1', '28080'); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18080 is the default port for mainnet, 28080 for testnet
+// $create_wallet = $walletRPC->create_wallet();
+$open_wallet = $walletRPC->open_wallet();
+$getaddress = $walletRPC->getaddress();
+$getbalance = $walletRPC->getbalance();
+// $getheight = $walletRPC->getheight();
+// $transfer = $walletRPC->transfer(1, '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn'); // First account generated from mnemonic 'gang dying lipstick wonders howls begun uptight humid thirsty irony adept umpire dusted update grunt water iceberg timber aloof fudge rift clue umpire venomous thirsty'
+// $transfer = $walletRPC->transfer(['address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'amount' => 1, 'priority' => 1]); // Passing parameters in as array
+// $transfer = $walletRPC->transfer(['destinations' => ['amount' => 1, 'address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'amount' => 2, 'address' => 'BhASuWq4HcBL1KAwt4wMBDhkpwseFe6pNaq5DWQnMwjBaFL8isMZzcEfcF7x6Vqgz9EBY66g5UBrueRFLCESojoaHaTPsjh'], 'priority' => 1]); // Multiple payments in one transaction
+// $sweep_all = $walletRPC->sweep_all('9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn');
+// $sweep_all = $walletRPC->sweep_all(['address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'priority' => 1]);
+// $get_transfers = $walletRPC->get_transfers('in', true);
+// $incoming_transfers = $walletRPC->incoming_transfers('all');
+// $mnemonic = $walletRPC->mnemonic();
 
 ?>
 <html>
   <body>
-    <h1>Example of Monero Library</h1>
-	<p>Welcome to Monero PHP and JSON Library, developed by SerHack! Please report any issue <a href="https://github.com/monero-integrations/monerophp/issues">here</a></p>
-	<h2>Informations</h2>
-    <h3>Monero Address</h3>
-    <?php $address = $monero_rpc->getaddress(); 
-	$monero_rpc->_print($address); ?>
-    <h3>Balance</h3>
-    <?php $balance = $monero_rpc->getbalance();
-	 $monero_rpc->_print($balance); ?>
-	<h3>Height</h3>
-	<?php $height = $monero_rpc->getheight();
-		$monero_rpc->_print($height); ?>
-	<h3>Incoming transfers</h3>
-	<h4>All</h4>
-	<?php $incoming_transfers = $monero_rpc->incoming_transfer('all'); 
-		$monero_rpc->_print($incoming_transfers); ?>
-	<h4>Available</h4>
-	<?php $available = $monero_rpc->incoming_transfer('available');
-		$monero_rpc->_print($available); ?>
-	<h4>Unavailable</h4>
-	<?php $unavailable = $monero_rpc->incoming_transfer('unavailable');
-		$monero_rpc->_print($unavailable); ?>
-	<h3>Get transfers</h3>
-	<?php $get_transfers = $monero_rpc->get_transfers('pool', true);
-		$monero_rpc->_print($get_transfers); ?>
-	<h3>View key</h3>
-	<?php $view_key = $monero_daemon->view_key();
-		$monero_rpc->_print($view_key); ?>
-<?php	
-	/*
-	 *	Available Function
-	 * --------------------------------------------------------------------
-	 *	make_integrated_address => make a integrated address
-	 *	$monero_daemon->make_integrated_address('');
-	 * --------------------------------------------------------------------
-	 *	split_integrated_address => Retrieve integrated address
-	 *	$integrated_address = integrated address
-	 *	$monero_daemon->splt_integrated_Address($integrated_address);
-	 * --------------------------------------------------------------------
-	 *	make_uri => useful for generating uri like monero:9aksi1o2...
-	 *	$address = wallet address string
-	 *	$amount (optional) = amount (library will convert into atomic unit, then use 1 xmr)
-	 * 	$recipient_name (optional) = string name of the payment recipient
-	 *	tx_description (optional) = string describing the reason for the tx
-	 *	$monero_rpc->make_uri($address, $address, $amount, $recipient_name, $description);
-	 * --------------------------------------------------------------------
-	 *	parse_uri => parse the uri
-	 * 	$uri = the uri
-	 *	$monero_rpc->parse_uri($uri);
-	 * --------------------------------------------------------------------
-	 *	get_payments => Get a list of incoming payments using a given payment id (useful for verifying payment with plugins)
-	 * 	$payment_id = id of payment
-	 *	$monero_rpc->get_payments($payment_id);
-	 * --------------------------------------------------------------------
-	 *	transfer => transfer function 
-	 * 	$amount = amount
-	 *	$address = wallet address (not your address)
-	 *	$monero_rpc->transfer($amount, $address);
-	 * --------------------------------------------------------------------
-	 *	get_bulk_payments => Get a list of incoming payments using a given payment id or height
-	 * 	$payment_id = array of payments id 
-	 *	$min_block_height = The block height at which to start looking for payments.
-	 *	$monero_rpc->get_bulk_payments($payments_id, $min_block_height);
-	 *
-	*/
-	?>
+    <h1><a href="https://github.com/monero-integrations/monerophp">MoneroPHP</a></h1>   
+    <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations team</a>! Please report any issues or request additional features at <a href="https://github.com/monero-integrations/monerophp/issues">github.com/monero-integrations/monerophp</a>.</p>
+
+    <h2><tt>daemonRPC.php</tt> example</h2>
+    <p><i>Note: not all methods shown, nor all results from each method.</i></p>
+    <dl>
+      <dt><tt>getblockcount()</tt></dt>
+      <dd>
+        <p>Status: <tt><?php echo $getblockcount['status']; ?></tt></p>
+        <p>Height: <tt><?php echo $getblockcount['count']; ?></tt></p>
+      </dd>
+      <dt><tt>on_getblockhash(42069)</tt></dt>
+      <dd>
+        <p>Block hash: <tt><?php echo $on_getblockhash; ?></tt></p>
+      </dd>
+      <dt><tt>getlastblockheader()</tt></dt>
+      <dd>
+        <p>Current block hash: <tt><?php echo $getlastblockheader['block_header']['hash']; ?></tt></p>
+        <p>Previous block hash: <tt><?php echo $getlastblockheader['block_header']['prev_hash']; ?></tt></p>
+      </dd>
+      <dt><tt>get_connections()</tt></dt>
+      <dd>
+        <p>Connections: <?php echo count($get_connections['connections']); ?></p>
+        <?php foreach ($get_connections['connections'] as $peer) { echo '<p><tt>' . $peer['address'] . ' (' . ( $peer['height'] == $getblockcount['count'] ? 'synced' : ( $peer['height'] > $getblockcount['count'] ? 'ahead; syncing' : 'behind; syncing') ). ')</tt></p>'; } ?>
+      </dd>
+      <dt><tt>get_info()</tt></dt>
+      <dd>
+        <p>Difficulty: <tt><?php echo $get_info['difficulty']; ?></tt></p>
+        <p>Cumulative difficulty: <tt><?php echo $get_info['cumulative_difficulty']; ?></tt></p>
+      </dd>
+    </dl>
+    <h2><tt>walletRPC.php</tt> example</h2>
+    <p><i>Note: not all methods shown, nor all results from each method.</i></p>
+    <dl>
+      <dt><tt>getaddress()</tt></dt>
+      <dd>
+        <?php foreach ($getaddress['addresses'] as $account) { echo '<p>' . $account['label'] . ': <tt>' . $account['address'] . '</tt></p>'; } ?>
+      </dd>
+      <dt><tt>getbalance()</tt></dt>
+      <dd>
+        <p>Balance: <tt><?php echo $getbalance['balance'] / pow(10, 12); ?></tt></p>
+        <p>Unlocked balance: <tt><?php echo $getbalance['unlocked_balance'] / pow(10, 12); ?></tt></p>
+      </dd>
+    </dl>
   </body>
+  <!-- ignore the code below, it's just CSS styling -->
+  <head>
+    <style>
+      body {
+        color: #fff;
+        background: #000;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      a, a:active, a:hover, a:visited {
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+        color: #ff6600;
+      }
+      a::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: #ff6600;
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+      }
+      a:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+      }
+
+      dt tt {
+        padding: 0.42em;
+        background: #4c4c4c;
+        text-shadow: 1px 1px 0px #000;
+      }
+      dd tt {
+        font-size: 14px;
+      }
+    </style>
+  </head>
 </html>
+ 
