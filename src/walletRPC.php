@@ -3,7 +3,7 @@
  * 
  * monerophp/walletRPC
  * 
- * A class for making calls to monero-wallet-rpc using PHP.
+ * A class for making calls to monero-wallet-rpc using PHP
  * https://github.com/monero-integrations/monerophp
  *
  * Using work from
@@ -263,7 +263,7 @@ class walletRPC {
   
   /**
    *
-   * Retrieve the standard address and payment ID corresponding to an integrated address.
+   * Retrieve the standard address and payment ID corresponding to an integrated address
    *
    * @param  string  $integrated_address  Integrated address to split
    *
@@ -289,7 +289,7 @@ class walletRPC {
   
   /**
    *
-   * Stop the wallet, saving the state.
+   * Stop the wallet, saving the state
    *
    */
   public function stop_wallet() {
@@ -298,7 +298,7 @@ class walletRPC {
 
   /**
    *
-   * Create a payment URI using the official URI spec.
+   * Create a payment URI using the official URI spec
    *
    * @param  string  $address         Address to include
    * @param  string  $amount          Amount to request
@@ -326,7 +326,7 @@ class walletRPC {
 
   /**
    *
-   * Parse a payment URI to get payment information.
+   * Parse a payment URI to get payment information
    *
    * @param  string  $uri  Payment URI
    *
@@ -353,7 +353,7 @@ class walletRPC {
   
   /**
    *
-   * Rescan blockchain from scratch.
+   * Rescan blockchain from scratch
    *
    */
   public function rescan_blockchain() {
@@ -362,7 +362,7 @@ class walletRPC {
   
   /**
    *
-   * Set arbitrary string notes for transactions.
+   * Set arbitrary string notes for transactions
    *
    * @param  array  $txids  Array of transaction IDs (strings) to apply notes to
    * @param  array  $notes  Array of notes (strings) to add 
@@ -383,7 +383,7 @@ class walletRPC {
   
   /**
    *
-   * Get string notes for transactions.
+   * Get string notes for transactions
    *
    * @param  array  $txids  Array of transaction IDs (strings) to look up
    *
@@ -400,7 +400,7 @@ class walletRPC {
   
   /**
    *
-   * Verify a signature on a string.
+   * Verify a signature on a string
    *
    * @param  string   $data       Signed data
    * @param  string   $address    Address that signed data
@@ -427,7 +427,7 @@ class walletRPC {
   
   /**
    *
-   * Export a signed set of key images.
+   * Export a signed set of key images
    *
    * @return  array  $signed_key_images  Array of signed key images
    *
@@ -438,7 +438,7 @@ class walletRPC {
   
   /**
    *
-   * Import a signed set of key images.
+   * Import a signed set of key images
    *
    * @param  array   $signed_key_images  Array of signed key images
    *
@@ -459,7 +459,7 @@ class walletRPC {
   
   /**
    *
-   * Retrieve entries from the address book.
+   * Retrieve entries from the address book
    *
    * @param  array   $entries  Array of indices to return from the address book
    *
@@ -478,7 +478,7 @@ class walletRPC {
   
   /**
    *
-   * Retrieve entries from the address book.
+   * Retrieve entries from the address book
    *
    * @param  string  $address      Address to add to address book
    * @param  string  $payment_id   Payment ID to use with address in address book (optional)
@@ -505,6 +505,32 @@ class walletRPC {
     $address_parameters = array('address' => $address);
 
     return $this->_run('add_address_book', $address_parameters);
+  }
+  
+  /**
+   *
+   * Delete an entry from the address book
+   *
+   * @param  array   $index  Index of the address book entry to remove
+   * 
+   */
+  public function delete_address_book($index) {
+    if (!isset($index)) {
+      throw new Exception('Error: Entry index required');
+    }
+
+    $delete_parameters = array('index' => $index);
+
+    return $this->_run('delete_address_book', $delete_parameters);
+  }
+  
+  /**
+   *
+   * Rescan the blockchain for spent outputs
+   * 
+   */
+  public function rescan_spent() {
+    return $this->_run('rescan_spent');
   }
 
   /**
@@ -632,7 +658,7 @@ class walletRPC {
   
   /**
    *
-   * Same as transfer, but splits transfer into more than one transaction if necessary.
+   * Same as transfer, but splits transfer into more than one transaction if necessary
    *
    */
   public function transfer_split($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
@@ -741,7 +767,7 @@ class walletRPC {
   
   /**
    *
-   * Save wallet.
+   * Save wallet
    *
    */
   public function store() {
@@ -750,7 +776,7 @@ class walletRPC {
   
   /**
    *
-   * Send all dust outputs back to the wallet's, to make them easier to spend (and mix).
+   * Send all dust outputs back to the wallet's, to make them easier to spend (and mix)
    *
    */
   public function sweep_dust() {
@@ -759,7 +785,7 @@ class walletRPC {
   
   /**
    *
-   * Send all unlocked balance to an address.
+   * Send all unlocked balance to an address
    * 
    * @param  string  $address       Address to transfer to
    * @param  number  $below_amount  Only send outputs below this amount         (optional)
@@ -868,7 +894,7 @@ class walletRPC {
   
   /**
    *
-   * Get a list of incoming payments using a given payment id.
+   * Get a list of incoming payments using a given payment id
    *
    * @param  string  $payment_id  Payment ID to look up
    *
@@ -895,7 +921,7 @@ class walletRPC {
   
   /**
    *
-   * Get a list of incoming payments using a given payment ID (or a list of payments IDs) from a given height.
+   * Get a list of incoming payments using a given payment ID (or a list of payments IDs) from a given height
    *
    * @param  string  $payment_id        Payment ID to look up
    * @param  string  $min_block_height  Height to begin search
@@ -926,7 +952,7 @@ class walletRPC {
   
   /**
    *
-   * Show information about a transfer with a given transaction ID.
+   * Show information about a transfer with a given transaction ID
    *
    * @param  string  $txid  Transaction ID to look up
    *
@@ -957,7 +983,7 @@ class walletRPC {
   
   /**
    *
-   * Rescan blockchain from scratch.
+   * Rescan blockchain from scratch
    *
    */
   public function rescan_blockchain() {
@@ -980,7 +1006,7 @@ class walletRPC {
   
   /**
    *
-   * Open a wallet.
+   * Open a wallet
    *
    * @param  string  $filename  Filename to use for new wallet
    * @param  string  $password  Password to use for new wallet
@@ -1017,7 +1043,7 @@ class walletRPC {
   
   /**
    *
-   * Rescan spent outputs.
+   * Rescan spent outputs
    *
    */
   public function rescan_spent() {
