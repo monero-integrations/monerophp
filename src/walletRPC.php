@@ -566,6 +566,17 @@ class walletRPC {
   public function stop_mining() {
     return $this->_run('stop_mining');
   }
+  
+  /**
+   *
+   * Get a list of available languages for your wallet's seed
+   * 
+   * @return array  List of available languages
+   *
+   */
+  public function get_languages() {
+    return $this->_run('get_languages');
+  }
 
   /**
    *
