@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 require_once('src/jsonRPCClient.php');
 require_once('src/daemonRPC.php');
 
-$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet
+$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet, 38081 for stagenet
 $getblockcount = $daemonRPC->getblockcount();
 $on_getblockhash = $daemonRPC->on_getblockhash(42069);
 // $getblocktemplate = $daemonRPC->getblocktemplate($wallet_address);
@@ -26,7 +26,7 @@ $get_info = $daemonRPC->get_info();
 
 require_once('src/walletRPC.php');
 
-$walletRPC = new walletRPC('127.0.0.1', '28080'); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18080 is the default port for mainnet, 28080 for testnet
+$walletRPC = new walletRPC('127.0.0.1', '28082'); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18082 is the default port for mainnet, 28082 for testnet, 38082 for stagenet
 // $create_wallet = $walletRPC->create_wallet();
 $open_wallet = $walletRPC->open_wallet();
 $getaddress = $walletRPC->getaddress();
