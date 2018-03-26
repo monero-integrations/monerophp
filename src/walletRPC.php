@@ -1024,16 +1024,6 @@ class walletRPC {
     $get_transfer_by_txid = $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
     return $get_transfer_by_txid;
   }
-
-  
-  /**
-   *
-   * Rescan blockchain from scratch
-   *
-   */
-  public function rescan_blockchain() {
-    return $this->_run('rescan_blockchain');
-  }
   
   /**
    *
