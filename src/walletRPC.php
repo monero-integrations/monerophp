@@ -286,6 +286,15 @@ class walletRPC {
     $split_methods = $this->_run('split_integrated_address', $split_params);
     return $split_methods;
   }
+  
+  /**
+   *
+   * Stop the wallet, saving the state.
+   *
+   */
+  public function stop_wallet() {
+    return $this->_run('stop_wallet');
+  }
 
   /**
    *
