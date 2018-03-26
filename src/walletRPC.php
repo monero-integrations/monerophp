@@ -557,6 +557,15 @@ class walletRPC {
 
     return $this->_run('start_mining', $mining_parameters);
   }
+  
+  /**
+   *
+   * Stop mining
+   * 
+   */
+  public function stop_mining() {
+    return $this->_run('stop_mining');
+  }
 
   /**
    *
