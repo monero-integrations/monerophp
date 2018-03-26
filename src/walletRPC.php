@@ -383,6 +383,23 @@ class walletRPC {
   
   /**
    *
+   * Get string notes for transactions.
+   *
+   * @param  array  $txids  Array of transaction IDs (strings) to look up
+   *
+   */
+  public function get_tx_notes($txids) {
+    if (!isset($txids)) {
+      throw new Exception('Error: Transaction IDs required');
+    }
+
+    $notes_parameters = array('txids' => $txids);
+
+    return $this->_run('get_tx_notes', $notes_parameters);
+  }
+  
+  /**
+   *
    * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an array (as listed at bottom.)  If multiple destinations are required, use the array format and use
    * 
    * @param  string  $amount       Amount to transfer
