@@ -3,7 +3,7 @@
  * 
  * monerophp/walletRPC
  * 
- * A class for making calls to monero-wallet-rpc using PHP.
+ * A class for making calls to monero-wallet-rpc using PHP
  * https://github.com/monero-integrations/monerophp
  *
  * Using work from
@@ -246,6 +246,21 @@ class walletRPC {
   
   /**
    *
+   * Look up wallet spend key
+   *
+   * @return object  Example: {
+   *   "key": "2ab810..."
+   * }
+   *
+   */
+  public function mnemonic() {
+    $query_key = array('key_type' => 'mnemonic');
+    $query_key_method = $this->_run('query_key', $query_key);
+    return $query_key_method;
+  }
+  
+  /**
+   *
    * Make an integrated address from the wallet address and a payment ID
    *
    * @param  string  $payment_id  Payment ID to use when generating an integrated address (optional)
@@ -263,7 +278,7 @@ class walletRPC {
   
   /**
    *
-   * Retrieve the standard address and payment ID corresponding to an integrated address.
+   * Retrieve the standard address and payment ID corresponding to an integrated address
    *
    * @param  string  $integrated_address  Integrated address to split
    *
@@ -282,14 +297,23 @@ class walletRPC {
       throw new Exception('Error: Integrated address required');
     }
 
-    $split_params = array('integrated_address' => $integrated_address);
-    $split_methods = $this->_run('split_integrated_address', $split_params);
+    $split_parameters = array('integrated_address' => $integrated_address);
+    $split_methods = $this->_run('split_integrated_address', $split_parameters);
     return $split_methods;
+  }
+  
+  /**
+   *
+   * Stop the wallet, saving the state
+   *
+   */
+  public function stop_wallet() {
+    return $this->_run('stop_wallet');
   }
 
   /**
    *
-   * Create a payment URI using the official URI spec.
+   * Create a payment URI using the official URI spec
    *
    * @param  string  $address         Address to include
    * @param  string  $amount          Amount to request
@@ -310,14 +334,14 @@ class walletRPC {
     // Convert from moneroj to tacoshi (piconero)
     $new_amount = $amount * 1000000000000;
        
-    $uri_params = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
-    $uri = $this->_run('make_uri', $uri_params);
+    $uri_parameters = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
+    $uri = $this->_run('make_uri', $uri_parameters);
     return $uri;
   }
 
   /**
    *
-   * Parse a payment URI to get payment information.
+   * Parse a payment URI to get payment information
    *
    * @param  string  $uri  Payment URI
    *
@@ -344,44 +368,466 @@ class walletRPC {
   
   /**
    *
-   * Send monero to a number of recipients.
-   *
-   * @param  string  $amount   Amount to transfer
-   * @param  string  $address  Address to transfer to
-   * @param  string  $mixin    Mixin number            (optional)
-   *
-   * @return object  Example: {
-   *   "fee": 48958481211,
-   *   "tx_hash": "985180f468637bc6d2f72ee054e1e34b8d5097988bb29a2e0cb763e4464db23c",
-   *   "tx_key": "8d62e5637f1fcc9a8904057d6bed6c697618507b193e956f77c31ce662b2ee07"
-   * }
+   * Rescan blockchain from scratch
    *
    */
-  public function transfer($amount, $address, $mixin = 6) {
-    if (!isset($amount)) {
-      throw new Exception('Error: Amount required');
+  public function rescan_blockchain() {
+    return $this->_run('rescan_blockchain');
+  }
+  
+  /**
+   *
+   * Set arbitrary string notes for transactions
+   *
+   * @param  array  $txids  Array of transaction IDs (strings) to apply notes to
+   * @param  array  $notes  Array of notes (strings) to add 
+   *
+   */
+  public function set_tx_notes($txids, $notes) {
+    if (!isset($txids)) {
+      throw new Exception('Error: Transaction IDs required');
     }
+    if (!isset($notes)) {
+      throw new Exception('Error: Notes required');
+    }
+
+    $notes_parameters = array('txids' => $txids, 'notes' => $notes);
+
+    return $this->_run('set_tx_notes', $notes_parameters);
+  }
+  
+  /**
+   *
+   * Get string notes for transactions
+   *
+   * @param  array  $txids  Array of transaction IDs (strings) to look up
+   *
+   */
+  public function get_tx_notes($txids) {
+    if (!isset($txids)) {
+      throw new Exception('Error: Transaction IDs required');
+    }
+
+    $notes_parameters = array('txids' => $txids);
+
+    return $this->_run('get_tx_notes', $notes_parameters);
+  }
+  
+  /**
+   *
+   * Verify a signature on a string
+   *
+   * @param  string   $data       Signed data
+   * @param  string   $address    Address that signed data
+   * @param  string   $signature  Signature to verify
+   *
+   * @return boolean  $good       Verification status
+   * 
+   */
+  public function verify($data, $address, $signature) {
+    if (!isset($data)) {
+      throw new Exception('Error: Signed data required');
+    }
+    if (!isset($address)) {
+      throw new Exception('Error: Signing address required');
+    }
+    if (!isset($signature)) {
+      throw new Exception('Error: Signature required');
+    }
+
+    $notes_parameters = array('data' => $data, 'address' => $address, 'signature' => $signature);
+
+    return $this->_run('verify', $notes_parameters);
+  }
+  
+  /**
+   *
+   * Export a signed set of key images
+   *
+   * @return  array  $signed_key_images  Array of signed key images
+   *
+   */
+  public function export_key_images() {
+    return $this->_run('export_key_images');
+  }
+  
+  /**
+   *
+   * Import a signed set of key images
+   *
+   * @param  array   $signed_key_images  Array of signed key images
+   *
+   * @return number  $height
+   * @return number  $spent
+   * @return number  $unspent
+   * 
+   */
+  public function import_key_images($signed_key_images) {
+    if (!isset($signed_key_images)) {
+      throw new Exception('Error: Signed key images required');
+    }
+
+    $import_parameters = array('signed_key_images' => $signed_key_images);
+
+    return $this->_run('import_key_images', $import_parameters);
+  }
+  
+  /**
+   *
+   * Retrieve entries from the address book
+   *
+   * @param  array   $entries  Array of indices to return from the address book
+   *
+   * @return array   $entries  Array of entries returned from the address book
+   * 
+   */
+  public function get_address_book($entries) {
+    if (!isset($entries)) {
+      throw new Exception('Error: Entry indices required');
+    }
+
+    $entries_parameters = array('entries' => $entries);
+
+    return $this->_run('get_address_book', $entries_parameters);
+  }
+  
+  /**
+   *
+   * Retrieve entries from the address book
+   *
+   * @param  string  $address      Address to add to address book
+   * @param  string  $payment_id   Payment ID to use with address in address book (optional)
+   * @param  string  $description  Description of address                         (optional)
+   *
+   * @return number  $index        Index of address in address book
+   * 
+   */
+  public function add_address_book($address, $payment_id, $description) {
     if (!isset($address)) {
       throw new Exception('Error: Address required');
     }
+    if (isset($payment_id)) {
+      if ($payment_id) {
+        $transfer_parameters['payment_id'] = $payment_id;
+      }
+    }
+    if (isset($description)) {
+      if ($description) {
+        $transfer_parameters['description'] = $description;
+      }
+    }
 
-    $this->rescan_spent(); // Workaround to make sure that transfer isn't rejected due to double spend
+    $address_parameters = array('address' => $address);
+
+    return $this->_run('add_address_book', $address_parameters);
+  }
+  
+  /**
+   *
+   * Delete an entry from the address book
+   *
+   * @param  array   $index  Index of the address book entry to remove
+   * 
+   */
+  public function delete_address_book($index) {
+    if (!isset($index)) {
+      throw new Exception('Error: Entry index required');
+    }
+
+    $delete_parameters = array('index' => $index);
+
+    return $this->_run('delete_address_book', $delete_parameters);
+  }
+  
+  /**
+   *
+   * Rescan the blockchain for spent outputs
+   * 
+   */
+  public function rescan_spent() {
+    return $this->_run('rescan_spent');
+  }
+  
+  /**
+   *
+   * Start mining in the Monero daemon
+   *
+   * @param  number   $threads_count         Number of threads with which to mine
+   * @param  boolean  $do_background_mining  Mine in backgound?
+   * @param  boolean  $ignore_battery        Ignore battery?  
+   * 
+   */
+  public function start_mining($threads_count, $do_background_mining, $ignore_battery) {
+    if (!isset($threads_count)) {
+      throw new Exception('Error: Threads required');
+    }
+    if (!isset($do_background_mining)) {
+      throw new Exception('Error: Background mining boolean required');
+    }
+    if (!isset($ignore_battery)) {
+      throw new Exception('Error: Inore battery boolean required');
+    }
+
+    $mining_parameters = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
+
+    return $this->_run('start_mining', $mining_parameters);
+  }
+  
+  /**
+   *
+   * Stop mining
+   * 
+   */
+  public function stop_mining() {
+    return $this->_run('stop_mining');
+  }
+  
+  /**
+   *
+   * Get a list of available languages for your wallet's seed
+   * 
+   * @return array  List of available languages
+   *
+   */
+  public function get_languages() {
+    return $this->_run('get_languages');
+  }
+
+  /**
+   *
+   * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an array (as listed at bottom.)  If multiple destinations are required, use the array format and use
+   * 
+   * @param  string  $amount       Amount to transfer
+   * @param  string  $address      Address to transfer to
+   * @param  number  $mixin        Mixin number                                (optional)
+   * @param  number  $index        Account to send from                        (optional)
+   * @param  number  $priority     Payment ID                                  (optional)
+   * @param  string  $pid          Payment ID                                  (optional)
+   * @param  number  $unlock_time  UNIX time or block height to unlock output  (optional)
+   * 
+   *   OR
+   * 
+   * @param  object  $params        Array containing any of the options listed above, where only amount and address are required
+   *
+   * @return object  Example: {
+   *   "amount": "1000000000000",
+   *   "fee": "1000020000",
+   *   "tx_hash": "c60a64ddae46154a75af65544f73a7064911289a7760be8fb5390cb57c06f2db",
+   *   "tx_key": "805abdb3882d9440b6c80490c2d6b95a79dbc6d1b05e514131a91768e8040b04"
+   * }
+   *
+   */
+  public function transfer($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+    if (is_array($amount)) { // Parameters passed in as object
+      $params = $amount;
+
+      if (array_key_exists('destinations', $params)) {
+        $destinations = $params['destinations'];
+
+        foreach ($destinations as $key => $amount) {
+          if ($key == 'amount') {
+            // Convert from moneroj to tacoshi (piconero)
+            $destinations[$key] = $amount * 1000000000000;
+          }
+        }
+      } else {
+        if (array_key_exists('amount', $params)) {
+          $amount = $params['amount'];
+        } else {
+          throw new Exception('Error: Amount required');
+        }
+        if (array_key_exists('address', $params)) {
+          $address = $params['address'];
+        } else {
+          throw new Exception('Error: Address required');
+        }
     
-    // Convert from moneroj to tacoshi (piconero)
-    $new_amount = $amount  * 1000000000000;
+        // Convert from moneroj to tacoshi (piconero)
+        $new_amount = $amount  * 1000000000000;
 
-    $destinations = array('amount' => $new_amount, 'address' => $address);
-    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
+        $destinations = array('amount' => $new_amount, 'address' => $address);
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('index', $params)) {
+        $index = $params['index'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
+      if (array_key_exists('pid', $params)) {
+        $pid = $params['pid'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('do_not_relay', $params)) {
+        $do_not_relay = $params['do_not_relay'];
+      }
+    } else { // Legacy parameters used
+      if (!isset($amount)) {
+        throw new Exception('Error: Amount required');
+      }
+      if (!isset($address) || !$address) {
+        throw new Exception('Error: Address required');
+      }
+    
+      // Convert from moneroj to tacoshi (piconero)
+      $new_amount = $amount  * 1000000000000;
+
+      $destinations = array('amount' => $new_amount, 'address' => $address);
+    }
+
+    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
+    if (isset($index)) {
+      if ($index) {
+        $transfer_parameters['index'] = $index;
+      }
+    }
+    if (isset($pid)) {
+      if ($pid) {
+        $transfer_parameters['payment_id'] = $pid;
+      }
+    }
+    if (isset($priority)) {
+      if ($priority) {
+        $transfer_parameters['priority'] = $priority;
+      }
+    }
+    if (isset($unlock_time)) {
+      if ($unlock_time) {
+        $transfer_parameters['unlock_time'] = $unlock_time;
+      }
+    }
+    if (isset($do_not_relay)) {
+      if ($do_not_relay) {
+        $transfer_parameters['do_not_relay'] = $do_not_relay;
+      }
+    }
+
     $transfer_method = $this->_run('transfer', $transfer_parameters);
 
-    // $save = $this->store(); // Save wallet state after transfer
+    $save = $this->store(); // Save wallet state after transfer
 
     return $transfer_method;
   }
   
   /**
    *
-   * Save wallet.
+   * Same as transfer, but splits transfer into more than one transaction if necessary
+   *
+   */
+  public function transfer_split($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+    if (is_array($amount)) { // Parameters passed in as object
+      $params = $amount;
+
+      if (array_key_exists('destinations', $params)) {
+        $destinations = $params['destinations'];
+
+        foreach ($destinations as $destination => $recipient) {
+          if (!array_key_exists('amount', $destinations[$destination])) {
+            throw new Exception('Error: Amount required for each destination');
+          }
+          if (!array_key_exists('address', $destinations[$destination])) {
+            throw new Exception('Error: Address required for each destination');
+          }
+
+          // Convert from moneroj to tacoshi (piconero)
+          $destinations[$destination]['amount'] = $destinations[$destination]['amount'] * 1000000000000;
+        }
+      } else {
+        if (array_key_exists('amount', $params)) {
+          $amount = $params['amount'];
+        } else {
+          throw new Exception('Error: Amount required');
+        }
+        if (array_key_exists('address', $params)) {
+          $address = $params['address'];
+        } else {
+          throw new Exception('Error: Address required');
+        }
+    
+        // Convert from moneroj to tacoshi (piconero)
+        $new_amount = $amount * 1000000000000;
+
+        $destinations = array('amount' => $new_amount, 'address' => $address);
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('index', $params)) {
+        $index = $params['index'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
+      if (array_key_exists('pid', $params)) {
+        $pid = $params['pid'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('do_not_relay', $params)) {
+        $do_not_relay = $params['do_not_relay'];
+      }
+    } else { // Legacy parameters used
+      if (!isset($amount)) {
+        throw new Exception('Error: Amount required');
+      }
+      if (!isset($address) || !$address) {
+        throw new Exception('Error: Address required');
+      }
+    
+      // Convert from moneroj to tacoshi (piconero)
+      $new_amount = $amount * 1000000000000;
+
+      $destinations = array('amount' => $new_amount, 'address' => $address);
+    }
+
+    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
+    if (isset($index)) {
+      if ($index) {
+        $transfer_parameters['index'] = $index;
+      }
+    }
+    if (isset($pid)) {
+      if ($pid) {
+        $transfer_parameters['payment_id'] = $pid;
+      }
+    }
+    if (isset($priority)) {
+      if ($priority) {
+        $transfer_parameters['priority'] = $priority;
+      }
+    }
+    if (isset($unlock_time)) {
+      if ($unlock_time) {
+        $transfer_parameters['unlock_time'] = $unlock_time;
+      }
+    }
+    if (isset($do_not_relay)) {
+      if ($do_not_relay) {
+        $transfer_parameters['do_not_relay'] = $do_not_relay;
+      }
+    }
+
+    $transfer_method = $this->_run('transfer_split', $transfer_parameters);
+
+    $save = $this->store(); // Save wallet state after transfer
+
+    return $transfer_method;
+  }
+  
+  /**
+   *
+   * Save wallet
    *
    */
   public function store() {
@@ -390,7 +836,125 @@ class walletRPC {
   
   /**
    *
-   * Get a list of incoming payments using a given payment id.
+   * Send all dust outputs back to the wallet's, to make them easier to spend (and mix)
+   *
+   */
+  public function sweep_dust() {
+    return $this->_run('sweep_dust');
+  }
+  
+  /**
+   *
+   * Send all unlocked balance to an address
+   * 
+   * @param  string  $address       Address to transfer to
+   * @param  number  $below_amount  Only send outputs below this amount         (optional)
+   * @param  number  $mixin         Mixin number                                (optional)
+   * @param  number  $index         Account to send from                        (optional)
+   * @param  number  $priority      Payment ID                                  (optional)
+   * @param  string  $pid           Payment ID                                  (optional)
+   * @param  number  $unlock_time   UNIX time or block height to unlock output  (optional)
+   * 
+   *   OR
+   * 
+   * @param  object  $params        Array containing any of the options listed above, where only amount and address are required
+   *
+   * @return object  Example: {
+   *   "amount": "1000000000000",
+   *   "fee": "1000020000",
+   *   "tx_hash": "c60a64ddae46154a75af65544f73a7064911289a7760be8fb5390cb57c06f2db",
+   *   "tx_key": "805abdb3882d9440b6c80490c2d6b95a79dbc6d1b05e514131a91768e8040b04"
+   * }
+   *
+   */
+  public function sweep_all($address, $below_amount = 0, $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+    if (is_array($address)) { // Parameters passed in as object
+      $params = $address;
+
+      if (array_key_exists('address', $params)) {
+        $address = $params['address'];
+      } else {
+        throw new Exception('Error: Address required');
+      }
+
+      if (array_key_exists('below_amount', $params)) {
+        $below_amount = $params['below_amount'];
+
+        // Convert from moneroj to tacoshi (piconero)
+        $new_below_amount = $below_amount * 1000000000000;
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('index', $params)) {
+        $index = $params['index'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
+      if (array_key_exists('pid', $params)) {
+        $pid = $params['pid'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('do_not_relay', $params)) {
+        $do_not_relay = $params['do_not_relay'];
+      }
+    } else { // Legacy parameters used
+      if (!isset($address) || !$address) {
+        throw new Exception('Error: Address required');
+      }
+
+      // Convert from moneroj to tacoshi (piconero)
+      $new_below_amount = $below_amount * 1000000000000;
+    }
+
+    $transfer_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true);
+    if (isset($new_below_amount)) {
+      if ($new_below_amount) {
+        $transfer_parameters['below_amount'] = $new_below_amount;
+      }
+    }
+    if (isset($index)) {
+      if ($index) {
+        $transfer_parameters['index'] = $index;
+      }
+    }
+    if (isset($pid)) {
+      if ($pid) {
+        $transfer_parameters['payment_id'] = $pid;
+      }
+    }
+    if (isset($priority)) {
+      if ($priority) {
+        $transfer_parameters['priority'] = $priority;
+      }
+    }
+    if (isset($unlock_time)) {
+      if ($unlock_time) {
+        $transfer_parameters['unlock_time'] = $unlock_time;
+      }
+    }
+    if (isset($do_not_relay)) {
+      if ($do_not_relay) {
+        $transfer_parameters['do_not_relay'] = $do_not_relay;
+      }
+    }
+
+    $sweep_all_method = $this->_run('sweep_all', $transfer_parameters);
+
+    $save = $this->store(); // Save wallet state after transfer
+
+    return $sweep_all_method;
+  }
+  
+  /**
+   *
+   * Get a list of incoming payments using a given payment id
    *
    * @param  string  $payment_id  Payment ID to look up
    *
@@ -417,7 +981,7 @@ class walletRPC {
   
   /**
    *
-   * Get a list of incoming payments using a given payment ID (or a list of payments IDs) from a given height.
+   * Get a list of incoming payments using a given payment ID (or a list of payments IDs) from a given height
    *
    * @param  string  $payment_id        Payment ID to look up
    * @param  string  $min_block_height  Height to begin search
@@ -448,7 +1012,7 @@ class walletRPC {
   
   /**
    *
-   * Show information about a transfer with a given transaction ID.
+   * Show information about a transfer with a given transaction ID
    *
    * @param  string  $txid  Transaction ID to look up
    *
@@ -475,16 +1039,6 @@ class walletRPC {
     $get_transfer_by_txid = $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
     return $get_transfer_by_txid;
   }
-
-  
-  /**
-   *
-   * Rescan blockchain from scratch.
-   *
-   */
-  public function rescan_blockchain() {
-    return $this->_run('rescan_blockchain');
-  }
   
   /**
    *
@@ -502,7 +1056,7 @@ class walletRPC {
   
   /**
    *
-   * Open a wallet.
+   * Open a wallet
    *
    * @param  string  $filename  Filename to use for new wallet
    * @param  string  $password  Password to use for new wallet
@@ -535,15 +1089,6 @@ class walletRPC {
     $sign_parameters = array('string' => $data);
     $sign_method = $this->_run('sign',$sign_parameters);
     return $sign_method;
-  }
-  
-  /**
-   *
-   * Rescan spent outputs.
-   *
-   */
-  public function rescan_spent() {
-    return $this->_run('rescan_spent');
   }
   
 }
