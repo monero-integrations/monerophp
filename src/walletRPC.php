@@ -7,12 +7,12 @@
  * https://github.com/monero-integrations/monerophp
  *
  * Using work from
- *   CryptoChangements (Monero_RPC) <https://github.com/cryptochangements34>
- *   Serhack (Monero Integrations) <https://github/serhack>
- *   TheKoziTwo (xmr-integration) <thekozitwo@gmail.com>
- *   Kacper Rowinski (jsonRPCClient) <krowinski@implix.com>
+ *   CryptoChangements [Monero_RPC] <bW9uZXJv@gmail.com> (https://github.com/cryptochangements34)
+ *   Serhack [Monero Integrations] <nico@serhack.me> (https://serhack.me)
+ *   TheKoziTwo [xmr-integration] <thekozitwo@gmail.com>
+ *   Kacper Rowinski [jsonRPCClient] <krowinski@implix.com>
  * 
- * @author     Monero Integrations Team <https://github.com/monero-integrations>
+ * @author     Monero Integrations Team <support@monerointegrations.com> (https://github.com/monero-integrations)
  * @copyright  2018
  * @license    MIT
  *  
