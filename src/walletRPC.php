@@ -77,21 +77,6 @@ class walletRPC {
     $result = $this->client->_run($method, $params);
     return $result;
   }
-  
-  /**
-   *
-   * Convert between moneroj and tacoshi (piconero)
-   *
-   * @param  string  $amount  Monero amount to convert to tacoshi (piconero)
-   *
-   * @return string  Call result
-   *
-   */
-  private function _transform($amount) {
-    // Convert from moneroj to tacoshi (piconero)
-    $new_amount = $amount * 100000000;
-    return $new_amount;
-  }
     
   /**
    *
@@ -662,9 +647,6 @@ class walletRPC {
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
       if (array_key_exists('do_not_relay', $params)) {
         $do_not_relay = $params['do_not_relay'];
       }
@@ -696,11 +678,6 @@ class walletRPC {
     if (isset($priority)) {
       if ($priority) {
         $transfer_parameters['priority'] = $priority;
-      }
-    }
-    if (isset($unlock_time)) {
-      if ($unlock_time) {
-        $transfer_parameters['unlock_time'] = $unlock_time;
       }
     }
     if (isset($do_not_relay)) {
