@@ -36,12 +36,17 @@ Copyright (c) 2018 Monero-Integrations
             $result = bin2hex($this->ed25519->encodeint($modulo));
             return $result;
         }
+
+        public function hash_to_scalar($data)
+        {
+            $hash = $this->keccak_256($data);
+            $scalar = $this->sc_reduce($hash);
+            return $scalar;
+        }
         
         public function derive_viewKey($spendKey)
         {
-            $hashed = $this->keccak_256($spendKey);
-            $viewKey = $this->sc_reduce($hashed);
-            return $viewKey;
+            return $this->hash_to_scalar($spendkey);
         }
         
         public function gen_private_keys($seed)
@@ -61,6 +66,76 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex($this->ed25519->encodepoint($aG));
         }
 
+        public function gen_key_derivation($public, $private)
+        {
+            $point = $this->ed25519->scalarmult($this->ed25519->decodepoint(hex2bin($public)), $this->ed25519->decodeint(hex2bin($private)));
+            $res = $this->ed25519->scalarmult($point, 8);
+            return bin2hex($this->ed25519->encodepoint($res));
+        }
+
+        public function encode_varint($data)
+        {
+            $orig = $data;
+
+            if ($data < 0x80)
+            {
+               return bin2hex(pack('C', $data));
+            }
+
+            $encodedBytes = [];
+            while ($data > 0)
+            {
+               $encodedBytes[] = 0x80 | ($data & 0x7f);
+               $data >>= 7;
+            }
+
+            $encodedBytes[count($encodedBytes)-1] &= 0x7f;
+            $bytes = call_user_func_array('pack', array_merge(array('C*'), $encodedBytes));;
+            return bin2hex($bytes);
+        }
+
+        public function derivation_to_scalar($der, $index)
+        {
+            $encoded = $this->encode_varint($index);
+            $data = $der . $encoded;
+            return $this->hash_to_scalar($data);
+        }
+
+        // this is a one way function used for both encrypting and decrypting 8 byte payment IDs
+        public function stealth_payment_id($payment_id, $tx_pub_key, $viewkey)
+        {
+            if(strlen($payment_id) != 16)
+            {
+               throw new Exception("Error: Incorrect payment ID size. Should be 8 bytes");
+            }
+            $der = $this->gen_key_derivation($tx_pub_key, $viewkey);
+            $data = $der . '8d';
+            $hash = $this->keccak_256($data);
+            $key = substr($hash, 0, 16);
+            $result = bin2hex(pack('H*',$payment_id) ^ pack('H*',$key));
+            return $result;
+        }
+
+        // takes transaction extra field as hex string and returns transaction public key 'R' as hex string
+        public function txpub_from_extra($extra)
+        {
+            $parsed = array_map("hexdec", str_split($extra, 2));
+
+            if($parsed[0] == 1)
+            {
+                return substr($extra, 2, 64);
+            }
+
+            if($parsed[0] == 2)
+            {
+                if($parsed[0] == 2 || $parsed[2] == 1)
+                {
+                    $offset = (($parsed[1] + 2) *2) + 2;
+                    return substr($extra, (($parsed[1] + 2) *2) + 2, 64);
+                }
+            }
+        }
+
 	public function encode_address($pSpendKey, $pViewKey)
 	{
 	    // mainnet network byte is 18 (0x12)
@@ -69,10 +144,27 @@ Copyright (c) 2018 Monero-Integrations
 	    return $encoded;
 	}
 
+	public function verify_checksum($address)
+	{
+	    $decoded = $this->base58->decode($address);
+	    $checksum = substr($decoded, -8);
+	    $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
+	    $calculated = substr($checksum_hash, 0, 8);
+	    if($checksum == $calculated){
+	    	return true;
+	    }
+	    else
+		return false;
+	}
+
 	// param (string) $address = base58 encoded monero address
 	public function decode_address($address)
         {
             $decoded = $this->base58->decode($address);
+
+	    if(!$this->verify_checksum($address)){
+		throw new Exception("Error: invalid checksum");
+	    }
 
 	    $network_byte = substr($decoded, 0, 2);
 	    $public_spendKey = substr($decoded, 2, 64);
@@ -81,6 +173,15 @@ Copyright (c) 2018 Monero-Integrations
 	    $result = array("networkByte" => $network_byte,
 			    "spendKey" => $public_spendKey,
 			    "viewKey" => $public_viewKey);
+            return $result;
+        }
+
+        public function integrated_addr_from_keys($public_spendkey, $public_viewkey, $payment_id)
+        {
+            // 0x13 is the mainnet network byte for integrated addresses
+            $data = "13".$public_spendkey.$public_viewkey.$payment_id;
+            $checksum = substr($this->keccak_256($data), 0, 8);
+            $result = $this->base58->encode($data.$checksum);
             return $result;
         }
 
