@@ -1,7 +1,7 @@
 {
     "name": "monero-integrations/monerophp",
-    "description": "A PHP library for the Monero Wallet RPC JSON-RPC interface.",
-    "keywords": ["Monero", "JSON-RPC", "cryptocurrency", "XMR"],
+    "description": "A Monero library written in PHP by the Monero-Integrations team.",
+    "keywords": ["Monero", "XMR", "monerod", "monero-wallet-rpc", "cryptonote", "JSONRPC", "JSON-RPC", "cryptocurrency"],
     "homepage": "https://github.com/monero-integrations/monerophp",
     "type": "library",
     "license": "MIT",
@@ -9,6 +9,14 @@
         {
             "name": "SerHack",
             "email": "support@monerointegrations.com"
+        },
+        {
+            "name": "cryptochangements34",
+            "email": "bW9uZXJv@gmail.com"
+        },
+        {
+            "name": "sneurlax",
+            "email": "sneurlax@gmail.com"
         }
     ],
     "require": {
