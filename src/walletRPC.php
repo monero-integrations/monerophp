@@ -473,21 +473,7 @@ class walletRPC
       $destinations = array('amount' => $new_amount, 'address' => $address);
     }
 
-    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
-    // Could maybe set these parameters naively, need to test if RPC throws an error if an empty value is passed
-    if ($payment_id) {
-      $transfer_parameters['payment_id'] = $payment_id;
-    }
-    if ($index) {
-      $transfer_parameters['index'] = $index;
-    }
-    if ($priority) {
-      $transfer_parameters['priority'] = $priority;
-    }
-    if ($do_not_relay) {
-      $transfer_parameters['do_not_relay'] = $do_not_relay;
-    }
-
+    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'index' => $index, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
     $transfer_method = $this->_run('transfer', $transfer_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -564,24 +550,8 @@ class walletRPC
       $destinations = array('amount' => $new_amount, 'address' => $address);
     }
 
-    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
-    if ($index) {
-      $transfer_parameters['index'] = $index;
-    }
-    if ($payment_id) {
-      $transfer_parameters['payment_id'] = $payment_id;
-    }
-    if ($priority) {
-      $transfer_parameters['priority'] = $priority;
-    }
-    if ($unlock_time) {
-      $transfer_parameters['unlock_time'] = $unlock_time;
-    }
-    if ($do_not_relay) {
-      $transfer_parameters['do_not_relay'] = $do_not_relay;
-    }
-
-    $transfer_method = $this->_run('transfer_split', $transfer_parameters);
+    $transfer_split_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'index' => $index, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $transfer_method = $this->_run('transfer_split', $transfer_split_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
 
@@ -684,27 +654,8 @@ class walletRPC
       $new_below_amount = $below_amount * 1000000000000;
     }
 
-    $transfer_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true);
-    if ($subaddr_indices) {
-      $transfer_parameters['subaddr_indices'] = $subaddr_indices;
-    }
-    if ($payment_id) {
-      $transfer_parameters['payment_id'] = $payment_id;
-    }
-    if ($priority) {
-      $transfer_parameters['priority'] = $priority;
-    }
-    if ($new_below_amount) {
-      $transfer_parameters['below_amount'] = $new_below_amount;
-    }
-    if ($unlock_time) {
-      $transfer_parameters['unlock_time'] = $unlock_time;
-    }
-    if ($do_not_relay) {
-      $transfer_parameters['do_not_relay'] = $do_not_relay;
-    }
-
-    $sweep_all_method = $this->_run('sweep_all', $transfer_parameters);
+    $sweep_all_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $new_below_amount, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $sweep_all_method = $this->_run('sweep_all', $sweep_all_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
 
@@ -784,27 +735,8 @@ class walletRPC
       $new_below_amount = $below_amount * 1000000000000;
     }
 
-    $transfer_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true);
-    if ($account_index) {
-      $transfer_parameters['account_index'] = $account_index;
-    }
-    if ($payment_id) {
-      $transfer_parameters['payment_id'] = $payment_id;
-    }
-    if ($priority) {
-      $transfer_parameters['priority'] = $priority;
-    }
-    if ($new_below_amount) {
-      $transfer_parameters['below_amount'] = $new_below_amount;
-    }
-    if ($unlock_time) {
-      $transfer_parameters['unlock_time'] = $unlock_time;
-    }
-    if ($do_not_relay) {
-      $transfer_parameters['do_not_relay'] = $do_not_relay;
-    }
-
-    $sweep_single_method = $this->_run('sweep_single', $transfer_parameters);
+    $sweep_single_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $new_below_amount, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $sweep_single_method = $this->_run('sweep_single', $sweep_single_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
 
@@ -1447,15 +1379,7 @@ class walletRPC
    */
   public function add_address_book($address, $payment_id, $description)
   {
-    $address_parameters = array('address' => $address);
-
-    if ($payment_id) {
-      $transfer_parameters['payment_id'] = $payment_id;
-    }
-    if ($description) {
-      $transfer_parameters['description'] = $description;
-    }
-
+    $address_parameters = array('address' => $address, 'payment_id' => $payment_id, 'description' => $description);
     return $this->_run('add_address_book', $address_parameters);
   }
   
