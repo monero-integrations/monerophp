@@ -627,7 +627,13 @@ class walletRPC
   
   /**
    *
-   * Send all dust outputs back to the wallet's, to make them easier to spend (and mix)
+   * Send all dust outputs back to the wallet to make them easier to spend (and mix)
+   *
+   * @param  none
+   *
+   * @return object  Example: {
+   *   "multisig_txset": []
+   * }
    *
    */
   public function sweep_dust()
