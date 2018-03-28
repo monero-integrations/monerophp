@@ -93,19 +93,6 @@ class walletRPC {
   
   /**
    *
-   * Look up wallet address
-   *
-   * @return object  Example: {
-   *   "address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
-   * }
-   *
-   */
-  public function getaddress() {
-    return $this->_run('getaddress');
-  }
-  
-  /**
-   *
    * Look up wallet balance
    *
    * @return object  Example: {
@@ -120,6 +107,19 @@ class walletRPC {
   
   /**
    *
+   * Look up wallet address
+   *
+   * @return object  Example: {
+   *   "address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
+   * }
+   *
+   */
+  public function getaddress() {
+    return $this->_run('getaddress');
+  }
+
+  /**
+   *
    * Look up current height of wallet
    *
    * @return object  Example: {
@@ -129,453 +129,6 @@ class walletRPC {
    */
   public function getheight() {
     return $this->_run('getheight');
-  }
-  
-  /**
-   *
-   * Look up transfers
-   *
-   * @param  string  $input_type   Transfer type; must be 'in', 'out', 'pending', 'failed', 'pool', 'filter_by_height', 'min_height', or 'max_height'
-   * @param  string  $input_value  Input value of above
-   *
-   * @return object  Example: {
-   *   "pool": [{
-   *     "amount": 500000000000,
-   *     "fee": 0,
-   *     "height": 0,
-   *     "note": "",
-   *     "payment_id": "758d9b225fda7b7f",
-   *     "timestamp": 1488312467,
-   *     "txid": "da7301d5423efa09fabacb720002e978d114ff2db6a1546f8b820644a1b96208",
-   *     "type": "pool"
-   *   }]
-   * }
-   *
-   */
-  public function get_transfers($input_type, $input_value) {
-    if (!isset($input_type)) {
-      throw new Exception('Error: Input type required');
-    }
-    if (!isset($input_value)) {
-      throw new Exception('Error: Input value required');
-    }
-
-    $get_parameters = array($input_type => $input_value);
-    $get_transfers = $this->_run('get_transfers', $get_parameters);
-    return $get_transfers;
-  }
-  
-  /**
-   *
-   * Look up incoming transfers
-   *
-   * @param  string  $type  Type of transfer to look up; must be 'all', 'available', or 'unavailable' (incoming transfers which have already been spent)
-   *
-   * @return object  Example: {
-   *   "transfers": [{
-   *     "amount": 10000000000000,
-   *     "global_index": 711506,
-   *     "spent": false,
-   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
-   *     "tx_size": 5870
-   *   },{
-   *     "amount": 300000000000,
-   *     "global_index": 794232,
-   *     "spent": false,
-   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
-   *     "tx_size": 5870
-   *   },{
-   *     "amount": 50000000000,
-   *     "global_index": 213659,
-   *     "spent": false,
-   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
-   *     "tx_size": 5870
-   *   }]
-   * }
-   */
-  public function incoming_transfers($type = 'all') {
-    $incoming_parameters = array('transfer_type' => $type);
-    $incoming_transfers = $this->_run('incoming_transfers', $incoming_parameters);
-    return $incoming_transfers;
-  }
-  
-  /**
-   *
-   * Look up wallet view key
-   *
-   * @return object  Example: {
-   *   "key": "7e341d..."
-   * }
-   *
-   */
-  public function view_key() {
-    $query_key = array('key_type' => 'view_key');
-    $query_key_method = $this->_run('query_key', $query_key);
-    return $query_key_method;
-  }
-  
-  /**
-   *
-   * Look up wallet spend key
-   *
-   * @return object  Example: {
-   *   "key": "2ab810..."
-   * }
-   *
-   */
-  public function spend_key() {
-    $query_key = array('key_type' => 'spend_key');
-    $query_key_method = $this->_run('query_key', $query_key);
-    return $query_key_method;
-  }
-  
-  /**
-   *
-   * Look up wallet spend key
-   *
-   * @return object  Example: {
-   *   "key": "2ab810..."
-   * }
-   *
-   */
-  public function mnemonic() {
-    $query_key = array('key_type' => 'mnemonic');
-    $query_key_method = $this->_run('query_key', $query_key);
-    return $query_key_method;
-  }
-  
-  /**
-   *
-   * Make an integrated address from the wallet address and a payment ID
-   *
-   * @param  string  $payment_id  Payment ID to use when generating an integrated address (optional)
-   *
-   * @return object  Example: {
-   *   "integrated_address": "4BpEv3WrufwXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQQ8H2RRJveAtUeiFs6J"
-   * }
-   *
-   */
-  public function make_integrated_address($payment_id = null) {
-    $integrate_address_parameters = array('payment_id' => $payment_id);
-    $integrate_address_method = $this->_run('make_integrated_address', $integrate_address_parameters);
-    return $integrate_address_method;
-  }
-  
-  /**
-   *
-   * Retrieve the standard address and payment ID corresponding to an integrated address
-   *
-   * @param  string  $integrated_address  Integrated address to split
-   *
-   * @return object  Example: {
-   *   "payment_id": "&lt;420fa29b2d9a49f5&gt;",
-   *   "standard_address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
-   * }
-   *
-   */
-  public function split_integrated_address($integrated_address) {
-    if (!isset($integrated_address)) {
-      throw new Exception('Error: Integrated address required');
-    }
-    
-    if (!isset($integrated_address)) {
-      throw new Exception('Error: Integrated address required');
-    }
-
-    $split_parameters = array('integrated_address' => $integrated_address);
-    $split_methods = $this->_run('split_integrated_address', $split_parameters);
-    return $split_methods;
-  }
-  
-  /**
-   *
-   * Stop the wallet, saving the state
-   *
-   */
-  public function stop_wallet() {
-    return $this->_run('stop_wallet');
-  }
-
-  /**
-   *
-   * Create a payment URI using the official URI spec
-   *
-   * @param  string  $address         Address to include
-   * @param  string  $amount          Amount to request
-   * @param  string  $recipient_name  Name of recipient    (optional)
-   * @param  string  #description     Payment description  (optional)
-   *
-   * @return object  Example: 
-   *
-   */
-  public function make_uri($address, $amount, $recipient_name = null, $description = null) {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-    if (!isset($amount)) {
-      throw new Exception('Error: Amount required');
-    }
-
-    // Convert from moneroj to tacoshi (piconero)
-    $new_amount = $amount * 1000000000000;
-       
-    $uri_parameters = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
-    $uri = $this->_run('make_uri', $uri_parameters);
-    return $uri;
-  }
-
-  /**
-   *
-   * Parse a payment URI to get payment information
-   *
-   * @param  string  $uri  Payment URI
-   *
-   * @return object  Example: {
-   *   "uri": {
-   *     "address": "44AFFq5kSiGBoZ4NMDwYtN18obc8AemS33DBLWs3H7otXft3XjrpDtQGv7SqSsaBYBb98uNbr2VBBEt7f2wfn3RVGQBEP3A",
-   *     "amount": 10,
-   *     "payment_id": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-   *     "recipient_name": "Monero Project donation address",
-   *     "tx_description": "Testing out the make_uri function."
-   *   }
-   * }
-   *
-   */
-  public function parse_uri($uri) {
-    if (!isset($uri)) {
-      throw new Exception('Error: Payment URI required');
-    }
-
-    $uri_parameters = array('uri' => $uri);
-    $parsed_uri = $this->_run('parse_uri', $uri_parameters);
-    return $parsed_uri;
-  }
-  
-  /**
-   *
-   * Rescan blockchain from scratch
-   *
-   */
-  public function rescan_blockchain() {
-    return $this->_run('rescan_blockchain');
-  }
-  
-  /**
-   *
-   * Set arbitrary string notes for transactions
-   *
-   * @param  array  $txids  Array of transaction IDs (strings) to apply notes to
-   * @param  array  $notes  Array of notes (strings) to add 
-   *
-   */
-  public function set_tx_notes($txids, $notes) {
-    if (!isset($txids)) {
-      throw new Exception('Error: Transaction IDs required');
-    }
-    if (!isset($notes)) {
-      throw new Exception('Error: Notes required');
-    }
-
-    $notes_parameters = array('txids' => $txids, 'notes' => $notes);
-
-    return $this->_run('set_tx_notes', $notes_parameters);
-  }
-  
-  /**
-   *
-   * Get string notes for transactions
-   *
-   * @param  array  $txids  Array of transaction IDs (strings) to look up
-   *
-   */
-  public function get_tx_notes($txids) {
-    if (!isset($txids)) {
-      throw new Exception('Error: Transaction IDs required');
-    }
-
-    $notes_parameters = array('txids' => $txids);
-
-    return $this->_run('get_tx_notes', $notes_parameters);
-  }
-  
-  /**
-   *
-   * Verify a signature on a string
-   *
-   * @param  string   $data       Signed data
-   * @param  string   $address    Address that signed data
-   * @param  string   $signature  Signature to verify
-   *
-   * @return boolean  $good       Verification status
-   * 
-   */
-  public function verify($data, $address, $signature) {
-    if (!isset($data)) {
-      throw new Exception('Error: Signed data required');
-    }
-    if (!isset($address)) {
-      throw new Exception('Error: Signing address required');
-    }
-    if (!isset($signature)) {
-      throw new Exception('Error: Signature required');
-    }
-
-    $notes_parameters = array('data' => $data, 'address' => $address, 'signature' => $signature);
-
-    return $this->_run('verify', $notes_parameters);
-  }
-  
-  /**
-   *
-   * Export a signed set of key images
-   *
-   * @return  array  $signed_key_images  Array of signed key images
-   *
-   */
-  public function export_key_images() {
-    return $this->_run('export_key_images');
-  }
-  
-  /**
-   *
-   * Import a signed set of key images
-   *
-   * @param  array   $signed_key_images  Array of signed key images
-   *
-   * @return number  $height
-   * @return number  $spent
-   * @return number  $unspent
-   * 
-   */
-  public function import_key_images($signed_key_images) {
-    if (!isset($signed_key_images)) {
-      throw new Exception('Error: Signed key images required');
-    }
-
-    $import_parameters = array('signed_key_images' => $signed_key_images);
-
-    return $this->_run('import_key_images', $import_parameters);
-  }
-  
-  /**
-   *
-   * Retrieve entries from the address book
-   *
-   * @param  array   $entries  Array of indices to return from the address book
-   *
-   * @return array   $entries  Array of entries returned from the address book
-   * 
-   */
-  public function get_address_book($entries) {
-    if (!isset($entries)) {
-      throw new Exception('Error: Entry indices required');
-    }
-
-    $entries_parameters = array('entries' => $entries);
-
-    return $this->_run('get_address_book', $entries_parameters);
-  }
-  
-  /**
-   *
-   * Retrieve entries from the address book
-   *
-   * @param  string  $address      Address to add to address book
-   * @param  string  $payment_id   Payment ID to use with address in address book (optional)
-   * @param  string  $description  Description of address                         (optional)
-   *
-   * @return number  $index        Index of address in address book
-   * 
-   */
-  public function add_address_book($address, $payment_id, $description) {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-    if (isset($payment_id)) {
-      if ($payment_id) {
-        $transfer_parameters['payment_id'] = $payment_id;
-      }
-    }
-    if (isset($description)) {
-      if ($description) {
-        $transfer_parameters['description'] = $description;
-      }
-    }
-
-    $address_parameters = array('address' => $address);
-
-    return $this->_run('add_address_book', $address_parameters);
-  }
-  
-  /**
-   *
-   * Delete an entry from the address book
-   *
-   * @param  array   $index  Index of the address book entry to remove
-   * 
-   */
-  public function delete_address_book($index) {
-    if (!isset($index)) {
-      throw new Exception('Error: Entry index required');
-    }
-
-    $delete_parameters = array('index' => $index);
-
-    return $this->_run('delete_address_book', $delete_parameters);
-  }
-  
-  /**
-   *
-   * Rescan the blockchain for spent outputs
-   * 
-   */
-  public function rescan_spent() {
-    return $this->_run('rescan_spent');
-  }
-  
-  /**
-   *
-   * Start mining in the Monero daemon
-   *
-   * @param  number   $threads_count         Number of threads with which to mine
-   * @param  boolean  $do_background_mining  Mine in backgound?
-   * @param  boolean  $ignore_battery        Ignore battery?  
-   * 
-   */
-  public function start_mining($threads_count, $do_background_mining, $ignore_battery) {
-    if (!isset($threads_count)) {
-      throw new Exception('Error: Threads required');
-    }
-    if (!isset($do_background_mining)) {
-      throw new Exception('Error: Background mining boolean required');
-    }
-    if (!isset($ignore_battery)) {
-      throw new Exception('Error: Inore battery boolean required');
-    }
-
-    $mining_parameters = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
-
-    return $this->_run('start_mining', $mining_parameters);
-  }
-  
-  /**
-   *
-   * Stop mining
-   * 
-   */
-  public function stop_mining() {
-    return $this->_run('stop_mining');
-  }
-  
-  /**
-   *
-   * Get a list of available languages for your wallet's seed
-   * 
-   * @return array  List of available languages
-   *
-   */
-  public function get_languages() {
-    return $this->_run('get_languages');
   }
 
   /**
@@ -804,24 +357,6 @@ class walletRPC {
   
   /**
    *
-   * Save wallet
-   *
-   */
-  public function store() {
-    return $this->_run('store');
-  }
-  
-  /**
-   *
-   * Send all dust outputs back to the wallet's, to make them easier to spend (and mix)
-   *
-   */
-  public function sweep_dust() {
-    return $this->_run('sweep_dust');
-  }
-  
-  /**
-   *
    * Send all unlocked balance to an address
    * 
    * @param  string  $address       Address to transfer to
@@ -931,6 +466,15 @@ class walletRPC {
   
   /**
    *
+   * Save wallet
+   *
+   */
+  public function store() {
+    return $this->_run('store');
+  }
+  
+  /**
+   *
    * Get a list of incoming payments using a given payment id
    *
    * @param  string  $payment_id  Payment ID to look up
@@ -989,6 +533,218 @@ class walletRPC {
   
   /**
    *
+   * Look up incoming transfers
+   *
+   * @param  string  $type  Type of transfer to look up; must be 'all', 'available', or 'unavailable' (incoming transfers which have already been spent)
+   *
+   * @return object  Example: {
+   *   "transfers": [{
+   *     "amount": 10000000000000,
+   *     "global_index": 711506,
+   *     "spent": false,
+   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
+   *     "tx_size": 5870
+   *   },{
+   *     "amount": 300000000000,
+   *     "global_index": 794232,
+   *     "spent": false,
+   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
+   *     "tx_size": 5870
+   *   },{
+   *     "amount": 50000000000,
+   *     "global_index": 213659,
+   *     "spent": false,
+   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
+   *     "tx_size": 5870
+   *   }]
+   * }
+   */
+  public function incoming_transfers($type = 'all') {
+    $incoming_parameters = array('transfer_type' => $type);
+    $incoming_transfers = $this->_run('incoming_transfers', $incoming_parameters);
+    return $incoming_transfers;
+  }
+  
+  /**
+   *
+   * Look up wallet view key
+   *
+   * @return object  Example: {
+   *   "key": "7e341d..."
+   * }
+   *
+   */
+  public function view_key() {
+    $query_key = array('key_type' => 'view_key');
+    $query_key_method = $this->_run('query_key', $query_key);
+    return $query_key_method;
+  }
+  
+  /**
+   *
+   * Look up wallet spend key
+   *
+   * @return object  Example: {
+   *   "key": "2ab810..."
+   * }
+   *
+   */
+  public function spend_key() {
+    $query_key = array('key_type' => 'spend_key');
+    $query_key_method = $this->_run('query_key', $query_key);
+    return $query_key_method;
+  }
+  
+  /**
+   *
+   * Look up wallet spend key
+   *
+   * @return object  Example: {
+   *   "key": "2ab810..."
+   * }
+   *
+   */
+  public function mnemonic() {
+    $query_key = array('key_type' => 'mnemonic');
+    $query_key_method = $this->_run('query_key', $query_key);
+    return $query_key_method;
+  }
+  
+  /**
+   *
+   * Make an integrated address from the wallet address and a payment ID
+   *
+   * @param  string  $payment_id  Payment ID to use when generating an integrated address (optional)
+   *
+   * @return object  Example: {
+   *   "integrated_address": "4BpEv3WrufwXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQQ8H2RRJveAtUeiFs6J"
+   * }
+   *
+   */
+  public function make_integrated_address($payment_id = null) {
+    $integrate_address_parameters = array('payment_id' => $payment_id);
+    $integrate_address_method = $this->_run('make_integrated_address', $integrate_address_parameters);
+    return $integrate_address_method;
+  }
+  
+  /**
+   *
+   * Retrieve the standard address and payment ID corresponding to an integrated address
+   *
+   * @param  string  $integrated_address  Integrated address to split
+   *
+   * @return object  Example: {
+   *   "payment_id": "&lt;420fa29b2d9a49f5&gt;",
+   *   "standard_address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
+   * }
+   *
+   */
+  public function split_integrated_address($integrated_address) {
+    if (!isset($integrated_address)) {
+      throw new Exception('Error: Integrated address required');
+    }
+    
+    if (!isset($integrated_address)) {
+      throw new Exception('Error: Integrated address required');
+    }
+
+    $split_parameters = array('integrated_address' => $integrated_address);
+    $split_methods = $this->_run('split_integrated_address', $split_parameters);
+    return $split_methods;
+  }
+  
+  /**
+   *
+   * Stop the wallet, saving the state
+   *
+   */
+  public function stop_wallet() {
+    return $this->_run('stop_wallet');
+  }
+  
+  /**
+   *
+   * Rescan blockchain from scratch
+   *
+   */
+  public function rescan_blockchain() {
+    return $this->_run('rescan_blockchain');
+  }
+  
+  /**
+   *
+   * Set arbitrary string notes for transactions
+   *
+   * @param  array  $txids  Array of transaction IDs (strings) to apply notes to
+   * @param  array  $notes  Array of notes (strings) to add 
+   *
+   */
+  public function set_tx_notes($txids, $notes) {
+    if (!isset($txids)) {
+      throw new Exception('Error: Transaction IDs required');
+    }
+    if (!isset($notes)) {
+      throw new Exception('Error: Notes required');
+    }
+
+    $notes_parameters = array('txids' => $txids, 'notes' => $notes);
+
+    return $this->_run('set_tx_notes', $notes_parameters);
+  }
+  
+  /**
+   *
+   * Get string notes for transactions
+   *
+   * @param  array  $txids  Array of transaction IDs (strings) to look up
+   *
+   */
+  public function get_tx_notes($txids) {
+    if (!isset($txids)) {
+      throw new Exception('Error: Transaction IDs required');
+    }
+
+    $notes_parameters = array('txids' => $txids);
+
+    return $this->_run('get_tx_notes', $notes_parameters);
+  }
+  
+  /**
+   *
+   * Look up transfers
+   *
+   * @param  string  $input_type   Transfer type; must be 'in', 'out', 'pending', 'failed', 'pool', 'filter_by_height', 'min_height', or 'max_height'
+   * @param  string  $input_value  Input value of above
+   *
+   * @return object  Example: {
+   *   "pool": [{
+   *     "amount": 500000000000,
+   *     "fee": 0,
+   *     "height": 0,
+   *     "note": "",
+   *     "payment_id": "758d9b225fda7b7f",
+   *     "timestamp": 1488312467,
+   *     "txid": "da7301d5423efa09fabacb720002e978d114ff2db6a1546f8b820644a1b96208",
+   *     "type": "pool"
+   *   }]
+   * }
+   *
+   */
+  public function get_transfers($input_type, $input_value) {
+    if (!isset($input_type)) {
+      throw new Exception('Error: Input type required');
+    }
+    if (!isset($input_value)) {
+      throw new Exception('Error: Input value required');
+    }
+
+    $get_parameters = array($input_type => $input_value);
+    $get_transfers = $this->_run('get_transfers', $get_parameters);
+    return $get_transfers;
+  }
+  
+  /**
+   *
    * Show information about a transfer with a given transaction ID
    *
    * @param  string  $txid  Transaction ID to look up
@@ -1019,6 +775,262 @@ class walletRPC {
   
   /**
    *
+   * Sign a string
+   *
+   * @param  string  $data  Data to sign
+   *
+   * @return object  Example: {
+   *   "signature": "SigV1Xp61ZkGguxSCHpkYEVw9eaWfRfSoAf36PCsSCApx4DUrKWHEqM9CdNwjeuhJii6LHDVDFxvTPijFsj3L8NDQp1TV"
+   * }
+   *
+   */
+  public function sign($data) {
+    if (!isset($data)) {
+      throw new Exception('Error: Data to sign required');
+    }
+    
+    $sign_parameters = array('string' => $data);
+    $sign_method = $this->_run('sign',$sign_parameters);
+    return $sign_method;
+  }
+  
+  /**
+   *
+   * Verify a signature on a string
+   *
+   * @param  string   $data       Signed data
+   * @param  string   $address    Address that signed data
+   * @param  string   $signature  Signature to verify
+   *
+   * @return boolean  $good       Verification status
+   * 
+   */
+  public function verify($data, $address, $signature) {
+    if (!isset($data)) {
+      throw new Exception('Error: Signed data required');
+    }
+    if (!isset($address)) {
+      throw new Exception('Error: Signing address required');
+    }
+    if (!isset($signature)) {
+      throw new Exception('Error: Signature required');
+    }
+
+    $notes_parameters = array('data' => $data, 'address' => $address, 'signature' => $signature);
+
+    return $this->_run('verify', $notes_parameters);
+  }
+  
+  /**
+   *
+   * Export a signed set of key images
+   *
+   * @return  array  $signed_key_images  Array of signed key images
+   *
+   */
+  public function export_key_images() {
+    return $this->_run('export_key_images');
+  }
+  
+  /**
+   *
+   * Import a signed set of key images
+   *
+   * @param  array   $signed_key_images  Array of signed key images
+   *
+   * @return number  $height
+   * @return number  $spent
+   * @return number  $unspent
+   * 
+   */
+  public function import_key_images($signed_key_images) {
+    if (!isset($signed_key_images)) {
+      throw new Exception('Error: Signed key images required');
+    }
+
+    $import_parameters = array('signed_key_images' => $signed_key_images);
+
+    return $this->_run('import_key_images', $import_parameters);
+  }
+
+  /**
+   *
+   * Create a payment URI using the official URI spec
+   *
+   * @param  string  $address         Address to include
+   * @param  string  $amount          Amount to request
+   * @param  string  $recipient_name  Name of recipient    (optional)
+   * @param  string  #description     Payment description  (optional)
+   *
+   * @return object  Example: 
+   *
+   */
+  public function make_uri($address, $amount, $recipient_name = null, $description = null) {
+    if (!isset($address)) {
+      throw new Exception('Error: Address required');
+    }
+    if (!isset($amount)) {
+      throw new Exception('Error: Amount required');
+    }
+
+    // Convert from moneroj to tacoshi (piconero)
+    $new_amount = $amount * 1000000000000;
+       
+    $uri_parameters = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
+    $uri = $this->_run('make_uri', $uri_parameters);
+    return $uri;
+  }
+
+  /**
+   *
+   * Parse a payment URI to get payment information
+   *
+   * @param  string  $uri  Payment URI
+   *
+   * @return object  Example: {
+   *   "uri": {
+   *     "address": "44AFFq5kSiGBoZ4NMDwYtN18obc8AemS33DBLWs3H7otXft3XjrpDtQGv7SqSsaBYBb98uNbr2VBBEt7f2wfn3RVGQBEP3A",
+   *     "amount": 10,
+   *     "payment_id": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+   *     "recipient_name": "Monero Project donation address",
+   *     "tx_description": "Testing out the make_uri function."
+   *   }
+   * }
+   *
+   */
+  public function parse_uri($uri) {
+    if (!isset($uri)) {
+      throw new Exception('Error: Payment URI required');
+    }
+
+    $uri_parameters = array('uri' => $uri);
+    $parsed_uri = $this->_run('parse_uri', $uri_parameters);
+    return $parsed_uri;
+  }
+  
+  /**
+   *
+   * Retrieve entries from the address book
+   *
+   * @param  array   $entries  Array of indices to return from the address book
+   *
+   * @return array   $entries  Array of entries returned from the address book
+   * 
+   */
+  public function get_address_book($entries) {
+    if (!isset($entries)) {
+      throw new Exception('Error: Entry indices required');
+    }
+
+    $entries_parameters = array('entries' => $entries);
+
+    return $this->_run('get_address_book', $entries_parameters);
+  }
+  
+  /**
+   *
+   * Retrieve entries from the address book
+   *
+   * @param  string  $address      Address to add to address book
+   * @param  string  $payment_id   Payment ID to use with address in address book (optional)
+   * @param  string  $description  Description of address                         (optional)
+   *
+   * @return number  $index        Index of address in address book
+   * 
+   */
+  public function add_address_book($address, $payment_id, $description) {
+    if (!isset($address)) {
+      throw new Exception('Error: Address required');
+    }
+    if (isset($payment_id)) {
+      if ($payment_id) {
+        $transfer_parameters['payment_id'] = $payment_id;
+      }
+    }
+    if (isset($description)) {
+      if ($description) {
+        $transfer_parameters['description'] = $description;
+      }
+    }
+
+    $address_parameters = array('address' => $address);
+
+    return $this->_run('add_address_book', $address_parameters);
+  }
+  
+  /**
+   *
+   * Delete an entry from the address book
+   *
+   * @param  array   $index  Index of the address book entry to remove
+   * 
+   */
+  public function delete_address_book($index) {
+    if (!isset($index)) {
+      throw new Exception('Error: Entry index required');
+    }
+
+    $delete_parameters = array('index' => $index);
+
+    return $this->_run('delete_address_book', $delete_parameters);
+  }
+  
+  /**
+   *
+   * Rescan the blockchain for spent outputs
+   * 
+   */
+  public function rescan_spent() {
+    return $this->_run('rescan_spent');
+  }
+  
+  /**
+   *
+   * Start mining in the Monero daemon
+   *
+   * @param  number   $threads_count         Number of threads with which to mine
+   * @param  boolean  $do_background_mining  Mine in backgound?
+   * @param  boolean  $ignore_battery        Ignore battery?  
+   * 
+   */
+  public function start_mining($threads_count, $do_background_mining, $ignore_battery) {
+    if (!isset($threads_count)) {
+      throw new Exception('Error: Threads required');
+    }
+    if (!isset($do_background_mining)) {
+      throw new Exception('Error: Background mining boolean required');
+    }
+    if (!isset($ignore_battery)) {
+      throw new Exception('Error: Inore battery boolean required');
+    }
+
+    $mining_parameters = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
+
+    return $this->_run('start_mining', $mining_parameters);
+  }
+  
+  /**
+   *
+   * Stop mining
+   * 
+   */
+  public function stop_mining() {
+    return $this->_run('stop_mining');
+  }
+  
+  /**
+   *
+   * Get a list of available languages for your wallet's seed
+   * 
+   * @return array  List of available languages
+   *
+   */
+  public function get_languages() {
+    return $this->_run('get_languages');
+  }
+  
+  /**
+   *
    * Create a new wallet
    *
    * @param  string  $filename  Filename to use for new wallet
@@ -1045,27 +1057,6 @@ class walletRPC {
     $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
     $open_wallet_method = $this->_run('open_wallet',$open_wallet_parameters);
     return $open_wallet_method;
-  }
-  
-  /**
-   *
-   * Sign a string
-   *
-   * @param  string  $data  Data to sign
-   *
-   * @return object  Example: {
-   *   "signature": "SigV1Xp61ZkGguxSCHpkYEVw9eaWfRfSoAf36PCsSCApx4DUrKWHEqM9CdNwjeuhJii6LHDVDFxvTPijFsj3L8NDQp1TV"
-   * }
-   *
-   */
-  public function sign($data) {
-    if (!isset($data)) {
-      throw new Exception('Error: Data to sign required');
-    }
-    
-    $sign_parameters = array('string' => $data);
-    $sign_method = $this->_run('sign',$sign_parameters);
-    return $sign_method;
   }
   
 }
