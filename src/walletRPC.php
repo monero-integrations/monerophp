@@ -1384,17 +1384,30 @@ class walletRPC
   
   /**
    *
-   * 
+   * Verify a reserve proof
    *
-   * @param 
+   * @param  string  $address    Wallet address
+   * @param  string  $signature  Reserve proof
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   "good": 1,
+   *   "spent": 0,
+   *   "total": 0
    * }
    *
    */
-  public function check_reserve_proof()
+  public function check_reserve_proof($address, $signature)
   {
-    return $this->_run('check_reserve_proof');
+    if (!isset($address)) {
+      throw new Exception('Error: Address required');
+    }
+    if (!isset($signature)) {
+      throw new Exception('Error: Signature required');
+    }
+
+    $check_reserve_proof_parameters = array('address' => $address, 'signature' => $signature);
+
+    return $this->_run('check_reserve_proof', $check_reserve_proof_parameters);
   }
   
   /**
