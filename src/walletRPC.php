@@ -1359,16 +1359,26 @@ class walletRPC
   
   /**
    *
-   * 
+   * Get proof of reserves
    *
-   * @param 
+   * @param  string  $account_index  Comma-separated list of account indices of which to prove reserves.  If empty, proves reserve of all accounts  (optional)
    *
    * @return   Example: {
+   *   "signature": "ReserveProofV11BZ23sBt9sZJeGccf84mzyAmNCP3KzYbE111111111111AjsVgKzau88VxXVGACbYgPVrDGC84vBU61Gmm2eiYxdZULAE4yzBxT1D9epWgCT7qiHFvFMbdChf3CpR2YsZj8CEhp8qDbitsfdy7iBdK6d5pPUiMEwCNsCGDp8AiAc6sLRiuTsLEJcfPYEKe"
    * }
    *
    */
-  public function get_reserve_proof()
+  public function get_reserve_proof($account_index = 'all')
   {
+    if (!isset($account_index)) {
+      throw new Exception('Error: Account index required');
+    }
+    if ($account_index == 'all') {
+      $check_spend_proof_parameters = array('all' => true);
+    } else {
+      $check_spend_proof_parameters = array('account_index' => $account_index);
+    }
+
     return $this->_run('get_reserve_proof');
   }
   
