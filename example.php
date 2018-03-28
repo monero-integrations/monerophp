@@ -30,6 +30,7 @@ $walletRPC = new walletRPC('127.0.0.1', 28082); // Change to match your wallet (
 // $create_wallet = $walletRPC->create_wallet('monero_wallet', ''); // Creates a new wallet named monero_wallet with no passphrase.  Comment this line and edit the next line to use your own wallet
 $open_wallet = $walletRPC->open_wallet('monero_wallet', '');
 $get_address = $walletRPC->get_address();
+$get_accounts = $walletRPC->get_accounts();
 $get_balance = $walletRPC->get_balance();
 // $getheight = $walletRPC->getheight();
 // $transfer = $walletRPC->transfer(1, '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn'); // First account generated from mnemonic 'gang dying lipstick wonders howls begun uptight humid thirsty irony adept umpire dusted update grunt water iceberg timber aloof fudge rift clue umpire venomous thirsty'
@@ -78,14 +79,21 @@ $get_balance = $walletRPC->get_balance();
     <h2><tt>walletRPC.php</tt> example</h2>
     <p><i>Note: not all methods shown, nor all results from each method.</i></p>
     <dl>
-      <dt><tt>getaddress()</tt></dt>
+      <!--
+      <dt><tt>get_address()</tt></dt>
       <dd>
-        <?php foreach ($getaddress['addresses'] as $account) { echo '<p>' . $account['label'] . ': <tt>' . $account['address'] . '</tt></p>'; } ?>
+        <?php foreach ($get_address['addresses'] as $account) { echo '<p>' . $account['label'] . ': <tt>' . $account['address'] . '</tt></p>'; } ?>
       </dd>
-      <dt><tt>getbalance()</tt></dt>
+      -->
+      <dt><tt>get_accounts()</tt></dt>
       <dd>
-        <p>Balance: <tt><?php echo $getbalance['balance'] / pow(10, 12); ?></tt></p>
-        <p>Unlocked balance: <tt><?php echo $getbalance['unlocked_balance'] / pow(10, 12); ?></tt></p>
+        <p>Accounts: <?php echo count($get_accounts['subaddress_accounts']); ?></p>
+        <?php foreach ($get_accounts['subaddress_accounts'] as $account) { echo '<p>Account ' . $account['account_index'] . ': <tt>' . $account['base_address'] . '</tt>' . ( $account['tag'] ? ' (' . $account['tag'] . ')' : '' ) . '<br>&nbsp;&nbsp;&nbsp;Balance: <tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)</p>'; } ?>
+      </dd>
+      <dt><tt>get_balance()</tt></dt>
+      <dd>
+        <p>Balance: <tt><?php echo $get_balance['balance'] / pow(10, 12); ?></tt></p>
+        <p>Unlocked balance: <tt><?php echo $get_balance['unlocked_balance'] / pow(10, 12); ?></tt></p>
       </dd>
     </dl>
   </body>
