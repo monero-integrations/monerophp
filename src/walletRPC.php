@@ -94,10 +94,25 @@ class walletRPC
     $json_parsed = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     echo $json_parsed;
   }
-  
+
   /**
    *
    * Look up wallet balance
+   *
+   * @return object  Example: {
+   *   "balance": 140000000000,
+   *   "unlocked_balance": 50000000000
+   * }
+   *
+   */
+  public function get_balance()
+  {
+    return $this->_run('get_balance');
+  }
+  
+  /**
+   *
+   * Alias of get_balance()
    *
    * @return object  Example: {
    *   "balance": 140000000000,
@@ -113,6 +128,20 @@ class walletRPC
   /**
    *
    * Look up wallet address
+   *
+   * @return object  Example: {
+   *   "address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
+   * }
+   *
+   */
+  public function get_address()
+  {
+    return $this->_run('get_address');
+  }
+  
+  /**
+   *
+   * Alias of get_address()
    *
    * @return object  Example: {
    *   "address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"

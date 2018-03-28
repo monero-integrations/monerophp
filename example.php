@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 require_once('src/jsonRPCClient.php');
 require_once('src/daemonRPC.php');
 
-$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet, 38081 for stagenet
+$daemonRPC = new daemonRPC('127.0.0.1', 28081); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet, 38081 for stagenet
 $getblockcount = $daemonRPC->getblockcount();
 $on_getblockhash = $daemonRPC->on_getblockhash(42069);
 // $getblocktemplate = $daemonRPC->getblocktemplate('9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 60);
@@ -26,11 +26,11 @@ $get_info = $daemonRPC->get_info();
 
 require_once('src/walletRPC.php');
 
-$walletRPC = new walletRPC('127.0.0.1', '28082'); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18082 is the default port for mainnet, 28082 for testnet, 38082 for stagenet
-$create_wallet = $walletRPC->create_wallet('monero_wallet', ''); // Creates a new wallet named monero_wallet with no passphrase.  Comment this line and edit the next line to use your own wallet
+$walletRPC = new walletRPC('127.0.0.1', 28082); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18082 is the default port for mainnet, 28082 for testnet, 38082 for stagenet
+// $create_wallet = $walletRPC->create_wallet('monero_wallet', ''); // Creates a new wallet named monero_wallet with no passphrase.  Comment this line and edit the next line to use your own wallet
 $open_wallet = $walletRPC->open_wallet('monero_wallet', '');
-$getaddress = $walletRPC->getaddress();
-$getbalance = $walletRPC->getbalance();
+$get_address = $walletRPC->get_address();
+$get_balance = $walletRPC->get_balance();
 // $getheight = $walletRPC->getheight();
 // $transfer = $walletRPC->transfer(1, '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn'); // First account generated from mnemonic 'gang dying lipstick wonders howls begun uptight humid thirsty irony adept umpire dusted update grunt water iceberg timber aloof fudge rift clue umpire venomous thirsty'
 // $transfer = $walletRPC->transfer(['address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'amount' => 1, 'priority' => 1]); // Passing parameters in as array
