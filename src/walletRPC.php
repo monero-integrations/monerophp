@@ -281,11 +281,21 @@ class walletRPC
   
   /**
    *
-   * 
+   * Get account tags
    *
-   * @param 
+   * @param  none
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   "account_tags": {
+   *     "0": {
+   *       "accounts": {
+   *         "0": 0,
+   *         "1": 1
+   *       },
+   *       "label": "",
+   *       "tag": "Example tag"
+   *     }
+   *   }
    * }
    *
    */
@@ -296,16 +306,21 @@ class walletRPC
   
   /**
    *
-   * 
+   * Tag an account
    *
-   * @param 
+   * @param  array   $accounts  Account indices to tag
+   * @param  string  $tag       Tag to apply
    *
-   * @return   Example: {
-   * }
+   * @return none
    *
    */
-  public function tag_accounts()
+  public function tag_accounts($accounts, $tag)
   {
+    $tag_accounts_parameters = array('accounts' => $accounts, 'tag' => $tag);
+    $tag_accounts_method = $this->_run('tag_accounts', $tag_accounts_parameters);
+
+    $save = $this->store(); // Save wallet state after account creation
+
     return $this->_run('tag_accounts');
   }
   
