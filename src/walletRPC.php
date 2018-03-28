@@ -659,19 +659,19 @@ class walletRPC
   
   /**
    *
-   * Send all unlocked balance to an address
+   * Send all unlocked balance from current account to an address
    * 
-   * @param  string  $address       Address to transfer to
-   * @param  number  $below_amount  Only send outputs below this amount         (optional)
-   * @param  number  $mixin         Mixin number                                (optional)
-   * @param  number  $index         Account to send from                        (optional)
-   * @param  number  $priority      Payment ID                                  (optional)
-   * @param  string  $pid           Payment ID                                  (optional)
-   * @param  number  $unlock_time   UNIX time or block height to unlock output  (optional)
+   * @param  string  $address          Address to transfer to
+   * @param  string  $subaddr_indices  Subaddress indices to sweep in a comma-separated list  (optional)
+   * @param  string  $payment_id       Payment ID                                             (optional)
+   * @param  number  $mixin            Mixin number                                           (optional)
+   * @param  number  $priority         Payment ID                                             (optional)
+   * @param  number  $below_amount     Only send outputs below this amount                    (optional)
+   * @param  number  $unlock_time      UNIX time or block height to unlock output             (optional)
    * 
    *   OR
    * 
-   * @param  object  $params        Array containing any of the options listed above, where only amount and address are required
+   * @param  object  $params           Array containing any of the options listed above, where only amount and address are required
    *
    * @return object  Example: {
    *   "amount": "1000000000000",
@@ -681,7 +681,7 @@ class walletRPC
    * }
    *
    */
-  public function sweep_all($address, $below_amount = 0, $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0)
+  public function sweep_all($address, $subaddr_indices = '', $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0)
   {
     if (is_array($address)) { // Parameters passed in as object
       $params = $address;
@@ -691,27 +691,23 @@ class walletRPC
       } else {
         throw new Exception('Error: Address required');
       }
-
+      if (array_key_exists('subaddr_indices', $params)) {
+        $subaddr_indices = $params['subaddr_indices'];
+      }
+      if (array_key_exists('payment_id', $params)) {
+        $payment_id = $params['payment_id'];
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
       if (array_key_exists('below_amount', $params)) {
         $below_amount = $params['below_amount'];
 
         // Convert from moneroj to tacoshi (piconero)
         $new_below_amount = $below_amount * 1000000000000;
-      }
-      if (array_key_exists('mixin', $params)) {
-        $mixin = $params['mixin'];
-      }
-      if (array_key_exists('index', $params)) {
-        $index = $params['index'];
-      }
-      if (array_key_exists('priority', $params)) {
-        $priority = $params['priority'];
-      }
-      if (array_key_exists('pid', $params)) {
-        $pid = $params['pid'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
       }
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
@@ -734,14 +730,14 @@ class walletRPC
         $transfer_parameters['below_amount'] = $new_below_amount;
       }
     }
-    if (isset($index)) {
-      if ($index) {
-        $transfer_parameters['index'] = $index;
+    if (isset($subaddr_indices)) {
+      if ($subaddr_indices) {
+        $transfer_parameters['subaddr_indices'] = $subaddr_indices;
       }
     }
-    if (isset($pid)) {
-      if ($pid) {
-        $transfer_parameters['payment_id'] = $pid;
+    if (isset($payment_id)) {
+      if ($payment_id) {
+        $transfer_parameters['payment_id'] = $payment_id;
       }
     }
     if (isset($priority)) {
