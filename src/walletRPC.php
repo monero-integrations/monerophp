@@ -1198,17 +1198,24 @@ class walletRPC
   
   /**
    *
-   * 
+   * Get a transaction key
    *
-   * @param 
+   * @param   string  $txid  Transaction ID
    *
-   * @return   Example: {
+   * @return  object  Example: {
+   *   "tx_key": "e8e97866b1606bd87178eada8f995bf96d2af3fec5db0bc570a451ab1d589b0f"
    * }
    *
    */
-  public function get_tx_key()
+  public function get_tx_key($txid)
   {
-    return $this->_run('get_tx_key');
+    if (!isset($txid)) {
+      throw new Exception('Error: Transaction ID required');
+    }
+
+    $get_tx_key_parameters = array('txid' => $txid);
+
+    return $this->_run('get_tx_key', $get_tx_key_parameters);
   }
   
   /**
