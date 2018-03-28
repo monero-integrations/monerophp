@@ -1792,17 +1792,28 @@ class walletRPC
   
   /**
    *
-   * 
+   * Make a multisig address.  Account must have nonzero balance
    *
-   * @param 
+   * @param  string  $multisig_info  Multisig information (from eg. prepare_multisig) 
+   * @param  string  $threshold      Threshold required to spend from multisig
+   * @param  string  $password       Passphrase to apply to multisig address
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   // TODO example
    * }
    *
    */
-  public function make_multisig()
+  public function make_multisig($multisig_info, $threshold, $password = '')
   {
-    return $this->_run('make_multisig');
+    if (!isset($multisig_info)) {
+      throw new Exception('Error: Multisig information required');
+    }
+    if (!isset($threshold)) {
+      throw new Exception('Error: Threshold required');
+    }
+
+    $make_multisig_parameters = array('multisig_info' => $multisig_info, 'threshold' => $threshold, 'password' => $password);
+    return $this->_run('make_multisig', $make_multisig_parameters);
   }
   
   /**
