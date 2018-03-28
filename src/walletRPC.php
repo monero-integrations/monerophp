@@ -1333,17 +1333,28 @@ class walletRPC
   
   /**
    *
-   * 
+   * Verify spend proof
    *
-   * @param 
+   * @param  string  $txid       Transaction ID
+   * @param  string  $signature  Spend proof to verify
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   "good": 1
    * }
    *
    */
-  public function check_spend_proof()
+  public function check_spend_proof($txid, $signature)
   {
-    return $this->_run('check_spend_proof');
+    if (!isset($txid)) {
+      throw new Exception('Error: Transaction ID required');
+    }
+    if (!isset($signature)) {
+      throw new Exception('Error: Signature required');
+    }
+
+    $check_spend_proof_parameters = array('txid' => $txid, 'signature' => $signature);
+
+    return $this->_run('check_spend_proof', $check_spend_proof_parameters);
   }
   
   /**
