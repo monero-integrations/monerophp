@@ -380,6 +380,20 @@ class walletRPC
    * }
    *
    */
+  public function get_height()
+  {
+    return $this->_run('get_height');
+  }
+  
+  /**
+   *
+   * Alias of get_height()
+   *
+   * @return object  Example: {
+   *   "height": 994310
+   * }
+   *
+   */
   public function getheight()
   {
     return $this->_run('getheight');
