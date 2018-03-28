@@ -47,7 +47,12 @@ $get_balance = $walletRPC->get_balance();
 ?>
 <html>
   <body>
-    <h1><a href="https://github.com/monero-integrations/monerophp">MoneroPHP</a></h1>   
+    <h1>
+      <a href="https://github.com/monero-integrations/monerophp" title="Monero Integrations">
+        <img src=" data:image/png;base64,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" height="22pt" style="height: 1em; margin-bottom: -4pt" /> <!-- Image source is just base64-encoded -->
+        MoneroPHP
+      </a>
+    </h1>   
     <p>MoneroPHP was developed by <a href="https://github.com/serhack">SerHack</a> and the <a href="https://github.com/monero-integrations/monerophp/graphs/contributors">Monero-Integrations team</a>! Please report any issues or request additional features at <a href="https://github.com/monero-integrations/monerophp/issues">github.com/monero-integrations/monerophp</a>.</p>
 
     <h2><tt>daemonRPC.php</tt> example</h2>
@@ -78,6 +83,7 @@ $get_balance = $walletRPC->get_balance();
         <p>Cumulative difficulty: <tt><?php echo $get_info['cumulative_difficulty']; ?></tt></p>
       </dd>
     </dl>
+
     <h2><tt>walletRPC.php</tt> example</h2>
     <p><i>Note: not all methods shown, nor all results from each method.</i></p>
     <dl>
@@ -92,10 +98,11 @@ $get_balance = $walletRPC->get_balance();
         <p>Accounts: <?php echo count($get_accounts['subaddress_accounts']); ?></p>
         <?php
           foreach ($get_accounts['subaddress_accounts'] as $account) {
-            echo '<p><table><tr><td style="text-align: right;">Account ' . $account['account_index'] . ': </td><td><tt>' . $account['base_address'] . '</tt></td></tr>';
-            echo ( $account['label'] ) ? '<tr><td style="text-align: right;">Label: </td><td><tt>' . $account['label'] . '</tt></td></tr>' : '';
-            echo ( $account['tag'] ) ? '<tr><td style="text-align: right;">Tag: </td><td><tt>' . $account['tag'] . '</tt></td></tr>' : '';
-            echo '<tr><td style="text-align: right;">Balance: </td><td><tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)</td></tr></table></p>';
+            echo '<p>Account ' . $account['account_index'] . ': <tt>' . $account['base_address'] . '</tt><br />';
+            echo 'Balance: <tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)<br />';
+            echo ( $account['label'] ) ? 'Label: <tt>' . $account['label'] . '</tt><br />' : '';
+            echo ( $account['tag'] ) ? 'Tag: <tt>' . $account['tag'] . '</tt><br />' : '';
+            echo '</p>';
           }
         ?>
       </dd>
