@@ -1773,12 +1773,17 @@ class walletRPC
   
   /**
    *
-   * 
+   * Check if wallet is multisig
    *
-   * @param 
+   * @param  none
    *
-   * @return   Example: {
-   * }
+   * @return object  Example: (non-multisig wallet) {
+   *   "multisig": ,
+   *   "ready": ,
+   *   "threshold": 0,
+   *   "total": 0
+   *
+   * } // TODO multisig wallet example
    *
    */
   public function is_multisig()
