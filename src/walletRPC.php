@@ -29,7 +29,8 @@
 
 require_once('jsonRPCClient.php');
 
-class walletRPC {
+class walletRPC
+{
   private $client;
 
   private $protocol; 
@@ -50,7 +51,8 @@ class walletRPC {
    * @param  string  $password  Password                                       (optional)
    *
    */
-  function __construct ($host = '127.0.0.1', $port = '18080', $protocol = 'http', $user = null, $password = null) {
+  function __construct ($host = '127.0.0.1', $port = '18080', $protocol = 'http', $user = null, $password = null)
+  {
     // TODO input validation
     
     $this->host = $host;
@@ -73,7 +75,8 @@ class walletRPC {
    * @return string  Call result
    *
    */
-  private function _run($method, $params = null) {
+  private function _run($method, $params = null)
+  {
     $result = $this->client->_run($method, $params);
     return $result;
   }
@@ -85,7 +88,8 @@ class walletRPC {
    * @param  object  $json  JSON object to print
    *
    */
-  public function _print($json) {
+  public function _print($json)
+  {
 
     $json_parsed = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     echo $json_parsed;
@@ -101,7 +105,8 @@ class walletRPC {
    * }
    *
    */
-  public function getbalance() {
+  public function getbalance()
+  {
     return $this->_run('getbalance');
   }
   
@@ -114,7 +119,8 @@ class walletRPC {
    * }
    *
    */
-  public function getaddress() {
+  public function getaddress()
+  {
     return $this->_run('getaddress');
   }
   
@@ -126,7 +132,8 @@ class walletRPC {
    * @param string The label to use
    *
    */
-  public function create_address($account_index, $label) {
+  public function create_address($account_index, $label)
+  {
     $create_account_parameters = array('account_index' => $account_index ,'label' => $label);
     return $this->_run('create_address', $create_account_parameters);
   }
@@ -139,8 +146,9 @@ class walletRPC {
    * @param string The label to use
    *
    */
-  public function label_address($index, $label) {
-    $label_address_parameters('index' => $index ,'label' => $label);
+  public function label_address($index, $label)
+  {
+    $label_address_parameters = array('index' => $index ,'label' => $label);
     return $this->_run('label_address', $label_address_parameters);
   }
 
@@ -151,7 +159,8 @@ class walletRPC {
    * @param none
    *
    */
-  public function get_accounts() {
+  public function get_accounts()
+  {
     return $this->_run('get_accounts');
   }
   
@@ -162,8 +171,9 @@ class walletRPC {
    * @param string A label for the account
    *
    */
-  public function create_account($label) {
-    $create_account_parameters('label' => $label);
+  public function create_account($label)
+  {
+    $create_account_parameters = array('label' => $label);
     return $this->_run('create_account', $create_account_parameters);
   }
   
@@ -177,7 +187,8 @@ class walletRPC {
    * }
    *
    */
-  public function label_account() {
+  public function label_account()
+  {
     return $this->_run('label_account');
   }
   
@@ -191,7 +202,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_account_tags() {
+  public function get_account_tags()
+  {
     return $this->_run('get_account_tags');
   }
   
@@ -205,7 +217,8 @@ class walletRPC {
    * }
    *
    */
-  public function tag_accounts() {
+  public function tag_accounts()
+  {
     return $this->_run('tag_accounts');
   }
   
@@ -219,7 +232,8 @@ class walletRPC {
    * }
    *
    */
-  public function untag_accounts() {
+  public function untag_accounts()
+  {
     return $this->_run('untag_accounts');
   }
   
@@ -233,7 +247,8 @@ class walletRPC {
    * }
    *
    */
-  public function set_account_tag_description() {
+  public function set_account_tag_description()
+  {
     return $this->_run('set_account_tag_description');
   }
   
@@ -246,7 +261,8 @@ class walletRPC {
    * }
    *
    */
-  public function getheight() {
+  public function getheight()
+  {
     return $this->_run('getheight');
   }
 
@@ -274,7 +290,8 @@ class walletRPC {
    * }
    *
    */
-  public function transfer($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+  public function transfer($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0)
+  {
     if (is_array($amount)) { // Parameters passed in as object
       $params = $amount;
 
@@ -370,7 +387,8 @@ class walletRPC {
    * Same as transfer, but splits transfer into more than one transaction if necessary
    *
    */
-  public function transfer_split($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+  public function transfer_split($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0)
+  {
     if (is_array($amount)) { // Parameters passed in as object
       $params = $amount;
 
@@ -479,7 +497,8 @@ class walletRPC {
    * Send all dust outputs back to the wallet's, to make them easier to spend (and mix)
    *
    */
-  public function sweep_dust() {
+  public function sweep_dust()
+  {
     return $this->_run('sweep_dust');
   }
   
@@ -493,7 +512,8 @@ class walletRPC {
    * }
    *
    */
-  public function sweep_unmixable() {
+  public function sweep_unmixable()
+  {
     return $this->_run('sweep_unmixable');
   }
   
@@ -521,7 +541,8 @@ class walletRPC {
    * }
    *
    */
-  public function sweep_all($address, $below_amount = 0, $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0) {
+  public function sweep_all($address, $below_amount = 0, $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0)
+  {
     if (is_array($address)) { // Parameters passed in as object
       $params = $address;
 
@@ -616,7 +637,8 @@ class walletRPC {
    * }
    *
    */
-  public function sweep_single() {
+  public function sweep_single()
+  {
     return $this->_run('sweep_single');
   }
   
@@ -630,7 +652,8 @@ class walletRPC {
    * }
    *
    */
-  public function relay_tx() {
+  public function relay_tx()
+  {
     return $this->_run('relay_tx');
   }
   
@@ -639,7 +662,8 @@ class walletRPC {
    * Save wallet
    *
    */
-  public function store() {
+  public function store()
+  {
     return $this->_run('store');
   }
   
@@ -660,14 +684,14 @@ class walletRPC {
    * }
    *
    */
-  public function get_payments($payment_id) {
+  public function get_payments($payment_id)
+  {
     if (!isset($payment_id)) {
       throw new Exception('Error: Payment ID required');
     }
 
     $get_payments_parameters = array('payment_id' => $payment_id);
-    $get_payments = $this->_run('get_payments', $get_payments_parameters);
-    return $get_payments;
+    return $this->_run('get_payments', $get_payments_parameters);
   }
   
   /**
@@ -688,7 +712,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_bulk_payments($payment_id, $min_block_height) {
+  public function get_bulk_payments($payment_id, $min_block_height)
+  {
     if (!isset($payment_id)) {
       throw new Exception('Error: Payment ID required');
     }
@@ -697,8 +722,7 @@ class walletRPC {
     }
 
     $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
-    $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
-    return $get_bulk_payments;
+    return $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
   }
   
   /**
@@ -729,10 +753,10 @@ class walletRPC {
    *   }]
    * }
    */
-  public function incoming_transfers($type = 'all') {
+  public function incoming_transfers($type = 'all')
+  {
     $incoming_parameters = array('transfer_type' => $type);
-    $incoming_transfers = $this->_run('incoming_transfers', $incoming_parameters);
-    return $incoming_transfers;
+    return $this->_run('incoming_transfers', $incoming_parameters);
   }
   
   /**
@@ -744,10 +768,10 @@ class walletRPC {
    * }
    *
    */
-  public function view_key() {
+  public function view_key()
+  {
     $query_key = array('key_type' => 'view_key');
-    $query_key_method = $this->_run('query_key', $query_key);
-    return $query_key_method;
+    return $this->_run('query_key', $query_key);
   }
   
   /**
@@ -759,10 +783,10 @@ class walletRPC {
    * }
    *
    */
-  public function spend_key() {
+  public function spend_key()
+  {
     $query_key = array('key_type' => 'spend_key');
-    $query_key_method = $this->_run('query_key', $query_key);
-    return $query_key_method;
+    return $this->_run('query_key', $query_key);
   }
   
   /**
@@ -774,10 +798,10 @@ class walletRPC {
    * }
    *
    */
-  public function mnemonic() {
+  public function mnemonic()
+  {
     $query_key = array('key_type' => 'mnemonic');
-    $query_key_method = $this->_run('query_key', $query_key);
-    return $query_key_method;
+    return $this->_run('query_key', $query_key);
   }
   
   /**
@@ -791,10 +815,10 @@ class walletRPC {
    * }
    *
    */
-  public function make_integrated_address($payment_id = null) {
+  public function make_integrated_address($payment_id = null)
+  {
     $integrate_address_parameters = array('payment_id' => $payment_id);
-    $integrate_address_method = $this->_run('make_integrated_address', $integrate_address_parameters);
-    return $integrate_address_method;
+    return $this->_run('make_integrated_address', $integrate_address_parameters);
   }
   
   /**
@@ -809,7 +833,8 @@ class walletRPC {
    * }
    *
    */
-  public function split_integrated_address($integrated_address) {
+  public function split_integrated_address($integrated_address)
+  {
     if (!isset($integrated_address)) {
       throw new Exception('Error: Integrated address required');
     }
@@ -819,8 +844,7 @@ class walletRPC {
     }
 
     $split_parameters = array('integrated_address' => $integrated_address);
-    $split_methods = $this->_run('split_integrated_address', $split_parameters);
-    return $split_methods;
+    return $this->_run('split_integrated_address', $split_parameters);
   }
   
   /**
@@ -828,7 +852,8 @@ class walletRPC {
    * Stop the wallet, saving the state
    *
    */
-  public function stop_wallet() {
+  public function stop_wallet()
+  {
     return $this->_run('stop_wallet');
   }
   
@@ -837,7 +862,8 @@ class walletRPC {
    * Rescan blockchain from scratch
    *
    */
-  public function rescan_blockchain() {
+  public function rescan_blockchain()
+  {
     return $this->_run('rescan_blockchain');
   }
   
@@ -849,7 +875,8 @@ class walletRPC {
    * @param  array  $notes  Array of notes (strings) to add 
    *
    */
-  public function set_tx_notes($txids, $notes) {
+  public function set_tx_notes($txids, $notes)
+  {
     if (!isset($txids)) {
       throw new Exception('Error: Transaction IDs required');
     }
@@ -869,7 +896,8 @@ class walletRPC {
    * @param  array  $txids  Array of transaction IDs (strings) to look up
    *
    */
-  public function get_tx_notes($txids) {
+  public function get_tx_notes($txids)
+  {
     if (!isset($txids)) {
       throw new Exception('Error: Transaction IDs required');
     }
@@ -889,7 +917,8 @@ class walletRPC {
    * }
    *
    */
-  public function set_attribute() {
+  public function set_attribute()
+  {
     return $this->_run('set_attribute');
   }
   
@@ -903,7 +932,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_attribute() {
+  public function get_attribute()
+  {
     return $this->_run('get_attribute');
   }
   
@@ -917,7 +947,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_tx_key() {
+  public function get_tx_key()
+  {
     return $this->_run('get_tx_key');
   }
   
@@ -931,7 +962,8 @@ class walletRPC {
    * }
    *
    */
-  public function check_tx_key() {
+  public function check_tx_key()
+  {
     return $this->_run('check_tx_key');
   }
   
@@ -945,7 +977,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_tx_proof() {
+  public function get_tx_proof()
+  {
     return $this->_run('get_tx_proof');
   }
   
@@ -959,7 +992,8 @@ class walletRPC {
    * }
    *
    */
-  public function check_tx_proof() {
+  public function check_tx_proof()
+  {
     return $this->_run('check_tx_proof');
   }
   
@@ -973,7 +1007,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_spend_proof() {
+  public function get_spend_proof()
+  {
     return $this->_run('get_spend_proof');
   }
   
@@ -987,7 +1022,8 @@ class walletRPC {
    * }
    *
    */
-  public function check_spend_proof() {
+  public function check_spend_proof()
+  {
     return $this->_run('check_spend_proof');
   }
   
@@ -1001,7 +1037,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_reserve_proof() {
+  public function get_reserve_proof()
+  {
     return $this->_run('get_reserve_proof');
   }
   
@@ -1015,7 +1052,8 @@ class walletRPC {
    * }
    *
    */
-  public function check_reserve_proof() {
+  public function check_reserve_proof()
+  {
     return $this->_run('check_reserve_proof');
   }
   
@@ -1040,7 +1078,8 @@ class walletRPC {
    * }
    *
    */
-  public function get_transfers($input_type, $input_value) {
+  public function get_transfers($input_type, $input_value)
+  {
     if (!isset($input_type)) {
       throw new Exception('Error: Input type required');
     }
@@ -1049,8 +1088,7 @@ class walletRPC {
     }
 
     $get_parameters = array($input_type => $input_value);
-    $get_transfers = $this->_run('get_transfers', $get_parameters);
-    return $get_transfers;
+    return $this->_run('get_transfers', $get_parameters);
   }
   
   /**
@@ -1073,14 +1111,14 @@ class walletRPC {
    * }
    *
    */
-  public function get_transfer_by_txid($txid) {
+  public function get_transfer_by_txid($txid)
+  {
     if (!isset($txid)) {
       throw new Exception('Error: TX ID required');
     }
 
     $get_transfer_by_txid_parameters = array('txid' => $txid);
-    $get_transfer_by_txid = $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
-    return $get_transfer_by_txid;
+    return $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
   }
   
   /**
@@ -1094,14 +1132,14 @@ class walletRPC {
    * }
    *
    */
-  public function sign($data) {
+  public function sign($data)
+  {
     if (!isset($data)) {
       throw new Exception('Error: Data to sign required');
     }
     
     $sign_parameters = array('string' => $data);
-    $sign_method = $this->_run('sign',$sign_parameters);
-    return $sign_method;
+    return $this->_run('sign',$sign_parameters);
   }
   
   /**
@@ -1115,7 +1153,8 @@ class walletRPC {
    * @return boolean  $good       Verification status
    * 
    */
-  public function verify($data, $address, $signature) {
+  public function verify($data, $address, $signature)
+  {
     if (!isset($data)) {
       throw new Exception('Error: Signed data required');
     }
@@ -1138,7 +1177,8 @@ class walletRPC {
    * @return  array  $signed_key_images  Array of signed key images
    *
    */
-  public function export_key_images() {
+  public function export_key_images()
+  {
     return $this->_run('export_key_images');
   }
   
@@ -1153,7 +1193,8 @@ class walletRPC {
    * @return number  $unspent
    * 
    */
-  public function import_key_images($signed_key_images) {
+  public function import_key_images($signed_key_images)
+  {
     if (!isset($signed_key_images)) {
       throw new Exception('Error: Signed key images required');
     }
@@ -1175,7 +1216,8 @@ class walletRPC {
    * @return object  Example: 
    *
    */
-  public function make_uri($address, $amount, $recipient_name = null, $description = null) {
+  public function make_uri($address, $amount, $recipient_name = null, $description = null)
+  {
     if (!isset($address)) {
       throw new Exception('Error: Address required');
     }
@@ -1187,8 +1229,7 @@ class walletRPC {
     $new_amount = $amount * 1000000000000;
        
     $uri_parameters = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
-    $uri = $this->_run('make_uri', $uri_parameters);
-    return $uri;
+    return $this->_run('make_uri', $uri_parameters);
   }
 
   /**
@@ -1203,19 +1244,20 @@ class walletRPC {
    *     "amount": 10,
    *     "payment_id": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
    *     "recipient_name": "Monero Project donation address",
-   *     "tx_description": "Testing out the make_uri function."
+   *     "tx_description": "Testing out the make_uri function
+   "
    *   }
    * }
    *
    */
-  public function parse_uri($uri) {
+  public function parse_uri($uri)
+  {
     if (!isset($uri)) {
       throw new Exception('Error: Payment URI required');
     }
 
     $uri_parameters = array('uri' => $uri);
-    $parsed_uri = $this->_run('parse_uri', $uri_parameters);
-    return $parsed_uri;
+    return $this->_run('parse_uri', $uri_parameters);
   }
   
   /**
@@ -1227,7 +1269,8 @@ class walletRPC {
    * @return array   $entries  Array of entries returned from the address book
    * 
    */
-  public function get_address_book($entries) {
+  public function get_address_book($entries)
+  {
     if (!isset($entries)) {
       throw new Exception('Error: Entry indices required');
     }
@@ -1248,7 +1291,8 @@ class walletRPC {
    * @return number  $index        Index of address in address book
    * 
    */
-  public function add_address_book($address, $payment_id, $description) {
+  public function add_address_book($address, $payment_id, $description)
+  {
     if (!isset($address)) {
       throw new Exception('Error: Address required');
     }
@@ -1275,7 +1319,8 @@ class walletRPC {
    * @param  array   $index  Index of the address book entry to remove
    * 
    */
-  public function delete_address_book($index) {
+  public function delete_address_book($index)
+  {
     if (!isset($index)) {
       throw new Exception('Error: Entry index required');
     }
@@ -1290,7 +1335,8 @@ class walletRPC {
    * Rescan the blockchain for spent outputs
    * 
    */
-  public function rescan_spent() {
+  public function rescan_spent()
+  {
     return $this->_run('rescan_spent');
   }
   
@@ -1303,7 +1349,8 @@ class walletRPC {
    * @param  boolean  $ignore_battery        Ignore battery?  
    * 
    */
-  public function start_mining($threads_count, $do_background_mining, $ignore_battery) {
+  public function start_mining($threads_count, $do_background_mining, $ignore_battery)
+  {
     if (!isset($threads_count)) {
       throw new Exception('Error: Threads required');
     }
@@ -1324,7 +1371,8 @@ class walletRPC {
    * Stop mining
    * 
    */
-  public function stop_mining() {
+  public function stop_mining()
+  {
     return $this->_run('stop_mining');
   }
   
@@ -1335,7 +1383,8 @@ class walletRPC {
    * @return array  List of available languages
    *
    */
-  public function get_languages() {
+  public function get_languages()
+  {
     return $this->_run('get_languages');
   }
   
@@ -1347,10 +1396,10 @@ class walletRPC {
    * @param  string  $password  Password to use for new wallet
    *
    */
-  public function create_wallet($filename = 'monero_wallet', $password = null) {
+  public function create_wallet($filename = 'monero_wallet', $password = null)
+  {
     $create_wallet_parameters = array('filename' => $filename, 'password' => $password, 'language' => 'English');
-    $create_wallet_method = $this->_run('create_wallet', $create_wallet_parameters);
-    return $create_wallet_method;
+    return $this->_run('create_wallet', $create_wallet_parameters);
   }
   
   /**
@@ -1363,10 +1412,10 @@ class walletRPC {
    * @return object  Example: 
    *
    */
-  public function open_wallet($filename = 'monero_wallet', $password = null) {
+  public function open_wallet($filename = 'monero_wallet', $password = null)
+  {
     $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
-    $open_wallet_method = $this->_run('open_wallet',$open_wallet_parameters);
-    return $open_wallet_method;
+    return $this->_run('open_wallet',$open_wallet_parameters);
   }
   
   /**
@@ -1379,7 +1428,8 @@ class walletRPC {
    * }
    *
    */
-  public function is_multisig() {
+  public function is_multisig()
+  {
     return $this->_run('is_multisig');
   }
   
@@ -1393,7 +1443,8 @@ class walletRPC {
    * }
    *
    */
-  public function prepare_multisig() {
+  public function prepare_multisig()
+  {
     return $this->_run('prepare_multisig');
   }
   
@@ -1407,7 +1458,8 @@ class walletRPC {
    * }
    *
    */
-  public function make_multisig() {
+  public function make_multisig()
+  {
     return $this->_run('make_multisig');
   }
   
@@ -1421,7 +1473,8 @@ class walletRPC {
    * }
    *
    */
-  public function export_multisig_info() {
+  public function export_multisig_info()
+  {
     return $this->_run('export_multisig_info');
   }
   
@@ -1435,7 +1488,8 @@ class walletRPC {
    * }
    *
    */
-  public function import_multisig_info() {
+  public function import_multisig_info()
+  {
     return $this->_run('import_multisig_info');
   }
   
@@ -1449,7 +1503,8 @@ class walletRPC {
    * }
    *
    */
-  public function finalize_multisig() {
+  public function finalize_multisig()
+  {
     return $this->_run('finalize_multisig');
   }
   
@@ -1463,7 +1518,8 @@ class walletRPC {
    * }
    *
    */
-  public function sign_multisig() {
+  public function sign_multisig()
+  {
     return $this->_run('sign_multisig');
   }
   
@@ -1477,7 +1533,8 @@ class walletRPC {
    * }
    *
    */
-  public function submit_multisig() {
+  public function submit_multisig()
+  {
     return $this->_run('submit_multisig');
   }
 

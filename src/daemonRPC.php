@@ -30,7 +30,8 @@
 
 require_once('jsonRPCClient.php');
 
-class daemonRPC {
+class daemonRPC
+{
   private $client;
 
   private $protocol;
@@ -51,7 +52,8 @@ class daemonRPC {
    * @param  string  $password  Password                                   (optional)
    *
    */
-  function __construct($host = '127.0.0.1', $port = 18081, $protocol = 'http', $user = null, $password = null) {
+  function __construct($host = '127.0.0.1', $port = 18081, $protocol = 'http', $user = null, $password = null)
+  {
     $this->host = $host;
     $this->port = $port;
     $this->protocol = $protocol; 
@@ -72,7 +74,8 @@ class daemonRPC {
    * @return string  Call result
    *
    */
-  protected function _run($method, $params = null) {
+  protected function _run($method, $params = null)
+  {
     return $this->client->_run($method, $params);
   }
 
@@ -86,7 +89,8 @@ class daemonRPC {
    * }  
    *
    */
-  public function getblockcount() {
+  public function getblockcount()
+  {
     return $this->_run('getblockcount');
   }
 
@@ -99,7 +103,8 @@ class daemonRPC {
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
    *
    */
-  public function on_getblockhash($height) {
+  public function on_getblockhash($height)
+  {
     if (!isset($height)) {
       throw new Exception('Error: Height required');
     }
@@ -126,7 +131,8 @@ class daemonRPC {
    * }
    *
    */
-  public function getblocktemplate($wallet_address, $reserve_size) {
+  public function getblocktemplate($wallet_address, $reserve_size)
+  {
     if (!isset($wallet_address)) {
       throw new Exception('Error: Wallet address required');
     }
@@ -148,7 +154,8 @@ class daemonRPC {
    * @return string  // TODO: example
    *
    */
-  public function submitblock($block) {
+  public function submitblock($block)
+  {
     if (!isset($block)) {
       throw new Exception('Error: Block blob required');
     }
@@ -178,7 +185,8 @@ class daemonRPC {
    * }
    *
    */
-  public function getlastblockheader() {
+  public function getlastblockheader()
+  {
     return $this->_run('getlastblockheader');
   }
 
@@ -206,7 +214,8 @@ class daemonRPC {
    * }
    *
    */
-  public function getblockheaderbyhash($hash) {
+  public function getblockheaderbyhash($hash)
+  {
     if (!isset($hash)) {
       throw new Exception('Error: Block hash required');
     }
@@ -240,7 +249,8 @@ class daemonRPC {
    * }
    *
    */
-  public function getblockheaderbyheight($height) {
+  public function getblockheaderbyheight($height)
+  {
     if (!isset($height)) {
       throw new Exception('Error: Block height required');
     }
@@ -274,7 +284,8 @@ class daemonRPC {
    * }
    *
    */
-  public function getblock_by_hash($hash) {
+  public function getblock_by_hash($hash)
+  {
     return $this->_run('getblock', $hash);
   }
 
@@ -304,7 +315,8 @@ class daemonRPC {
    * }
    *
    */
-  public function getblock_by_height($height) {
+  public function getblock_by_height($height)
+  {
     $heightString = (string) $height; // Cast input to string
     return $this->_run('getblock', $heightString);
   }
@@ -338,7 +350,8 @@ class daemonRPC {
    * }
    *
    */
-  public function get_connections() {
+  public function get_connections()
+  {
     return $this->_run('get_connections');
   }
 
@@ -364,7 +377,8 @@ class daemonRPC {
    * }
    *
    */
-  public function get_info() {
+  public function get_info()
+  {
     return $this->_run('get_info');
   }
 
@@ -401,7 +415,8 @@ class daemonRPC {
    * }
    *
    */
-  public function hardfork_info() {
+  public function hardfork_info()
+  {
     return $this->_run('hard_fork_info');
   }
 
@@ -414,7 +429,8 @@ class daemonRPC {
    * }
    *
    */
-  public function setbans($ip) {
+  public function setbans($ip)
+  {
     // TODO full input validation
 
     if (!isset($ip)) {
@@ -437,7 +453,8 @@ class daemonRPC {
    * }
    *
    */
-  public function getbans() {
+  public function getbans()
+  {
     return $this->_run('getbans');
   }
 
