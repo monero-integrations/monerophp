@@ -47,6 +47,13 @@ Copyright (c) 2018 Monero-Integrations
             return $result;
         }
 
+        /*
+         * Hs in the cryptonote white paper
+         *
+         * @param string Hex encoded data to hash
+         *
+         * @return string A 32 byte encoded integer
+         */
         public function hash_to_scalar($data)
         {
             $hash = $this->keccak_256($data);
@@ -96,6 +103,14 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex($this->ed25519->encodepoint($aG));
         }
 
+        /*
+         * Generate key derivation
+         *
+         * @param string a 32 byte hex encoding of a point on the ed25519 curve used as a public key
+         * @param string a 32 byte hex encoded private key
+         *
+         * @return string The hex encoded key derivation
+         */
         public function gen_key_derivation($public, $private)
         {
             $point = $this->ed25519->scalarmult($this->ed25519->decodepoint(hex2bin($public)), $this->ed25519->decodeint(hex2bin($private)));
@@ -165,7 +180,15 @@ Copyright (c) 2018 Monero-Integrations
                 }
             }
         }
-
+        
+        /*
+         * Create a valid base58 encoded Monero address from public keys
+         *
+         * @param string Public spend key
+         * @param string Public view key
+         *
+         * @return string Base58 encoded Monero address
+         */
 	public function encode_address($pSpendKey, $pViewKey)
 	{
 	    // mainnet network byte is 18 (0x12)
@@ -211,7 +234,14 @@ Copyright (c) 2018 Monero-Integrations
 			    "viewKey" => $public_viewKey);
             return $result;
         }
-
+        
+        /*
+         * Get an integrated address from public keys and a payment id
+         *
+         * @param string A 32 byte hex encoded public spend key
+         * @param string A 32 byte hex encoded public view key
+         * @param string An 8 byte hex string to use as a payment id 
+         */
         public function integrated_addr_from_keys($public_spendkey, $public_viewkey, $payment_id)
         {
             // 0x13 is the mainnet network byte for integrated addresses
