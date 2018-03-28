@@ -1118,7 +1118,46 @@ class walletRPC {
     $label_address_parameters('index' => $index ,'label' => $label);
     return $this->_run('label_address', $label_address_parameters);
   }
+
+  /**
+   *
+   * Get current accounts from wallet
+   *
+   * @param none
+   *
+   */
+  public function get_accounts()
+  {
+    return $this->_run('get_accounts');
+  }
   
+  /**
+   *
+   * Create a new sub-account from your wallet
+   *
+   * @param string A label for the account
+   *
+   */
+  public function create_account($label)
+  {
+    $create_account_parameters('label' => $label);
+    return $this->_run('create_account', $create_account_parameters);
+  }
+  
+  /**
+   *
+   * Label a sub-account
+   *
+   * @param unsigned int The subaddress account index to label
+   * @param string The label to use
+   *
+   */
+  public function label_account($index, $label)
+  {
+    $label_account_parameters('index' => $index ,'label' => $label);
+    return $this->_run('label_account', $label_account_parameters);
+  }
+
 }
 
 ?>
