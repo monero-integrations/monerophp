@@ -1833,17 +1833,23 @@ class walletRPC
   
   /**
    *
-   * 
+   * Import mutlisignature information
    *
-   * @param 
+   * @param  string  $info  Multisig info (from eg. prepare_multisig)
    *
    * @return   Example: {
+   *   // TODO example
    * }
    *
    */
-  public function import_multisig_info()
+  public function import_multisig_info($info)
   {
-    return $this->_run('import_multisig_info');
+    if (!isset($info)) {
+      throw new Exception('Error: Multisignature info required');
+    }
+
+    $import_multisig_info_parameters = array('info' => $info);
+    return $this->_run('import_multisig_info', $import_multisig_info_parameters);
   }
   
   /**
