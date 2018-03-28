@@ -1876,32 +1876,45 @@ class walletRPC
   
   /**
    *
-   * 
+   * Sign a multisignature transaction
    *
-   * @param 
+   * @param  string  $tx_data_hex  Transaction as hex blob
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   // TODO example
    * }
    *
    */
-  public function sign_multisig()
+  public function sign_multisig($tx_data_hex)
   {
-    return $this->_run('sign_multisig');
+    if (!isset($tx_data_hex)) {
+      throw new Exception('Error: Transaction required');
+    }
+
+    $sign_multisig_parameters = array('tx_data_hex' => $tx_data_hex);
+
+    return $this->_run('sign_multisig', $sign_multisig_parameters);
   }
   
   /**
    *
-   * 
+   * Submit (relay) a multisignature transaction
    *
-   * @param 
+   * @param  string  $tx_data_hex  Transaction as hex blob
    *
    * @return   Example: {
+   *   // TODO example
    * }
    *
    */
-  public function submit_multisig()
+  public function submit_multisig($tx_data_hex)
   {
-    return $this->_run('submit_multisig');
+    if (!isset($tx_data_hex)) {
+      throw new Exception('Error: Transaction required');
+    }
+
+    $submit_multisig_parameters = array('tx_data_hex' => $tx_data_hex);
+    return $this->_run('submit_multisig', $submit_multisig_parameters);
   }
 
 }
