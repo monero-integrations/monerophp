@@ -1153,17 +1153,26 @@ class walletRPC
   
   /**
    *
-   * 
+   * Set an option in the wallet
    *
-   * @param 
+   * @param  string  $key    Option to set
+   * @param  string  $value  Value to set
    *
-   * @return   Example: {
-   * }
+   * @return none
    *
    */
-  public function set_attribute()
+  public function set_attribute($key, $value)
   {
-    return $this->_run('set_attribute');
+    if (!isset($key)) {
+      throw new Exception('Error: Key required');
+    }
+    if (!isset($key)) {
+      throw new Exception('Error: Value required');
+    }
+
+    $set_attribute_parameters = array('key' => $key, 'value' => $value);
+
+    return $this->_run('set_attribute', $set_attribute_parameters);
   }
   
   /**
