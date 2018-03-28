@@ -1,5 +1,5 @@
 # Monero Library
-A Monero library written in PHP by the Monero-Integrations team.
+A Monero library written in PHP by the [Monero Integrations](https://monerointegrations.com) [team](https://github.com/monero-integrations/monerophp/graphs/contributors).
 
 ## How It Works
 This library has 3 main parts:
