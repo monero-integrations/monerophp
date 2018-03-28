@@ -169,7 +169,11 @@ class walletRPC
   public function create_address($account_index = 0, $label = '')
   {
     $create_address_parameters = array('account_index' => $account_index ,'label' => $label);
-    return $this->_run('create_address', $create_address_parameters);
+    $create_address_method = $this->_run('create_address', $create_address_parameters);
+
+    $save = $this->store(); // Save wallet state after transfer
+
+    return $create_address_method;
   }
   
   /**
