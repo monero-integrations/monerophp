@@ -120,40 +120,35 @@ class walletRPC {
   
   /**
    *
-   * 
+   * Create a new subaddress
    *
-   * @param 
-   *
-   * @return   Example: {
-   * }
+   * @param unsigned int The subaddress account index
+   * @param string The label to use
    *
    */
-  public function create_address() {
-    return $this->_run('create_address');
+  public function create_address($account_index, $label) {
+    $create_account_parameters = array('account_index' => $account_index ,'label' => $label);
+    return $this->_run('create_address', $create_account_parameters);
   }
   
   /**
    *
-   * 
+   * Label a subaddress
    *
-   * @param 
-   *
-   * @return   Example: {
-   * }
+   * @param unsigned int The subaddress index to label
+   * @param string The label to use
    *
    */
-  public function label_address() {
-    return $this->_run('label_address');
+  public function label_address($index, $label) {
+    $label_address_parameters('index' => $index ,'label' => $label);
+    return $this->_run('label_address', $label_address_parameters);
   }
-  
+
   /**
    *
-   * 
+   * Get current accounts from wallet
    *
-   * @param 
-   *
-   * @return   Example: {
-   * }
+   * @param none
    *
    */
   public function get_accounts() {
@@ -162,16 +157,14 @@ class walletRPC {
   
   /**
    *
-   * 
+   * Create a new sub-account from your wallet
    *
-   * @param 
-   *
-   * @return   Example: {
-   * }
+   * @param string A label for the account
    *
    */
-  public function create_account() {
-    return $this->_run('create_account');
+  public function create_account($label) {
+    $create_account_parameters('label' => $label);
+    return $this->_run('create_account', $create_account_parameters);
   }
   
   /**
@@ -1486,73 +1479,6 @@ class walletRPC {
    */
   public function submit_multisig() {
     return $this->_run('submit_multisig');
-  }
-  
-  /**
-   *
-   * Create a new subaddress
-   *
-   * @param unsigned int The subaddress account index
-   * @param string The label to use
-   *
-   */
-  public function create_address($account_index, $label)
-  {
-    $create_account_parameters = array('account_index' => $account_index ,'label' => $label);
-    return $this->_run('create_address', $create_account_parameters);
-  }
-  
-  /**
-   *
-   * Label a subaddress
-   *
-   * @param unsigned int The subaddress index to label
-   * @param string The label to use
-   *
-   */
-  public function label_address($index, $label)
-  {
-    $label_address_parameters('index' => $index ,'label' => $label);
-    return $this->_run('label_address', $label_address_parameters);
-  }
-
-  /**
-   *
-   * Get current accounts from wallet
-   *
-   * @param none
-   *
-   */
-  public function get_accounts()
-  {
-    return $this->_run('get_accounts');
-  }
-  
-  /**
-   *
-   * Create a new sub-account from your wallet
-   *
-   * @param string A label for the account
-   *
-   */
-  public function create_account($label)
-  {
-    $create_account_parameters('label' => $label);
-    return $this->_run('create_account', $create_account_parameters);
-  }
-  
-  /**
-   *
-   * Label a sub-account
-   *
-   * @param unsigned int The subaddress account index to label
-   * @param string The label to use
-   *
-   */
-  public function label_account($index, $label)
-  {
-    $label_account_parameters('index' => $index ,'label' => $label);
-    return $this->_run('label_account', $label_account_parameters);
   }
 
 }
