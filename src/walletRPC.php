@@ -1014,8 +1014,8 @@ class walletRPC
    */
   public function view_key()
   {
-    $query_key = array('key_type' => 'view_key');
-    return $this->_run('query_key', $query_key);
+    $query_key_parameters = array('key_type' => 'view_key');
+    return $this->_run('query_key', $query_key_parameters);
   }
   
   /**
@@ -1029,8 +1029,8 @@ class walletRPC
    */
   public function spend_key()
   {
-    $query_key = array('key_type' => 'spend_key');
-    return $this->_run('query_key', $query_key);
+    $query_key_parameters = array('key_type' => 'spend_key');
+    return $this->_run('query_key', $query_key_parameters);
   }
   
   /**
@@ -1044,8 +1044,8 @@ class walletRPC
    */
   public function mnemonic()
   {
-    $query_key = array('key_type' => 'mnemonic');
-    return $this->_run('query_key', $query_key);
+    $query_key_parameters = array('key_type' => 'mnemonic');
+    return $this->_run('query_key', $query_key_parameters);
   }
   
   /**
@@ -1129,7 +1129,6 @@ class walletRPC
     }
 
     $notes_parameters = array('txids' => $txids, 'notes' => $notes);
-
     return $this->_run('set_tx_notes', $notes_parameters);
   }
   
@@ -1147,7 +1146,6 @@ class walletRPC
     }
 
     $notes_parameters = array('txids' => $txids);
-
     return $this->_run('get_tx_notes', $notes_parameters);
   }
   
@@ -1171,7 +1169,6 @@ class walletRPC
     }
 
     $set_attribute_parameters = array('key' => $key, 'value' => $value);
-
     return $this->_run('set_attribute', $set_attribute_parameters);
   }
   
@@ -1192,7 +1189,6 @@ class walletRPC
     }
 
     $get_attribute_parameters = array('key' => $key);
-
     return $this->_run('get_attribute', $get_attribute_parameters);
   }
   
@@ -1214,7 +1210,6 @@ class walletRPC
     }
 
     $get_tx_key_parameters = array('txid' => $txid);
-
     return $this->_run('get_tx_key', $get_tx_key_parameters);
   }
   
@@ -1246,7 +1241,6 @@ class walletRPC
     }
 
     $check_tx_key_parameters = array('address' => $address, 'txid' => $txid, 'tx_key' => $tx_key);
-
     return $this->_run('check_tx_key', $check_tx_key_parameters);
   }
   
@@ -1272,7 +1266,6 @@ class walletRPC
     }
 
     $get_tx_proof_parameters = array('address' => $address, 'txid' => $txid);
-
     return $this->_run('get_tx_proof', $get_tx_proof_parameters);
   }
   
@@ -1305,7 +1298,6 @@ class walletRPC
     }
 
     $check_tx_proof_parameters = array('address' => $address, 'txid' => $txid, 'signature' => $signature);
-
     return $this->_run('check_tx_proof', $check_tx_proof_parameters);
   }
   
@@ -1327,7 +1319,6 @@ class walletRPC
     }
 
     $get_spend_proof_parameters = array('txid' => $txid);
-
     return $this->_run('get_spend_proof', $get_spend_proof_parameters);
   }
   
@@ -1353,7 +1344,6 @@ class walletRPC
     }
 
     $check_spend_proof_parameters = array('txid' => $txid, 'signature' => $signature);
-
     return $this->_run('check_spend_proof', $check_spend_proof_parameters);
   }
   
@@ -1406,7 +1396,6 @@ class walletRPC
     }
 
     $check_reserve_proof_parameters = array('address' => $address, 'signature' => $signature);
-
     return $this->_run('check_reserve_proof', $check_reserve_proof_parameters);
   }
   
@@ -1519,7 +1508,6 @@ class walletRPC
     }
 
     $notes_parameters = array('data' => $data, 'address' => $address, 'signature' => $signature);
-
     return $this->_run('verify', $notes_parameters);
   }
   
@@ -1553,7 +1541,6 @@ class walletRPC
     }
 
     $import_parameters = array('signed_key_images' => $signed_key_images);
-
     return $this->_run('import_key_images', $import_parameters);
   }
 
@@ -1629,7 +1616,6 @@ class walletRPC
     }
 
     $entries_parameters = array('entries' => $entries);
-
     return $this->_run('get_address_book', $entries_parameters);
   }
   
@@ -1661,7 +1647,6 @@ class walletRPC
     }
 
     $address_parameters = array('address' => $address);
-
     return $this->_run('add_address_book', $address_parameters);
   }
   
@@ -1679,7 +1664,6 @@ class walletRPC
     }
 
     $delete_parameters = array('index' => $index);
-
     return $this->_run('delete_address_book', $delete_parameters);
   }
   
@@ -1715,7 +1699,6 @@ class walletRPC
     }
 
     $mining_parameters = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
-
     return $this->_run('start_mining', $mining_parameters);
   }
   
@@ -1793,11 +1776,12 @@ class walletRPC
   
   /**
    *
-   * 
+   * Get information needed to create a multisig wallet
    *
-   * @param 
+   * @param  none
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   "multisig_info": "MultisigV1WBnkPKszceUBriuPZ6zoDsU6RYJuzQTiwUqE5gYSAD1yGTz85vqZGetawVvioaZB5cL86kYkVJmKbXvNrvEz7o5kibr7tHtenngGUSK4FgKbKhKSZxVXRYjMRKEdkcbwFBaSbsBZxJFFVYwLUrtGccSihta3F4GJfYzbPMveCFyT53oK"
    * }
    *
    */
