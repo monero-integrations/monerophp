@@ -1220,17 +1220,34 @@ class walletRPC
   
   /**
    *
-   * 
+   * Check a transaction key
    *
-   * @param 
+   * @param   string  $address  Address that sent transfer
+   * @param   string  $txid     Transaction ID
+   * @param   string  $tx_key   Transaction key
    *
-   * @return   Example: {
+   * @return  object  Example: {
+   *   "confirmations": 1,
+   *   "in_pool": ,
+   *   "received": 0
    * }
    *
    */
-  public function check_tx_key()
+  public function check_tx_key($address, $txid, $tx_key)
   {
-    return $this->_run('check_tx_key');
+    if (!isset($address)) {
+      throw new Exception('Error: Address required');
+    }
+    if (!isset($txid)) {
+      throw new Exception('Error: Transaction ID required');
+    }
+    if (!isset($tx_key)) {
+      throw new Exception('Error: Transaction key required');
+    }
+
+    $check_tx_key_parameters = array('address' => $address, 'txid' => $txid, 'tx_key' => $tx_key);
+
+    return $this->_run('check_tx_key', $check_tx_key_parameters);
   }
   
   /**
