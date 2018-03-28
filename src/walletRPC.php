@@ -1854,17 +1854,24 @@ class walletRPC
   
   /**
    *
-   * 
+   * Finalize a multisignature wallet
    *
-   * @param 
+   * @param  string  $multisig_info  Multisig info (from eg. prepare_multisig)
+   * @param  string  $password       Multisig info (from eg. prepare_multisig)
    *
    * @return   Example: {
+   *   // TODO example
    * }
    *
    */
-  public function finalize_multisig()
+  public function finalize_multisig($multisig_info, $password = '')
   {
-    return $this->_run('finalize_multisig');
+    if (!isset($multisig_info)) {
+      throw new Exception('Error: Multisignature info required');
+    }
+
+    $finalize_multisig_parameters = array('multisig_info' => $multisig_info, 'password' => $password);
+    return $this->_run('finalize_multisig', $finalize_multisig_parameters);
   }
   
   /**
