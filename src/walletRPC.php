@@ -128,14 +128,19 @@ class walletRPC
    *
    * Create a new subaddress
    *
-   * @param unsigned int The subaddress account index
-   * @param string The label to use
+   * @param  number  $account_index  The subaddress account index
+   * @param  string  $label          The label to use
+   *
+   * @return object  Example: {
+   *   "address": "Bh3ttLbjGFnVGCeGJF1HgVh4DfCaBNpDt7PQAgsC2GFug7WKskgfbTmB6e7UupyiijiHDQPmDC7wSCo9eLoGgbAFJQaAaDS"
+   *   "address_index": 1
+   * }
    *
    */
-  public function create_address($account_index, $label)
+  public function create_address($account_index = 0, $label = '')
   {
-    $create_account_parameters = array('account_index' => $account_index ,'label' => $label);
-    return $this->_run('create_address', $create_account_parameters);
+    $create_address_parameters = array('account_index' => $account_index ,'label' => $label);
+    return $this->_run('create_address', $create_address_parameters);
   }
   
   /**
