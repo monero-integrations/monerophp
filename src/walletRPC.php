@@ -880,16 +880,24 @@ class walletRPC
   
   /**
    *
-   * 
+   * Relay a transaction
    *
-   * @param 
+   * @param  string  $hex  Transaction blob to relay
    *
-   * @return   Example: {
-   * }
+   * @return object  // TODO example
    *
    */
-  public function relay_tx()
+  public function relay_tx($hex)
   {
+    if (!isset($hex)) {
+      throw new Exception('Error: Transaction required');
+    }
+
+    $relay_tx_parameters = array('hex' => $hex);
+    $relay_tx_method = $this->_run('relay_tx_method', $relay_tx_parameters);
+
+    $save = $this->store(); // Save wallet state after transaction relay
+
     return $this->_run('relay_tx');
   }
   
