@@ -345,17 +345,30 @@ class walletRPC
   
   /**
    *
+   * Describe a tag
    * 
-   * 
-   * @param 
+   * @param  string  $tag          Tag to describe
+   * @param  string  $description  Description to apply to tag
    *
-   * @return   Example: {
+   * @return object  Example: {
    * }
    *
    */
-  public function set_account_tag_description()
+  public function set_account_tag_description($tag, $description)
   {
-    return $this->_run('set_account_tag_description');
+    if (!isset($tag)) {
+      throw new Exception('Error: Tag required');
+    }
+    if (!isset($description)) {
+      throw new Exception('Error: Description required');
+    }
+
+    $set_account_tag_description_parameters = array('tag' => $tag, 'description' => $description);
+    $set_account_tag_description_method = $this->_run('set_account_tag_description', $set_account_tag_description_parameters);
+
+    $save = $this->store(); // Save wallet state after describing tag
+
+    return $set_account_tag_description_method;
   }
   
   /**
