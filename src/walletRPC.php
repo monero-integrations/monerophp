@@ -1252,17 +1252,28 @@ class walletRPC
   
   /**
    *
-   * 
+   * Get proof (signature) of transaction
    *
-   * @param 
+   * @param  string  $address  Address that spent funds
+   * @param  string  $txid     Transaction ID
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   "signature": "InProofV1Lq4nejMXxMnAdnLeZhHe3FGCmFdnSvzVM1AiGcXjngTRi4hfHPcDL9D4th7KUuvF9ZHnzCDXysNBhfy7gFvUfSbQWiqWtzbs35yUSmtW8orRZzJpYKNjxtzfqGthy1U3puiF"
    * }
    *
    */
-  public function get_tx_proof()
+  public function get_tx_proof($address, $txid)
   {
-    return $this->_run('get_tx_proof');
+    if (!isset($address)) {
+      throw new Exception('Error: Address required');
+    }
+    if (!isset($txid)) {
+      throw new Exception('Error: Transaction ID required');
+    }
+
+    $get_tx_proof_parameters = array('address' => $address, 'txid' => $txid);
+
+    return $this->_run('get_tx_proof', $get_tx_proof_parameters);
   }
   
   /**
