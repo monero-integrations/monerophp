@@ -14,6 +14,12 @@ Copyright (c) 2018 Monero-Integrations
             $this->ed25519 = new ed25519();
 	    $this->base58 = new base58();
         }
+
+        /*
+         * @param string Hex encoded string of the data to hash
+         * @return string Hex encoded string of the hashed data
+         *
+         */
         public function keccak_256($message)
         {
             $keccak256 = SHA3::init (SHA3::KECCAK_256);
@@ -21,6 +27,10 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex ($keccak256->squeeze (32)) ;
         }
         
+        /*
+         * @return string A hex encoded string of 32 random bytes
+         *
+         */
         public function gen_new_hex_seed()
         {
             $bytes = random_bytes(32);
@@ -44,11 +54,24 @@ Copyright (c) 2018 Monero-Integrations
             return $scalar;
         }
         
+        /*
+         * Derive a deterministic private view key from a private spend key
+         * @param string A private spend key represented as a 32 byte hex string
+         * 
+         * @return string A deterministic private view key represented as a 32 byte hex string
+         */
         public function derive_viewKey($spendKey)
         {
             return $this->hash_to_scalar($spendkey);
         }
         
+        /*
+         * Generate a pair of random private keys
+         *
+         * @param string A hex string to be used as a seed (this should be random)
+         *
+         * @return array An array containing a private spend key and a deterministic view key 
+         */
         public function gen_private_keys($seed)
         {
             $spendKey = $this->sc_reduce($seed);
@@ -59,9 +82,16 @@ Copyright (c) 2018 Monero-Integrations
             return $result;
         }
         
-        public function pk_from_sk($pubKey)
+        /*
+         * Get a public key from a private key on the ed25519 curve
+         *
+         * @param string a 32 byte hex encoded private key
+         *
+         * @return string a 32 byte hex encoding of a point on the curve to be used as a public key
+         */
+        public function pk_from_sk($privKey)
         {
-	    $keyInt = $this->ed25519->decodeint(hex2bin($pubKey));
+	    $keyInt = $this->ed25519->decodeint(hex2bin($privKey));
 	    $aG = $this->ed25519->scalarmult_base($keyInt);
             return bin2hex($this->ed25519->encodepoint($aG));
         }
@@ -157,7 +187,13 @@ Copyright (c) 2018 Monero-Integrations
 		return false;
 	}
 
-	// param (string) $address = base58 encoded monero address
+	/*
+         * Decode a base58 encoded Monero address
+         *
+         * @param string A base58 encoded Monero address
+         *
+         * @return array An array containing the Address network byte, public spend key, and public view key
+         */
 	public function decode_address($address)
         {
             $decoded = $this->base58->decode($address);
@@ -185,6 +221,13 @@ Copyright (c) 2018 Monero-Integrations
             return $result;
         }
 
+        /*
+         * Generate a Monero address from seed
+         *
+         * @param string Hex string to use as seed
+         *
+         * @return string A base58 encoded Monero address
+         */
 	public function address_from_seed($hex_seed)
 	{
 	    $private_keys = $this->gen_private_keys($hex_seed);
