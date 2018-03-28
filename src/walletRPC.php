@@ -1760,7 +1760,7 @@ class walletRPC
    *
    * @param  none
    *
-   * @return object  Example: (non-multisig wallet) {
+   * @return object  Example: (non-multisignature wallet) {
    *   "multisig": ,
    *   "ready": ,
    *   "threshold": 0,
@@ -1776,7 +1776,7 @@ class walletRPC
   
   /**
    *
-   * Get information needed to create a multisig wallet
+   * Get information needed to create a multisignature wallet
    *
    * @param  none
    *
@@ -1792,9 +1792,9 @@ class walletRPC
   
   /**
    *
-   * Make a multisig address.  Account must have nonzero balance
+   * Make a multisig account.  Account described by multisig_info must have nonzero balance
    *
-   * @param  string  $multisig_info  Multisig information (from eg. prepare_multisig) 
+   * @param  string  $multisig_info  Multisignature information (from eg. prepare_multisig) 
    * @param  string  $threshold      Threshold required to spend from multisig
    * @param  string  $password       Passphrase to apply to multisig address
    *
@@ -1806,7 +1806,7 @@ class walletRPC
   public function make_multisig($multisig_info, $threshold, $password = '')
   {
     if (!isset($multisig_info)) {
-      throw new Exception('Error: Multisig information required');
+      throw new Exception('Error: Multisignature information required');
     }
     if (!isset($threshold)) {
       throw new Exception('Error: Threshold required');
@@ -1818,11 +1818,11 @@ class walletRPC
   
   /**
    *
-   * 
+   * Export multisignature information
    *
-   * @param 
+   * @param  none
    *
-   * @return   Example: {
+   * @return object  Example: {
    * }
    *
    */
