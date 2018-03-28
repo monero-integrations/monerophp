@@ -765,17 +765,117 @@ class walletRPC
   
   /**
    *
+   * Sweep a single key image to an address
    * 
+   * @param  string  $key_image     Key image to sweep
+   * @param  string  $address       Address to transfer to
+   * @param  string  $payment_id           Payment ID                                  (optional)
+   * @param  number  $below_amount  Only send outputs below this amount         (optional)
+   * @param  number  $mixin         Mixin number                                (optional)
+   * @param  number  $priority      Payment ID                                  (optional)
+   * @param  number  $unlock_time   UNIX time or block height to unlock output  (optional)
+   * 
+   *   OR
+   * 
+   * @param  object  $params         Array containing any of the options listed above, where only amount and address are required
    *
-   * @param 
-   *
-   * @return   Example: {
+   * @return object  Example: {
+   *   "amount": "1000000000000",
+   *   "fee": "1000020000",
+   *   "tx_hash": "c60a64ddae46154a75af65544f73a7064911289a7760be8fb5390cb57c06f2db",
+   *   "tx_key": "805abdb3882d9440b6c80490c2d6b95a79dbc6d1b05e514131a91768e8040b04"
    * }
    *
    */
-  public function sweep_single()
+  public function sweep_single($key_image, $address, $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0)
   {
-    return $this->_run('sweep_single');
+    if (is_array($key_image)) { // Parameters passed in as object
+      $params = $key_image;
+
+      if (array_key_exists('key_image', $params)) {
+        $key_image = $params['key_image'];
+      } else {
+        throw new Exception('Error: Key image required');
+      }
+      if (array_key_exists('address', $params)) {
+        $address = $params['address'];
+      } else {
+        throw new Exception('Error: Address required');
+      }
+
+      if (array_key_exists('payment_id', $params)) {
+        $payment_id = $params['payment_id'];
+      }
+      if (array_key_exists('mixin', $params)) {
+        $mixin = $params['mixin'];
+      }
+      if (array_key_exists('account_index', $params)) {
+        $account_index = $params['account_index'];
+      }
+      if (array_key_exists('priority', $params)) {
+        $priority = $params['priority'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('unlock_time', $params)) {
+        $unlock_time = $params['unlock_time'];
+      }
+      if (array_key_exists('below_amount', $params)) {
+        $below_amount = $params['below_amount'];
+
+        // Convert from moneroj to tacoshi (piconero)
+        $new_below_amount = $below_amount * 1000000000000;
+      }
+      if (array_key_exists('do_not_relay', $params)) {
+        $do_not_relay = $params['do_not_relay'];
+      }
+    } else { // Legacy parameters used
+      if (!isset($address) || !$address) {
+        throw new Exception('Error: Address required');
+      }
+
+      // Convert from moneroj to tacoshi (piconero)
+      $new_below_amount = $below_amount * 1000000000000;
+    }
+
+    $transfer_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true);
+    if (isset($account_index)) {
+      if ($account_index) {
+        $transfer_parameters['account_index'] = $account_index;
+      }
+    }
+    if (isset($payment_id)) {
+      if ($payment_id) {
+        $transfer_parameters['payment_id'] = $payment_id;
+      }
+    }
+    if (isset($priority)) {
+      if ($priority) {
+        $transfer_parameters['priority'] = $priority;
+      }
+    }
+    if (isset($new_below_amount)) {
+      if ($new_below_amount) {
+        $transfer_parameters['below_amount'] = $new_below_amount;
+      }
+    }
+    if (isset($unlock_time)) {
+      if ($unlock_time) {
+        $transfer_parameters['unlock_time'] = $unlock_time;
+      }
+    }
+    if (isset($do_not_relay)) {
+      if ($do_not_relay) {
+        $transfer_parameters['do_not_relay'] = $do_not_relay;
+      }
+    }
+
+    $sweep_single_method = $this->_run('sweep_single', $transfer_parameters);
+
+    $save = $this->store(); // Save wallet state after transfer
+
+    return $sweep_single_method;
   }
   
   /**
