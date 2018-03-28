@@ -1278,17 +1278,35 @@ class walletRPC
   
   /**
    *
-   * 
+   * Verify transaction poof
    *
-   * @param 
+   * @param  string  $address    Address that spent funds
+   * @param  string  $txid       Transaction ID
+   * @param  string  $signature  Signature (tx_proof)
    *
    * @return   Example: {
+   *   "confirmations": 2,
+   *   "good": 1,
+   *   "in_pool": ,
+   *   "received": 15752471409492,
    * }
    *
    */
-  public function check_tx_proof()
+  public function check_tx_proof($address, $txid, $signature)
   {
-    return $this->_run('check_tx_proof');
+    if (!isset($address)) {
+      throw new Exception('Error: Address required');
+    }
+    if (!isset($txid)) {
+      throw new Exception('Error: Transaction ID required');
+    }
+    if (!isset($signature)) {
+      throw new Exception('Error: Signature required');
+    }
+
+    $check_tx_proof_parameters = array('address' => $address, 'txid' => $txid, 'signature' => $signature);
+
+    return $this->_run('check_tx_proof', $check_tx_proof_parameters);
   }
   
   /**
