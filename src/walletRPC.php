@@ -147,12 +147,21 @@ class walletRPC
    *
    * Label a subaddress
    *
-   * @param unsigned int The subaddress index to label
-   * @param string The label to use
+   * @param  number  The subaddress index to label
+   * @param  string  The label to use
+   *
+   * @return none
    *
    */
   public function label_address($index, $label)
   {
+    if (!isset($index)) {
+      throw new Exception('Error: Subaddress index required');
+    }
+    if (!isset($label)) {
+      throw new Exception('Error: Label required');
+    }
+
     $label_address_parameters = array('index' => $index ,'label' => $label);
     return $this->_run('label_address', $label_address_parameters);
   }
