@@ -117,7 +117,133 @@ class walletRPC {
   public function getaddress() {
     return $this->_run('getaddress');
   }
-
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function create_address() {
+    return $this->_run('create_address');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function label_address() {
+    return $this->_run('label_address');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function get_accounts() {
+    return $this->_run('get_accounts');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function create_account() {
+    return $this->_run('create_account');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function label_account() {
+    return $this->_run('label_account');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function get_account_tags() {
+    return $this->_run('get_account_tags');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function tag_accounts() {
+    return $this->_run('tag_accounts');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function untag_accounts() {
+    return $this->_run('untag_accounts');
+  }
+  
+  /**
+   *
+   * 
+   * 
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function set_account_tag_description() {
+    return $this->_run('set_account_tag_description');
+  }
+  
   /**
    *
    * Look up current height of wallet
@@ -357,6 +483,29 @@ class walletRPC {
   
   /**
    *
+   * Send all dust outputs back to the wallet's, to make them easier to spend (and mix)
+   *
+   */
+  public function sweep_dust() {
+    return $this->_run('sweep_dust');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function sweep_unmixable() {
+    return $this->_run('sweep_unmixable');
+  }
+  
+  /**
+   *
    * Send all unlocked balance to an address
    * 
    * @param  string  $address       Address to transfer to
@@ -462,6 +611,34 @@ class walletRPC {
     $save = $this->store(); // Save wallet state after transfer
 
     return $sweep_all_method;
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function sweep_single() {
+    return $this->_run('sweep_single');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function relay_tx() {
+    return $this->_run('relay_tx');
   }
   
   /**
@@ -707,6 +884,146 @@ class walletRPC {
     $notes_parameters = array('txids' => $txids);
 
     return $this->_run('get_tx_notes', $notes_parameters);
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function set_attribute() {
+    return $this->_run('set_attribute');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function get_attribute() {
+    return $this->_run('get_attribute');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function get_tx_key() {
+    return $this->_run('get_tx_key');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function check_tx_key() {
+    return $this->_run('check_tx_key');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function get_tx_proof() {
+    return $this->_run('get_tx_proof');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function check_tx_proof() {
+    return $this->_run('check_tx_proof');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function get_spend_proof() {
+    return $this->_run('get_spend_proof');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function check_spend_proof() {
+    return $this->_run('check_spend_proof');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function get_reserve_proof() {
+    return $this->_run('get_reserve_proof');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function check_reserve_proof() {
+    return $this->_run('check_reserve_proof');
   }
   
   /**
@@ -1057,6 +1374,118 @@ class walletRPC {
     $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
     $open_wallet_method = $this->_run('open_wallet',$open_wallet_parameters);
     return $open_wallet_method;
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function is_multisig() {
+    return $this->_run('is_multisig');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function prepare_multisig() {
+    return $this->_run('prepare_multisig');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function make_multisig() {
+    return $this->_run('make_multisig');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function export_multisig_info() {
+    return $this->_run('export_multisig_info');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function import_multisig_info() {
+    return $this->_run('import_multisig_info');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function finalize_multisig() {
+    return $this->_run('finalize_multisig');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function sign_multisig() {
+    return $this->_run('sign_multisig');
+  }
+  
+  /**
+   *
+   * 
+   *
+   * @param 
+   *
+   * @return   Example: {
+   * }
+   *
+   */
+  public function submit_multisig() {
+    return $this->_run('submit_multisig');
   }
   
 }
