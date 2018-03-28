@@ -70,7 +70,7 @@ class walletRPC
    * Execute command on the monero-wallet-rpc API
    *
    * @param  string  $method  RPC method to call
-   * @param  string  $params  Parameters to include with call  (optional)
+   * @param  object  $params  Parameters to include with call  (optional)
    *
    * @return string  Call result
    *
@@ -87,6 +87,8 @@ class walletRPC
    *
    * @param  object  $json  JSON object to print
    *
+   * @return none
+   *
    */
   public function _print($json)
   {
@@ -98,6 +100,8 @@ class walletRPC
   /**
    *
    * Look up wallet balance
+   *
+   * @param  none
    *
    * @return object  Example: {
    *   "balance": 140000000000,
@@ -114,6 +118,8 @@ class walletRPC
    *
    * Alias of get_balance()
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "balance": 140000000000,
    *   "unlocked_balance": 50000000000
@@ -129,6 +135,8 @@ class walletRPC
    *
    * Look up wallet address
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
    * }
@@ -142,6 +150,8 @@ class walletRPC
   /**
    *
    * Alias of get_address()
+   *
+   * @param  none
    *
    * @return object  Example: {
    *   "address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
@@ -375,6 +385,8 @@ class walletRPC
    *
    * Look up current height of wallet
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "height": 994310
    * }
@@ -388,6 +400,8 @@ class walletRPC
   /**
    *
    * Alias of get_height()
+   *
+   * @param  none
    *
    * @return object  Example: {
    *   "height": 994310
@@ -769,7 +783,7 @@ class walletRPC
    * 
    * @param  string  $key_image     Key image to sweep
    * @param  string  $address       Address to transfer to
-   * @param  string  $payment_id           Payment ID                                  (optional)
+   * @param  string  $payment_id    Payment ID                                  (optional)
    * @param  number  $below_amount  Only send outputs below this amount         (optional)
    * @param  number  $mixin         Mixin number                                (optional)
    * @param  number  $priority      Payment ID                                  (optional)
@@ -1007,6 +1021,8 @@ class walletRPC
    *
    * Look up wallet view key
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "key": "7e341d..."
    * }
@@ -1021,6 +1037,8 @@ class walletRPC
   /**
    *
    * Look up wallet spend key
+   *
+   * @param  none
    *
    * @return object  Example: {
    *   "key": "2ab810..."
@@ -1037,6 +1055,8 @@ class walletRPC
    *
    * Look up wallet spend key
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "key": "2ab810..."
    * }
@@ -1052,7 +1072,7 @@ class walletRPC
    *
    * Make an integrated address from the wallet address and a payment ID
    *
-   * @param  string  $payment_id  Payment ID to use when generating an integrated address (optional)
+   * @param  string  $payment_id  Payment ID to use when generating an integrated address  (optional)
    *
    * @return object  Example: {
    *   "integrated_address": "4BpEv3WrufwXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQQ8H2RRJveAtUeiFs6J"
@@ -1095,6 +1115,10 @@ class walletRPC
    *
    * Stop the wallet, saving the state
    *
+   * @param  none
+   *
+   * @return none
+   *
    */
   public function stop_wallet()
   {
@@ -1104,6 +1128,10 @@ class walletRPC
   /**
    *
    * Rescan blockchain from scratch
+   *
+   * @param  none
+   *
+   * @return none
    *
    */
   public function rescan_blockchain()
@@ -1116,7 +1144,9 @@ class walletRPC
    * Set arbitrary string notes for transactions
    *
    * @param  array  $txids  Array of transaction IDs (strings) to apply notes to
-   * @param  array  $notes  Array of notes (strings) to add 
+   * @param  array  $notes  Array of notes (strings) to add
+   *
+   * @return none
    *
    */
   public function set_tx_notes($txids, $notes)
@@ -1137,6 +1167,8 @@ class walletRPC
    * Get string notes for transactions
    *
    * @param  array  $txids  Array of transaction IDs (strings) to look up
+   *
+   * @return none
    *
    */
   public function get_tx_notes($txids)
@@ -1179,6 +1211,7 @@ class walletRPC
    * @param  string  $key  Wallet option to query
    *
    * @return object  Example: {
+   *   // TODO example
    * }
    *
    */
@@ -1515,6 +1548,8 @@ class walletRPC
    *
    * Export a signed set of key images
    *
+   * @param  none
+   *
    * @return  array  $signed_key_images  Array of signed key images
    *
    */
@@ -1624,8 +1659,8 @@ class walletRPC
    * Retrieve entries from the address book
    *
    * @param  string  $address      Address to add to address book
-   * @param  string  $payment_id   Payment ID to use with address in address book (optional)
-   * @param  string  $description  Description of address                         (optional)
+   * @param  string  $payment_id   Payment ID to use with address in address book  (optional)
+   * @param  string  $description  Description of address                          (optional)
    *
    * @return number  $index        Index of address in address book
    * 
@@ -1655,6 +1690,8 @@ class walletRPC
    * Delete an entry from the address book
    *
    * @param  array   $index  Index of the address book entry to remove
+   *
+   * @return none
    * 
    */
   public function delete_address_book($index)
@@ -1684,6 +1721,8 @@ class walletRPC
    * @param  number   $threads_count         Number of threads with which to mine
    * @param  boolean  $do_background_mining  Mine in backgound?
    * @param  boolean  $ignore_battery        Ignore battery?  
+   *
+   * @return none
    * 
    */
   public function start_mining($threads_count, $do_background_mining, $ignore_battery)
@@ -1705,6 +1744,10 @@ class walletRPC
   /**
    *
    * Stop mining
+   *
+   * @param  none
+   *
+   * @return none
    * 
    */
   public function stop_mining()
@@ -1715,6 +1758,8 @@ class walletRPC
   /**
    *
    * Get a list of available languages for your wallet's seed
+   *
+   * @param  none
    * 
    * @return array  List of available languages
    *
@@ -1731,6 +1776,8 @@ class walletRPC
    * @param  string  $filename  Filename to use for new wallet
    * @param  string  $password  Password to use for new wallet
    *
+   * @return none
+   *
    */
   public function create_wallet($filename = 'monero_wallet', $password = null)
   {
@@ -1745,7 +1792,7 @@ class walletRPC
    * @param  string  $filename  Filename to use for new wallet
    * @param  string  $password  Password to use for new wallet
    *
-   * @return object  Example: 
+   * @return none
    *
    */
   public function open_wallet($filename = 'monero_wallet', $password = null)
@@ -1765,7 +1812,6 @@ class walletRPC
    *   "ready": ,
    *   "threshold": 0,
    *   "total": 0
-   *
    * } // TODO multisig wallet example
    *
    */
@@ -1823,6 +1869,7 @@ class walletRPC
    * @param  none
    *
    * @return object  Example: {
+   *   // TODO example
    * }
    *
    */
