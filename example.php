@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 require_once('src/jsonRPCClient.php');
 require_once('src/daemonRPC.php');
 
-$daemonRPC = new daemonRPC('127.0.0.1', '28081'); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet, 38081 for stagenet
+$daemonRPC = new daemonRPC('127.0.0.1', 28081); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet, 38081 for stagenet
 $getblockcount = $daemonRPC->getblockcount();
 $on_getblockhash = $daemonRPC->on_getblockhash(42069);
 // $getblocktemplate = $daemonRPC->getblocktemplate('9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 60);
@@ -26,12 +26,15 @@ $get_info = $daemonRPC->get_info();
 
 require_once('src/walletRPC.php');
 
-$walletRPC = new walletRPC('127.0.0.1', '28082'); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18082 is the default port for mainnet, 28082 for testnet, 38082 for stagenet
-// $create_wallet = $walletRPC->create_wallet();
-$open_wallet = $walletRPC->open_wallet();
-$getaddress = $walletRPC->getaddress();
-$getbalance = $walletRPC->getbalance();
-// $getheight = $walletRPC->getheight();
+$walletRPC = new walletRPC('127.0.0.1', 28082); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18082 is the default port for mainnet, 28082 for testnet, 38082 for stagenet
+// $create_wallet = $walletRPC->create_wallet('monero_wallet', ''); // Creates a new wallet named monero_wallet with no passphrase.  Comment this line and edit the next line to use your own wallet
+$open_wallet = $walletRPC->open_wallet('monero_wallet', '');
+$get_address = $walletRPC->get_address();
+$get_accounts = $walletRPC->get_accounts();
+$get_balance = $walletRPC->get_balance();
+// $create_address = $walletRPC->create_address(0, 'This is an example subaddress label'); // Create a subaddress on account 0
+// $tag_accounts = $walletRPC->tag_accounts([0], 'This is an example account tag');
+// $get_height = $walletRPC->get_height();
 // $transfer = $walletRPC->transfer(1, '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn'); // First account generated from mnemonic 'gang dying lipstick wonders howls begun uptight humid thirsty irony adept umpire dusted update grunt water iceberg timber aloof fudge rift clue umpire venomous thirsty'
 // $transfer = $walletRPC->transfer(['address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'amount' => 1, 'priority' => 1]); // Passing parameters in as array
 // $transfer = $walletRPC->transfer(['destinations' => ['amount' => 1, 'address' => '9sZABNdyWspcpsCPma1eUD5yM3efTHfsiCx3qB8RDYH9UFST4aj34s5Ygz69zxh8vEBCCqgxEZxBAEC4pyGkN4JEPmUWrxn', 'amount' => 2, 'address' => 'BhASuWq4HcBL1KAwt4wMBDhkpwseFe6pNaq5DWQnMwjBaFL8isMZzcEfcF7x6Vqgz9EBY66g5UBrueRFLCESojoaHaTPsjh'], 'priority' => 1]); // Multiple payments in one transaction
@@ -78,14 +81,28 @@ $getbalance = $walletRPC->getbalance();
     <h2><tt>walletRPC.php</tt> example</h2>
     <p><i>Note: not all methods shown, nor all results from each method.</i></p>
     <dl>
-      <dt><tt>getaddress()</tt></dt>
+      <!--
+      <dt><tt>get_address()</tt></dt>
       <dd>
-        <?php foreach ($getaddress['addresses'] as $account) { echo '<p>' . $account['label'] . ': <tt>' . $account['address'] . '</tt></p>'; } ?>
+        <?php foreach ($get_address['addresses'] as $account) { echo '<p>' . $account['label'] . ': <tt>' . $account['address'] . '</tt></p>'; } ?>
       </dd>
-      <dt><tt>getbalance()</tt></dt>
+      -->
+      <dt><tt>get_accounts()</tt></dt>
       <dd>
-        <p>Balance: <tt><?php echo $getbalance['balance'] / pow(10, 12); ?></tt></p>
-        <p>Unlocked balance: <tt><?php echo $getbalance['unlocked_balance'] / pow(10, 12); ?></tt></p>
+        <p>Accounts: <?php echo count($get_accounts['subaddress_accounts']); ?></p>
+        <?php
+          foreach ($get_accounts['subaddress_accounts'] as $account) {
+            echo '<p><table><tr><td style="text-align: right;">Account ' . $account['account_index'] . ': </td><td><tt>' . $account['base_address'] . '</tt></td></tr>';
+            echo ( $account['label'] ) ? '<tr><td style="text-align: right;">Label: </td><td><tt>' . $account['label'] . '</tt></td></tr>' : '';
+            echo ( $account['tag'] ) ? '<tr><td style="text-align: right;">Tag: </td><td><tt>' . $account['tag'] . '</tt></td></tr>' : '';
+            echo '<tr><td style="text-align: right;">Balance: </td><td><tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)</td></tr></table></p>';
+          }
+        ?>
+      </dd>
+      <dt><tt>get_balance()</tt></dt>
+      <dd>
+        <p>Balance: <tt><?php echo $get_balance['balance'] / pow(10, 12); ?></tt></p>
+        <p>Unlocked balance: <tt><?php echo $get_balance['unlocked_balance'] / pow(10, 12); ?></tt></p>
       </dd>
     </dl>
   </body>
