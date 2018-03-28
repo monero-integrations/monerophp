@@ -262,9 +262,21 @@ class walletRPC
    * @return none
    *
    */
-  public function label_account()
+  public function label_account($account_index, $label)
   {
-    return $this->_run('label_account');
+    if (!isset($account_index)) {
+      throw new Exception('Error: Account index required');
+    }
+    if (!isset($label)) {
+      throw new Exception('Error: Label required');
+    }
+
+    $label_account_parameters = array('account_index' => $account_index, 'label' => $label);
+    $label_account_method = $this->_run('label_account', $label_account_parameters);
+
+    $save = $this->store(); // Save wallet state after account creation
+
+    return $label_account_method;
   }
   
   /**
