@@ -1091,6 +1091,34 @@ class walletRPC {
     return $sign_method;
   }
   
+  /**
+   *
+   * Create a new subaddress
+   *
+   * @param unsigned int The subaddress account index
+   * @param string The label to use
+   *
+   */
+  public function create_address($account_index, $label)
+  {
+    $create_account_parameters = array('account_index' => $account_index ,'label' => $label);
+    return $this->_run('create_address', $create_account_parameters);
+  }
+  
+  /**
+   *
+   * Label a subaddress
+   *
+   * @param unsigned int The subaddress index to label
+   * @param string The label to use
+   *
+   */
+  public function label_address($index, $label)
+  {
+    $label_address_parameters('index' => $index ,'label' => $label);
+    return $this->_run('label_address', $label_address_parameters);
+  }
+  
 }
 
 ?>
