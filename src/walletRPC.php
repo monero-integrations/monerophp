@@ -643,11 +643,12 @@ class walletRPC
   
   /**
    *
-   * 
+   * Send all unimzable output back to the wallet
    *
-   * @param 
+   * @param  none
    *
-   * @return   Example: {
+   * @return object  Example: {
+   *   "multisig_txset": []
    * }
    *
    */
