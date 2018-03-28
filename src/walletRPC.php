@@ -395,13 +395,14 @@ class walletRPC
    *
    * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an array (as listed at bottom.)  If multiple destinations are required, use the array format and use
    * 
-   * @param  string  $amount       Amount to transfer
-   * @param  string  $address      Address to transfer to
-   * @param  string  $payment_id   Payment ID                                  (optional)
-   * @param  number  $mixin        Mixin number                                (optional)
-   * @param  number  $index        Account to send from                        (optional)
-   * @param  number  $priority     Transaction priority                        (optional)
-   * @param  number  $unlock_time  UNIX time or block height to unlock output  (optional)
+   * @param  string   $amount        Amount to transfer
+   * @param  string   $address       Address to transfer to
+   * @param  string   $payment_id    Payment ID                                  (optional)
+   * @param  number   $mixin         Mixin number                                (optional)
+   * @param  number   $index         Account to send from                        (optional)
+   * @param  number   $priority      Transaction priority                        (optional)
+   * @param  number   $unlock_time   UNIX time or block height to unlock output  (optional)
+   * @param  boolean  $do_not_relay  Do not relay transaction                    (optional)
    * 
    *   OR
    * 
@@ -415,7 +416,7 @@ class walletRPC
    * }
    *
    */
-  public function transfer($amount, $address = '', $payment_id = '', $mixin = 6, $index = 0, $priority = 2, $unlock_time = 0)
+  public function transfer($amount, $address = '', $payment_id = '', $mixin = 6, $index = 0, $priority = 2, $unlock_time = 0, $do_not_relay = false)
   {
     if (is_array($amount)) { // Parameters passed in as object
       $params = $amount;
@@ -499,7 +500,7 @@ class walletRPC
    * Same as transfer, but splits transfer into more than one transaction if necessary
    *
    */
-  public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 6, $index = 0, $priority = 2, $unlock_time = 0)
+  public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 6, $index = 0, $priority = 2, $unlock_time = 0, $do_not_relay = false)
   {
     if (is_array($amount)) { // Parameters passed in as object
       $params = $amount;
@@ -623,13 +624,14 @@ class walletRPC
    *
    * Send all unlocked balance from current account to an address
    * 
-   * @param  string  $address          Address to transfer to
-   * @param  string  $subaddr_indices  Subaddress indices to sweep in a comma-separated list  (optional)
-   * @param  string  $payment_id       Payment ID                                             (optional)
-   * @param  number  $mixin            Mixin number                                           (optional)
-   * @param  number  $priority         Payment ID                                             (optional)
-   * @param  number  $below_amount     Only send outputs below this amount                    (optional)
-   * @param  number  $unlock_time      UNIX time or block height to unlock output             (optional)
+   * @param  string   $address          Address to transfer to
+   * @param  string   $subaddr_indices  Subaddress indices to sweep in a comma-separated list  (optional)
+   * @param  string   $payment_id       Payment ID                                             (optional)
+   * @param  number   $mixin            Mixin number                                           (optional)
+   * @param  number   $priority         Payment ID                                             (optional)
+   * @param  number   $below_amount     Only send outputs below this amount                    (optional)
+   * @param  number   $unlock_time      UNIX time or block height to unlock output             (optional)
+   * @param  boolean  $do_not_relay     Do not relay transaction                               (optional)
    * 
    *   OR
    * 
@@ -643,7 +645,7 @@ class walletRPC
    * }
    *
    */
-  public function sweep_all($address, $subaddr_indices = '', $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0)
+  public function sweep_all($address, $subaddr_indices = '', $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = false)
   {
     if (is_array($address)) { // Parameters passed in as object
       $params = $address;
@@ -713,13 +715,14 @@ class walletRPC
    *
    * Sweep a single key image to an address
    * 
-   * @param  string  $key_image     Key image to sweep
-   * @param  string  $address       Address to transfer to
-   * @param  string  $payment_id    Payment ID                                  (optional)
-   * @param  number  $below_amount  Only send outputs below this amount         (optional)
-   * @param  number  $mixin         Mixin number                                (optional)
-   * @param  number  $priority      Payment ID                                  (optional)
-   * @param  number  $unlock_time   UNIX time or block height to unlock output  (optional)
+   * @param  string   $key_image     Key image to sweep
+   * @param  string   $address       Address to transfer to
+   * @param  string   $payment_id    Payment ID                                  (optional)
+   * @param  number   $below_amount  Only send outputs below this amount         (optional)
+   * @param  number   $mixin         Mixin number                                (optional)
+   * @param  number   $priority      Payment ID                                  (optional)
+   * @param  number   $unlock_time   UNIX time or block height to unlock output  (optional)
+   * @param  boolean  $do_not_relay  Do not relay transaction                    (optional)
    * 
    *   OR
    * 
@@ -733,7 +736,7 @@ class walletRPC
    * }
    *
    */
-  public function sweep_single($key_image, $address, $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0)
+  public function sweep_single($key_image, $address, $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = 0)
   {
     if (is_array($key_image)) { // Parameters passed in as object
       $params = $key_image;
