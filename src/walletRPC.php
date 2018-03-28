@@ -274,7 +274,7 @@ class walletRPC
     $label_account_parameters = array('account_index' => $account_index, 'label' => $label);
     $label_account_method = $this->_run('label_account', $label_account_parameters);
 
-    $save = $this->store(); // Save wallet state after account creation
+    $save = $this->store(); // Save wallet state after account label
 
     return $label_account_method;
   }
@@ -319,24 +319,28 @@ class walletRPC
     $tag_accounts_parameters = array('accounts' => $accounts, 'tag' => $tag);
     $tag_accounts_method = $this->_run('tag_accounts', $tag_accounts_parameters);
 
-    $save = $this->store(); // Save wallet state after account creation
+    $save = $this->store(); // Save wallet state after account tagginng
 
     return $this->_run('tag_accounts');
   }
   
   /**
    *
-   * 
+   * Untag accounts
    *
-   * @param 
+   * @param  array   $accounts  Account indices to untag
    *
-   * @return   Example: {
-   * }
+   * @return none
    *
    */
-  public function untag_accounts()
+  public function untag_accounts($accounts)
   {
-    return $this->_run('untag_accounts');
+    $untag_accounts_parameters = array('accounts' => $accounts);
+    $untag_accounts_method = $this->_run('untag_accounts', $untag_accounts_parameters);
+
+    $save = $this->store(); // Save wallet state after untagging accounts
+
+    return $untag_accounts_method;
   }
   
   /**
