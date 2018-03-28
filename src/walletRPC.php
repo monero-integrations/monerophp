@@ -92,7 +92,6 @@ class walletRPC
    */
   public function _print($json)
   {
-
     $json_parsed = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     echo $json_parsed;
   }
@@ -198,13 +197,6 @@ class walletRPC
    */
   public function label_address($index, $label)
   {
-    if (!isset($index)) {
-      throw new Exception('Error: Subaddress index required');
-    }
-    if (!isset($label)) {
-      throw new Exception('Error: Label required');
-    }
-
     $label_address_parameters = array('index' => $index ,'label' => $label);
     return $this->_run('label_address', $label_address_parameters);
   }
@@ -274,13 +266,6 @@ class walletRPC
    */
   public function label_account($account_index, $label)
   {
-    if (!isset($account_index)) {
-      throw new Exception('Error: Account index required');
-    }
-    if (!isset($label)) {
-      throw new Exception('Error: Label required');
-    }
-
     $label_account_parameters = array('account_index' => $account_index, 'label' => $label);
     $label_account_method = $this->_run('label_account', $label_account_parameters);
 
@@ -366,13 +351,6 @@ class walletRPC
    */
   public function set_account_tag_description($tag, $description)
   {
-    if (!isset($tag)) {
-      throw new Exception('Error: Tag required');
-    }
-    if (!isset($description)) {
-      throw new Exception('Error: Description required');
-    }
-
     $set_account_tag_description_parameters = array('tag' => $tag, 'description' => $description);
     $set_account_tag_description_method = $this->_run('set_account_tag_description', $set_account_tag_description_parameters);
 
@@ -487,13 +465,7 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-      if (!isset($amount)) {
-        throw new Exception('Error: Amount required');
-      }
-      if (!isset($address) || !$address) {
-        throw new Exception('Error: Address required');
-      }
-    
+
       // Convert from moneroj to tacoshi (piconero)
       $new_amount = $amount  * 1000000000000;
 
@@ -501,25 +473,18 @@ class walletRPC
     }
 
     $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
-    if (isset($payment_id)) {
-      if ($payment_id) {
-        $transfer_parameters['payment_id'] = $payment_id;
-      }
+    // Could maybe set these parameters naively, need to test if RPC throws an error if an empty value is passed
+    if ($payment_id) {
+      $transfer_parameters['payment_id'] = $payment_id;
     }
-    if (isset($index)) {
-      if ($index) {
-        $transfer_parameters['index'] = $index;
-      }
+    if ($index) {
+      $transfer_parameters['index'] = $index;
     }
-    if (isset($priority)) {
-      if ($priority) {
-        $transfer_parameters['priority'] = $priority;
-      }
+    if ($priority) {
+      $transfer_parameters['priority'] = $priority;
     }
-    if (isset($do_not_relay)) {
-      if ($do_not_relay) {
-        $transfer_parameters['do_not_relay'] = $do_not_relay;
-      }
+    if ($do_not_relay) {
+      $transfer_parameters['do_not_relay'] = $do_not_relay;
     }
 
     $transfer_method = $this->_run('transfer', $transfer_parameters);
@@ -592,13 +557,6 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-      if (!isset($amount)) {
-        throw new Exception('Error: Amount required');
-      }
-      if (!isset($address) || !$address) {
-        throw new Exception('Error: Address required');
-      }
-    
       // Convert from moneroj to tacoshi (piconero)
       $new_amount = $amount * 1000000000000;
 
@@ -606,30 +564,20 @@ class walletRPC
     }
 
     $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
-    if (isset($index)) {
-      if ($index) {
-        $transfer_parameters['index'] = $index;
-      }
+    if ($index) {
+      $transfer_parameters['index'] = $index;
     }
-    if (isset($payment_id)) {
-      if ($payment_id) {
-        $transfer_parameters['payment_id'] = $payment_id;
-      }
+    if ($payment_id) {
+      $transfer_parameters['payment_id'] = $payment_id;
     }
-    if (isset($priority)) {
-      if ($priority) {
-        $transfer_parameters['priority'] = $priority;
-      }
+    if ($priority) {
+      $transfer_parameters['priority'] = $priority;
     }
-    if (isset($unlock_time)) {
-      if ($unlock_time) {
-        $transfer_parameters['unlock_time'] = $unlock_time;
-      }
+    if ($unlock_time) {
+      $transfer_parameters['unlock_time'] = $unlock_time;
     }
-    if (isset($do_not_relay)) {
-      if ($do_not_relay) {
-        $transfer_parameters['do_not_relay'] = $do_not_relay;
-      }
+    if ($do_not_relay) {
+      $transfer_parameters['do_not_relay'] = $do_not_relay;
     }
 
     $transfer_method = $this->_run('transfer_split', $transfer_parameters);
@@ -730,44 +678,28 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-      if (!isset($address) || !$address) {
-        throw new Exception('Error: Address required');
-      }
-
       // Convert from moneroj to tacoshi (piconero)
       $new_below_amount = $below_amount * 1000000000000;
     }
 
     $transfer_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true);
-    if (isset($new_below_amount)) {
-      if ($new_below_amount) {
-        $transfer_parameters['below_amount'] = $new_below_amount;
-      }
+    if ($subaddr_indices) {
+      $transfer_parameters['subaddr_indices'] = $subaddr_indices;
     }
-    if (isset($subaddr_indices)) {
-      if ($subaddr_indices) {
-        $transfer_parameters['subaddr_indices'] = $subaddr_indices;
-      }
+    if ($payment_id) {
+      $transfer_parameters['payment_id'] = $payment_id;
     }
-    if (isset($payment_id)) {
-      if ($payment_id) {
-        $transfer_parameters['payment_id'] = $payment_id;
-      }
+    if ($priority) {
+      $transfer_parameters['priority'] = $priority;
     }
-    if (isset($priority)) {
-      if ($priority) {
-        $transfer_parameters['priority'] = $priority;
-      }
+    if ($new_below_amount) {
+      $transfer_parameters['below_amount'] = $new_below_amount;
     }
-    if (isset($unlock_time)) {
-      if ($unlock_time) {
-        $transfer_parameters['unlock_time'] = $unlock_time;
-      }
+    if ($unlock_time) {
+      $transfer_parameters['unlock_time'] = $unlock_time;
     }
-    if (isset($do_not_relay)) {
-      if ($do_not_relay) {
-        $transfer_parameters['do_not_relay'] = $do_not_relay;
-      }
+    if ($do_not_relay) {
+      $transfer_parameters['do_not_relay'] = $do_not_relay;
     }
 
     $sweep_all_method = $this->_run('sweep_all', $transfer_parameters);
@@ -845,44 +777,28 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-      if (!isset($address) || !$address) {
-        throw new Exception('Error: Address required');
-      }
-
       // Convert from moneroj to tacoshi (piconero)
       $new_below_amount = $below_amount * 1000000000000;
     }
 
     $transfer_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true);
-    if (isset($account_index)) {
-      if ($account_index) {
-        $transfer_parameters['account_index'] = $account_index;
-      }
+    if ($account_index) {
+      $transfer_parameters['account_index'] = $account_index;
     }
-    if (isset($payment_id)) {
-      if ($payment_id) {
-        $transfer_parameters['payment_id'] = $payment_id;
-      }
+    if ($payment_id) {
+      $transfer_parameters['payment_id'] = $payment_id;
     }
-    if (isset($priority)) {
-      if ($priority) {
-        $transfer_parameters['priority'] = $priority;
-      }
+    if ($priority) {
+      $transfer_parameters['priority'] = $priority;
     }
-    if (isset($new_below_amount)) {
-      if ($new_below_amount) {
-        $transfer_parameters['below_amount'] = $new_below_amount;
-      }
+    if ($new_below_amount) {
+      $transfer_parameters['below_amount'] = $new_below_amount;
     }
-    if (isset($unlock_time)) {
-      if ($unlock_time) {
-        $transfer_parameters['unlock_time'] = $unlock_time;
-      }
+    if ($unlock_time) {
+      $transfer_parameters['unlock_time'] = $unlock_time;
     }
-    if (isset($do_not_relay)) {
-      if ($do_not_relay) {
-        $transfer_parameters['do_not_relay'] = $do_not_relay;
-      }
+    if ($do_not_relay) {
+      $transfer_parameters['do_not_relay'] = $do_not_relay;
     }
 
     $sweep_single_method = $this->_run('sweep_single', $transfer_parameters);
@@ -903,10 +819,6 @@ class walletRPC
    */
   public function relay_tx($hex)
   {
-    if (!isset($hex)) {
-      throw new Exception('Error: Transaction required');
-    }
-
     $relay_tx_parameters = array('hex' => $hex);
     $relay_tx_method = $this->_run('relay_tx_method', $relay_tx_parameters);
 
@@ -944,10 +856,6 @@ class walletRPC
    */
   public function get_payments($payment_id)
   {
-    if (!isset($payment_id)) {
-      throw new Exception('Error: Payment ID required');
-    }
-
     $get_payments_parameters = array('payment_id' => $payment_id);
     return $this->_run('get_payments', $get_payments_parameters);
   }
@@ -972,13 +880,6 @@ class walletRPC
    */
   public function get_bulk_payments($payment_id, $min_block_height)
   {
-    if (!isset($payment_id)) {
-      throw new Exception('Error: Payment ID required');
-    }
-    if (!isset($min_block_height)) {
-      throw new Exception('Error: Minimum block height required');
-    }
-
     $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
     return $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
   }
@@ -1099,14 +1000,7 @@ class walletRPC
    */
   public function split_integrated_address($integrated_address)
   {
-    if (!isset($integrated_address)) {
-      throw new Exception('Error: Integrated address required');
-    }
-    
-    if (!isset($integrated_address)) {
-      throw new Exception('Error: Integrated address required');
-    }
-
+ 
     $split_parameters = array('integrated_address' => $integrated_address);
     return $this->_run('split_integrated_address', $split_parameters);
   }
@@ -1151,13 +1045,6 @@ class walletRPC
    */
   public function set_tx_notes($txids, $notes)
   {
-    if (!isset($txids)) {
-      throw new Exception('Error: Transaction IDs required');
-    }
-    if (!isset($notes)) {
-      throw new Exception('Error: Notes required');
-    }
-
     $notes_parameters = array('txids' => $txids, 'notes' => $notes);
     return $this->_run('set_tx_notes', $notes_parameters);
   }
@@ -1173,10 +1060,6 @@ class walletRPC
    */
   public function get_tx_notes($txids)
   {
-    if (!isset($txids)) {
-      throw new Exception('Error: Transaction IDs required');
-    }
-
     $notes_parameters = array('txids' => $txids);
     return $this->_run('get_tx_notes', $notes_parameters);
   }
@@ -1193,13 +1076,6 @@ class walletRPC
    */
   public function set_attribute($key, $value)
   {
-    if (!isset($key)) {
-      throw new Exception('Error: Key required');
-    }
-    if (!isset($key)) {
-      throw new Exception('Error: Value required');
-    }
-
     $set_attribute_parameters = array('key' => $key, 'value' => $value);
     return $this->_run('set_attribute', $set_attribute_parameters);
   }
@@ -1217,10 +1093,6 @@ class walletRPC
    */
   public function get_attribute($key)
   {
-    if (!isset($key)) {
-      throw new Exception('Error: Key required');
-    }
-
     $get_attribute_parameters = array('key' => $key);
     return $this->_run('get_attribute', $get_attribute_parameters);
   }
@@ -1238,10 +1110,6 @@ class walletRPC
    */
   public function get_tx_key($txid)
   {
-    if (!isset($txid)) {
-      throw new Exception('Error: Transaction ID required');
-    }
-
     $get_tx_key_parameters = array('txid' => $txid);
     return $this->_run('get_tx_key', $get_tx_key_parameters);
   }
@@ -1263,16 +1131,6 @@ class walletRPC
    */
   public function check_tx_key($address, $txid, $tx_key)
   {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-    if (!isset($txid)) {
-      throw new Exception('Error: Transaction ID required');
-    }
-    if (!isset($tx_key)) {
-      throw new Exception('Error: Transaction key required');
-    }
-
     $check_tx_key_parameters = array('address' => $address, 'txid' => $txid, 'tx_key' => $tx_key);
     return $this->_run('check_tx_key', $check_tx_key_parameters);
   }
@@ -1291,13 +1149,6 @@ class walletRPC
    */
   public function get_tx_proof($address, $txid)
   {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-    if (!isset($txid)) {
-      throw new Exception('Error: Transaction ID required');
-    }
-
     $get_tx_proof_parameters = array('address' => $address, 'txid' => $txid);
     return $this->_run('get_tx_proof', $get_tx_proof_parameters);
   }
@@ -1320,16 +1171,6 @@ class walletRPC
    */
   public function check_tx_proof($address, $txid, $signature)
   {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-    if (!isset($txid)) {
-      throw new Exception('Error: Transaction ID required');
-    }
-    if (!isset($signature)) {
-      throw new Exception('Error: Signature required');
-    }
-
     $check_tx_proof_parameters = array('address' => $address, 'txid' => $txid, 'signature' => $signature);
     return $this->_run('check_tx_proof', $check_tx_proof_parameters);
   }
@@ -1347,10 +1188,6 @@ class walletRPC
    */
   public function get_spend_proof($txid)
   {
-    if (!isset($txid)) {
-      throw new Exception('Error: Transaction ID required');
-    }
-
     $get_spend_proof_parameters = array('txid' => $txid);
     return $this->_run('get_spend_proof', $get_spend_proof_parameters);
   }
@@ -1369,13 +1206,6 @@ class walletRPC
    */
   public function check_spend_proof($txid, $signature)
   {
-    if (!isset($txid)) {
-      throw new Exception('Error: Transaction ID required');
-    }
-    if (!isset($signature)) {
-      throw new Exception('Error: Signature required');
-    }
-
     $check_spend_proof_parameters = array('txid' => $txid, 'signature' => $signature);
     return $this->_run('check_spend_proof', $check_spend_proof_parameters);
   }
@@ -1393,9 +1223,6 @@ class walletRPC
    */
   public function get_reserve_proof($account_index = 'all')
   {
-    if (!isset($account_index)) {
-      throw new Exception('Error: Account index required');
-    }
     if ($account_index == 'all') {
       $check_spend_proof_parameters = array('all' => true);
     } else {
@@ -1421,13 +1248,6 @@ class walletRPC
    */
   public function check_reserve_proof($address, $signature)
   {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-    if (!isset($signature)) {
-      throw new Exception('Error: Signature required');
-    }
-
     $check_reserve_proof_parameters = array('address' => $address, 'signature' => $signature);
     return $this->_run('check_reserve_proof', $check_reserve_proof_parameters);
   }
@@ -1455,13 +1275,6 @@ class walletRPC
    */
   public function get_transfers($input_type, $input_value)
   {
-    if (!isset($input_type)) {
-      throw new Exception('Error: Input type required');
-    }
-    if (!isset($input_value)) {
-      throw new Exception('Error: Input value required');
-    }
-
     $get_parameters = array($input_type => $input_value);
     return $this->_run('get_transfers', $get_parameters);
   }
@@ -1488,10 +1301,6 @@ class walletRPC
    */
   public function get_transfer_by_txid($txid)
   {
-    if (!isset($txid)) {
-      throw new Exception('Error: TX ID required');
-    }
-
     $get_transfer_by_txid_parameters = array('txid' => $txid);
     return $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
   }
@@ -1509,10 +1318,7 @@ class walletRPC
    */
   public function sign($data)
   {
-    if (!isset($data)) {
-      throw new Exception('Error: Data to sign required');
-    }
-    
+ 
     $sign_parameters = array('string' => $data);
     return $this->_run('sign',$sign_parameters);
   }
@@ -1530,16 +1336,6 @@ class walletRPC
    */
   public function verify($data, $address, $signature)
   {
-    if (!isset($data)) {
-      throw new Exception('Error: Signed data required');
-    }
-    if (!isset($address)) {
-      throw new Exception('Error: Signing address required');
-    }
-    if (!isset($signature)) {
-      throw new Exception('Error: Signature required');
-    }
-
     $notes_parameters = array('data' => $data, 'address' => $address, 'signature' => $signature);
     return $this->_run('verify', $notes_parameters);
   }
@@ -1571,10 +1367,6 @@ class walletRPC
    */
   public function import_key_images($signed_key_images)
   {
-    if (!isset($signed_key_images)) {
-      throw new Exception('Error: Signed key images required');
-    }
-
     $import_parameters = array('signed_key_images' => $signed_key_images);
     return $this->_run('import_key_images', $import_parameters);
   }
@@ -1593,13 +1385,6 @@ class walletRPC
    */
   public function make_uri($address, $amount, $recipient_name = null, $description = null)
   {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
-    }
-    if (!isset($amount)) {
-      throw new Exception('Error: Amount required');
-    }
-
     // Convert from moneroj to tacoshi (piconero)
     $new_amount = $amount * 1000000000000;
        
@@ -1627,10 +1412,6 @@ class walletRPC
    */
   public function parse_uri($uri)
   {
-    if (!isset($uri)) {
-      throw new Exception('Error: Payment URI required');
-    }
-
     $uri_parameters = array('uri' => $uri);
     return $this->_run('parse_uri', $uri_parameters);
   }
@@ -1646,10 +1427,6 @@ class walletRPC
    */
   public function get_address_book($entries)
   {
-    if (!isset($entries)) {
-      throw new Exception('Error: Entry indices required');
-    }
-
     $entries_parameters = array('entries' => $entries);
     return $this->_run('get_address_book', $entries_parameters);
   }
@@ -1667,21 +1444,15 @@ class walletRPC
    */
   public function add_address_book($address, $payment_id, $description)
   {
-    if (!isset($address)) {
-      throw new Exception('Error: Address required');
+    $address_parameters = array('address' => $address);
+
+    if ($payment_id) {
+      $transfer_parameters['payment_id'] = $payment_id;
     }
-    if (isset($payment_id)) {
-      if ($payment_id) {
-        $transfer_parameters['payment_id'] = $payment_id;
-      }
-    }
-    if (isset($description)) {
-      if ($description) {
-        $transfer_parameters['description'] = $description;
-      }
+    if ($description) {
+      $transfer_parameters['description'] = $description;
     }
 
-    $address_parameters = array('address' => $address);
     return $this->_run('add_address_book', $address_parameters);
   }
   
@@ -1696,10 +1467,6 @@ class walletRPC
    */
   public function delete_address_book($index)
   {
-    if (!isset($index)) {
-      throw new Exception('Error: Entry index required');
-    }
-
     $delete_parameters = array('index' => $index);
     return $this->_run('delete_address_book', $delete_parameters);
   }
@@ -1727,16 +1494,6 @@ class walletRPC
    */
   public function start_mining($threads_count, $do_background_mining, $ignore_battery)
   {
-    if (!isset($threads_count)) {
-      throw new Exception('Error: Threads required');
-    }
-    if (!isset($do_background_mining)) {
-      throw new Exception('Error: Background mining boolean required');
-    }
-    if (!isset($ignore_battery)) {
-      throw new Exception('Error: Inore battery boolean required');
-    }
-
     $mining_parameters = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
     return $this->_run('start_mining', $mining_parameters);
   }
@@ -1851,13 +1608,6 @@ class walletRPC
    */
   public function make_multisig($multisig_info, $threshold, $password = '')
   {
-    if (!isset($multisig_info)) {
-      throw new Exception('Error: Multisignature information required');
-    }
-    if (!isset($threshold)) {
-      throw new Exception('Error: Threshold required');
-    }
-
     $make_multisig_parameters = array('multisig_info' => $multisig_info, 'threshold' => $threshold, 'password' => $password);
     return $this->_run('make_multisig', $make_multisig_parameters);
   }
@@ -1891,10 +1641,6 @@ class walletRPC
    */
   public function import_multisig_info($info)
   {
-    if (!isset($info)) {
-      throw new Exception('Error: Multisignature info required');
-    }
-
     $import_multisig_info_parameters = array('info' => $info);
     return $this->_run('import_multisig_info', $import_multisig_info_parameters);
   }
@@ -1913,10 +1659,6 @@ class walletRPC
    */
   public function finalize_multisig($multisig_info, $password = '')
   {
-    if (!isset($multisig_info)) {
-      throw new Exception('Error: Multisignature info required');
-    }
-
     $finalize_multisig_parameters = array('multisig_info' => $multisig_info, 'password' => $password);
     return $this->_run('finalize_multisig', $finalize_multisig_parameters);
   }
@@ -1934,10 +1676,6 @@ class walletRPC
    */
   public function sign_multisig($tx_data_hex)
   {
-    if (!isset($tx_data_hex)) {
-      throw new Exception('Error: Transaction required');
-    }
-
     $sign_multisig_parameters = array('tx_data_hex' => $tx_data_hex);
 
     return $this->_run('sign_multisig', $sign_multisig_parameters);
@@ -1956,10 +1694,6 @@ class walletRPC
    */
   public function submit_multisig($tx_data_hex)
   {
-    if (!isset($tx_data_hex)) {
-      throw new Exception('Error: Transaction required');
-    }
-
     $submit_multisig_parameters = array('tx_data_hex' => $tx_data_hex);
     return $this->_run('submit_multisig', $submit_multisig_parameters);
   }
