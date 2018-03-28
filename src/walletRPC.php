@@ -405,10 +405,10 @@ class walletRPC
    * 
    * @param  string  $amount       Amount to transfer
    * @param  string  $address      Address to transfer to
+   * @param  string  $payment_id   Payment ID                                  (optional)
    * @param  number  $mixin        Mixin number                                (optional)
    * @param  number  $index        Account to send from                        (optional)
-   * @param  number  $priority     Payment ID                                  (optional)
-   * @param  string  $pid          Payment ID                                  (optional)
+   * @param  number  $priority     Transaction priority                        (optional)
    * @param  number  $unlock_time  UNIX time or block height to unlock output  (optional)
    * 
    *   OR
@@ -423,7 +423,7 @@ class walletRPC
    * }
    *
    */
-  public function transfer($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0)
+  public function transfer($amount, $address = '', $payment_id = '', $mixin = 6, $index = 0, $priority = 2, $unlock_time = 0)
   {
     if (is_array($amount)) { // Parameters passed in as object
       $params = $amount;
@@ -454,6 +454,9 @@ class walletRPC
 
         $destinations = array('amount' => $new_amount, 'address' => $address);
       }
+      if (array_key_exists('payment_id', $params)) {
+        $payment_id = $params['payment_id'];
+      }
       if (array_key_exists('mixin', $params)) {
         $mixin = $params['mixin'];
       }
@@ -462,9 +465,6 @@ class walletRPC
       }
       if (array_key_exists('priority', $params)) {
         $priority = $params['priority'];
-      }
-      if (array_key_exists('pid', $params)) {
-        $pid = $params['pid'];
       }
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
@@ -487,14 +487,14 @@ class walletRPC
     }
 
     $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true);
+    if (isset($payment_id)) {
+      if ($payment_id) {
+        $transfer_parameters['payment_id'] = $payment_id;
+      }
+    }
     if (isset($index)) {
       if ($index) {
         $transfer_parameters['index'] = $index;
-      }
-    }
-    if (isset($pid)) {
-      if ($pid) {
-        $transfer_parameters['payment_id'] = $pid;
       }
     }
     if (isset($priority)) {
@@ -520,7 +520,7 @@ class walletRPC
    * Same as transfer, but splits transfer into more than one transaction if necessary
    *
    */
-  public function transfer_split($amount, $address = '', $mixin = 6, $index = 0, $priority = 2, $pid = '', $unlock_time = 0)
+  public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 6, $index = 0, $priority = 2, $unlock_time = 0)
   {
     if (is_array($amount)) { // Parameters passed in as object
       $params = $amount;
@@ -559,14 +559,14 @@ class walletRPC
       if (array_key_exists('mixin', $params)) {
         $mixin = $params['mixin'];
       }
+      if (array_key_exists('payment_id', $params)) {
+        $payment_id = $params['payment_id'];
+      }
       if (array_key_exists('index', $params)) {
         $index = $params['index'];
       }
       if (array_key_exists('priority', $params)) {
         $priority = $params['priority'];
-      }
-      if (array_key_exists('pid', $params)) {
-        $pid = $params['pid'];
       }
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
@@ -597,9 +597,9 @@ class walletRPC
         $transfer_parameters['index'] = $index;
       }
     }
-    if (isset($pid)) {
-      if ($pid) {
-        $transfer_parameters['payment_id'] = $pid;
+    if (isset($payment_id)) {
+      if ($payment_id) {
+        $transfer_parameters['payment_id'] = $payment_id;
       }
     }
     if (isset($priority)) {
