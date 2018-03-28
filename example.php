@@ -88,7 +88,14 @@ $get_balance = $walletRPC->get_balance();
       <dt><tt>get_accounts()</tt></dt>
       <dd>
         <p>Accounts: <?php echo count($get_accounts['subaddress_accounts']); ?></p>
-        <?php foreach ($get_accounts['subaddress_accounts'] as $account) { echo '<p>Account ' . $account['account_index'] . ': <tt>' . $account['base_address'] . '</tt>' . ( $account['label'] ? ' (' . $account['label'] . ')' : '' ) . '<br>&nbsp;&nbsp;&nbsp;Balance: <tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)</p>'; } ?>
+        <?php
+          foreach ($get_accounts['subaddress_accounts'] as $account) {
+            echo '<p><table><tr><td style="text-align: right;">Account ' . $account['account_index'] . ': </td><td><tt>' . $account['base_address'] . '</tt></td></tr>';
+            echo ( $account['label'] ) ? '<tr><td style="text-align: right;">Label: </td><td><tt>' . $account['label'] . '</tt></td></tr>' : '';
+            echo ( $account['tag'] ) ? '<tr><td style="text-align: right;">Tag: </td><td><tt>' . $account['tag'] . '</tt></td></tr>' : '';
+            echo '<tr><td style="text-align: right;">Balance: </td><td><tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)</td></tr></table></p>';
+          }
+        ?>
       </dd>
       <dt><tt>get_balance()</tt></dt>
       <dd>
