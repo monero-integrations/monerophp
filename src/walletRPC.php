@@ -203,7 +203,29 @@ class walletRPC
    *
    * Get current accounts from wallet
    *
-   * @param none
+   * @param  none
+   *
+   * @return object  Example: {
+   *   "subaddress_accounts": {
+   *     "0": {
+   *       "account_index": 0,
+   *       "balance": 2808597352948771,
+   *       "base_address": "A2XE6ArhRkVZqepY2DQ5QpW8p8P2dhDQLhPJ9scSkW6q9aYUHhrhXVvE8sjg7vHRx2HnRv53zLQH4ATSiHHrDzcSFqHpARF",
+   *       "label": "Primary account",
+   *       "tag": "",
+   *       "unlocked_balance": 2717153096298162
+   *     },
+   *     "1": {
+   *       "account_index": 1,
+   *       "balance": 0,
+   *       "base_address": "BcXKsfrvffKYVoNGN4HUFfaruAMRdk5DrLZDmJBnYgXrTFrXyudn81xMj7rsmU5P9dX56kRZGqSaigUxUYoaFETo9gfDKx5",
+   *       "label": "Secondary account",
+   *       "tag": "",
+   *       "unlocked_balance": 0 )
+   *    },
+   *    "total_balance": 2808597352948771,
+   *    "total_unlocked_balance": 2717153096298162
+   * }
    *
    */
   public function get_accounts()

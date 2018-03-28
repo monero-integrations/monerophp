@@ -88,7 +88,7 @@ $get_balance = $walletRPC->get_balance();
       <dt><tt>get_accounts()</tt></dt>
       <dd>
         <p>Accounts: <?php echo count($get_accounts['subaddress_accounts']); ?></p>
-        <?php foreach ($get_accounts['subaddress_accounts'] as $account) { echo '<p>Account ' . $account['account_index'] . ': <tt>' . $account['base_address'] . '</tt>' . ( $account['tag'] ? ' (' . $account['tag'] . ')' : '' ) . '<br>&nbsp;&nbsp;&nbsp;Balance: <tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)</p>'; } ?>
+        <?php foreach ($get_accounts['subaddress_accounts'] as $account) { echo '<p>Account ' . $account['account_index'] . ': <tt>' . $account['base_address'] . '</tt>' . ( $account['label'] ? ' (' . $account['label'] . ')' : '' ) . '<br>&nbsp;&nbsp;&nbsp;Balance: <tt>' . $account['balance'] / pow(10, 12) . '</tt> (<tt>' . $account['unlocked_balance'] / pow(10, 12) . '</tt> unlocked)</p>'; } ?>
       </dd>
       <dt><tt>get_balance()</tt></dt>
       <dd>
