@@ -171,7 +171,7 @@ class walletRPC
     $create_address_parameters = array('account_index' => $account_index ,'label' => $label);
     $create_address_method = $this->_run('create_address', $create_address_parameters);
 
-    $save = $this->store(); // Save wallet state after transfer
+    $save = $this->store(); // Save wallet state after subaddress creation
 
     return $create_address_method;
   }
@@ -237,23 +237,29 @@ class walletRPC
    *
    * Create a new sub-account from your wallet
    *
-   * @param string A label for the account
+   * @param  string  A label for the account
+   *
+   * @return none
    *
    */
-  public function create_account($label)
+  public function create_account($label = '')
   {
     $create_account_parameters = array('label' => $label);
-    return $this->_run('create_account', $create_account_parameters);
+    $create_account_method = $this->_run('create_account', $create_account_parameters);
+
+    $save = $this->store(); // Save wallet state after account creation
+
+    return $create_account_method;
   }
   
   /**
    *
-   * 
+   * Label an account
    *
-   * @param 
+   * @param  number $account_index  Index of account to label
+   * @param  string $label          Label to apply
    *
-   * @return   Example: {
-   * }
+   * @return none
    *
    */
   public function label_account()
