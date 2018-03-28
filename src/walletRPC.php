@@ -1177,17 +1177,23 @@ class walletRPC
   
   /**
    *
-   * 
+   * Get a wallet option
    *
-   * @param 
+   * @param  string  $key  Wallet option to query
    *
-   * @return   Example: {
+   * @return object  Example: {
    * }
    *
    */
-  public function get_attribute()
+  public function get_attribute($key)
   {
-    return $this->_run('get_attribute');
+    if (!isset($key)) {
+      throw new Exception('Error: Key required');
+    }
+
+    $get_attribute_parameters = array('key' => $key);
+
+    return $this->_run('get_attribute', $get_attribute_parameters);
   }
   
   /**
