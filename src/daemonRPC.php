@@ -83,6 +83,8 @@ class daemonRPC
    *
    * Look up how many blocks are in the longest chain known to the node
    *
+   * @param  none
+   *
    * @return object  Example: {  
    *   "count": 993163,  
    *   "status": "OK"  
@@ -105,10 +107,6 @@ class daemonRPC
    */
   public function on_getblockhash($height)
   {
-    if (!isset($height)) {
-      throw new Exception('Error: Height required');
-    }
-
     $params = array($height);
 
     return $this->_run('on_getblockhash', $params);
@@ -133,13 +131,6 @@ class daemonRPC
    */
   public function getblocktemplate($wallet_address, $reserve_size)
   {
-    if (!isset($wallet_address)) {
-      throw new Exception('Error: Wallet address required');
-    }
-    if (!isset($reserve_size)) {
-      throw new Exception('Error: Reserve size required');
-    }
-    
     $params = array('wallet_address' => $wallet_address, 'reserve_size' => $reserve_size);
 
     return $this->client->_run('getblocktemplate', $params);
@@ -156,16 +147,14 @@ class daemonRPC
    */
   public function submitblock($block)
   {
-    if (!isset($block)) {
-      throw new Exception('Error: Block blob required');
-    }
-
     return $this->_run('submitblock', $block);
   }
 
   /**
    *
    * Block header information for the most recent block is easily retrieved with this method
+   *
+   * @param  none
    *
    * @return object  Example: {
    *   "block_header": {
@@ -216,10 +205,6 @@ class daemonRPC
    */
   public function getblockheaderbyhash($hash)
   {
-    if (!isset($hash)) {
-      throw new Exception('Error: Block hash required');
-    }
-    
     $params = array('hash' => $hash);
 
     return $this->_run('getblockheaderbyhash', $params);
@@ -251,10 +236,6 @@ class daemonRPC
    */
   public function getblockheaderbyheight($height)
   {
-    if (!isset($height)) {
-      throw new Exception('Error: Block height required');
-    }
-    
     return $this->_run('getblockheaderbyheight', $height);
   }
 
@@ -325,6 +306,8 @@ class daemonRPC
    *
    * Retrieve information about incoming and outgoing connections to your node
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "connections": [{
    *     "avg_download": 0,
@@ -359,6 +342,8 @@ class daemonRPC
    *
    * Retrieve general information about the state of your node and the network
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "alt_blocks_count": 5,
    *   "difficulty": 972165250,
@@ -385,6 +370,8 @@ class daemonRPC
   /**
    *
    * Look up information regarding hard fork voting and readiness
+   *
+   * @param  none
    *
    * @return object  Example: {
    *   "alt_blocks_count": 0,
@@ -424,6 +411,8 @@ class daemonRPC
    *
    * Ban another node by IP.
    *
+   * @param  none
+   *
    * @return object  Example: {
    *   "status": "OK"
    * }
@@ -431,18 +420,14 @@ class daemonRPC
    */
   public function setbans($ip)
   {
-    // TODO full input validation
-
-    if (!isset($ip)) {
-      throw new Exception('Error: IP address required');
-    }
-
     return $this->_run('setbans', $ip);
   }
 
   /**
    *
    * Get list of banned IPs.
+   *
+   * @param  none
    *
    * @return object  Example: {
    *   "bans": [{
