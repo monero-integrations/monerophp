@@ -180,6 +180,37 @@ Copyright (c) 2018 Monero-Integrations
                 }
             }
         }
+
+        public function derive_public_key($der, $index, $pub)
+        {
+            $scalar = $this->derivation_to_scalar($der, $index);
+            $sG = $this->ed25519->scalarmult_base($this->ed25519->decodeint(hex2bin($scalar)));
+            $pubPoint = $this->ed25519->decodepoint(hex2bin($pub));
+            $key = $this->ed25519->encodepoint($this->ed25519->edwards($pubPoint, $sG));
+            return bin2hex($key);
+        }
+
+        /*
+         * Perform the calculation P = P' as described in the cryptonote whitepaper
+         *
+         * @param string 32 byte transaction public key R
+         * @param string 32 byte reciever private view key a
+         * @param string 32 byte reciever public spend key B
+         * @param int output index
+         * @param string output you want to check against P
+         */
+        public function is_output_mine($txPublic, $privViewkey, $publicSpendkey, $index, $P)
+        {
+            $derivation = $this->gen_key_derivation($txPublic, $privViewkey);
+            $Pprime = $this->derive_public_key($derivation, $index, $publicSpendkey);
+
+            if($P == $Pprime)
+            {
+               return true;
+            }
+            else
+              return false;
+        }
         
         /*
          * Create a valid base58 encoded Monero address from public keys
