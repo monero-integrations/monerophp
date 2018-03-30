@@ -483,10 +483,6 @@ class walletRPC
         } else {
           throw new Exception('Error: Address required');
         }
-    
-        // Convert from moneroj to tacoshi (piconero)
-        $new_amount = $this->_transform($amount);
-
         $destinations = array(array('amount' => $new_amount, 'address' => $address));
       }
       if (array_key_exists('payment_id', $params)) {
@@ -511,11 +507,7 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-
-      // Convert from moneroj to tacoshi (piconero)
-      $new_amount = $this->_transform($amount);
-
-      $destinations = array(array('amount' => $new_amount, 'address' => $address));
+      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
     }
 
     $transfer_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
@@ -564,11 +556,7 @@ class walletRPC
         } else {
           throw new Exception('Error: Address required');
         }
-    
-        // Convert from moneroj to tacoshi (piconero)
-        $new_amount = $this->_transform($amount);
-
-        $destinations = array(array('amount' => $new_amount, 'address' => $address));
+        $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
       }
       if (array_key_exists('mixin', $params)) {
         $mixin = $params['mixin'];
@@ -595,10 +583,7 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-      // Convert from moneroj to tacoshi (piconero)
-      $new_amount = $this->_transform($amount);
-
-      $destinations = array(array('amount' => $new_amount, 'address' => $address));
+      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
     }
 
     $transfer_split_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
@@ -694,9 +679,6 @@ class walletRPC
       }
       if (array_key_exists('below_amount', $params)) {
         $below_amount = $params['below_amount'];
-
-        // Convert from moneroj to tacoshi (piconero)
-        $new_below_amount = $this->_transform($below_amount);
       }
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
@@ -704,12 +686,9 @@ class walletRPC
       if (array_key_exists('do_not_relay', $params)) {
         $do_not_relay = $params['do_not_relay'];
       }
-    } else { // Legacy parameters used
-      // Convert from moneroj to tacoshi (piconero)
-      $new_below_amount = $this->_transform($below_amount);
     }
 
-    $sweep_all_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'subaddr_indices' => $subaddr_indices, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $new_below_amount, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $sweep_all_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'subaddr_indices' => $subaddr_indices, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
     $sweep_all_method = $this->_run('sweep_all', $sweep_all_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -778,19 +757,13 @@ class walletRPC
       }
       if (array_key_exists('below_amount', $params)) {
         $below_amount = $params['below_amount'];
-
-        // Convert from moneroj to tacoshi (piconero)
-        $new_below_amount = $this->_transform($below_amount);
       }
       if (array_key_exists('do_not_relay', $params)) {
         $do_not_relay = $params['do_not_relay'];
       }
-    } else { // Legacy parameters used
-      // Convert from moneroj to tacoshi (piconero)
-      $new_below_amount = $this->_transform($below_amount);
     }
 
-    $sweep_single_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $new_below_amount, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $sweep_single_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
     $sweep_single_method = $this->_run('sweep_single', $sweep_single_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -1442,10 +1415,7 @@ class walletRPC
    */
   public function make_uri($address, $amount, $payment_id = null, $recipient_name = null, $tx_description = null)
   {
-    // Convert from moneroj to tacoshi (piconero)
-    $new_amount = $this->_transform($amount);
-       
-    $uri_parameters = array('address' => $address, 'amount' => $new_amount, 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description);
+    $uri_parameters = array('address' => $address, 'amount' => $this->_transform($amount), 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description);
     return $this->_run('make_uri', $uri_parameters);
   }
 
