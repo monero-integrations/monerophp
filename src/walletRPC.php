@@ -333,7 +333,7 @@ class walletRPC
 
     $save = $this->store(); // Save wallet state after account tagginng
 
-    return $this->_run('tag_accounts');
+    return $tag_accounts_method;
   }
   
   /**
