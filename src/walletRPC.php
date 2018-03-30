@@ -47,14 +47,12 @@ class walletRPC
    * @param  string  $host      IP address of monero-wallet-rpc to connect to  (optional)
    * @param  int     $port      Port to use when accessing monero-wallet-rpc   (optional)
    * @param  string  $protocol  Protocol to acces daemon over (eg. 'http')     (optional)
-   * @param  string  $user      Username                                       (optional)
-   * @param  string  $password  Password                                       (optional)
+   * @param  string  $user      RPC username                                   (optional)
+   * @param  string  $password  RPC password                                   (optional)
    *
    */
   function __construct ($host = '127.0.0.1', $port = 18083, $protocol = 'http', $user = null, $password = null)
   {
-    // TODO input validation
-    
     $this->host = $host;
     $this->port = $port;
     $this->protocol = $protocol;
@@ -95,6 +93,21 @@ class walletRPC
     $json_parsed = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     echo $json_parsed;
   }
+   
+  /**
+   *
+   * Convert from moneroj to tacoshi (piconero)
+   *
+   * @param  number  $method  Amount (in monero) to transform to tacoshi (piconero)  (optional)
+   *
+   * @return number
+   *
+   */
+  public function _transform($amount = 0)
+  {
+    // 
+    return $amount * 1000000000000;
+  }
 
   /**
    *
@@ -134,13 +147,26 @@ class walletRPC
   
   /**
    *
-   * Look up wallet address
+   * Look up wallet address(es)
    *
    * @param  number  $account_index  Index of account to look up     (optional)
    * @param  number  $address_index  Index of subaddress to look up  (optional)
    *
    * @return object  Example: {
-   *   "address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
+   *   address: 'A2XE6ArhRkVZqepY2DQ5QpW8p8P2dhDQLhPJ9scSkW6q9aYUHhrhXVvE8sjg7vHRx2HnRv53zLQH4ATSiHHrDzcSFqHpARF',
+   *   addresses: [
+   *     {
+   *       address: 'A2XE6ArhRkVZqepY2DQ5QpW8p8P2dhDQLhPJ9scSkW6q9aYUHhrhXVvE8sjg7vHRx2HnRv53zLQH4ATSiHHrDzcSFqHpARF',
+   *       address_index: 0,
+   *       label: 'Primary account',
+   *       used: true
+   *     }, {
+   *       address: 'Bh3ttLbjGFnVGCeGJF1HgVh4DfCaBNpDt7PQAgsC2GFug7WKskgfbTmB6e7UupyiijiHDQPmDC7wSCo9eLoGgbAFJQaAaDS',
+   *       address_index: 1,
+   *       label: '',
+   *       used: true
+   *     }
+   *   ]
    * }
    *
    */
@@ -183,7 +209,7 @@ class walletRPC
    */
   public function create_address($account_index = 0, $label = '')
   {
-    $create_address_parameters = array('account_index' => $account_index ,'label' => $label);
+    $create_address_parameters = array('account_index' => $account_index, 'label' => $label);
     $create_address_method = $this->_run('create_address', $create_address_parameters);
 
     $save = $this->store(); // Save wallet state after subaddress creation
@@ -307,7 +333,7 @@ class walletRPC
   
   /**
    *
-   * Tag an account
+   * Apply a tag to accounts
    *
    * @param  array   $accounts  Account indices to tag
    * @param  string  $tag       Tag to apply
@@ -322,7 +348,7 @@ class walletRPC
 
     $save = $this->store(); // Save wallet state after account tagginng
 
-    return $this->_run('tag_accounts');
+    return $tag_accounts_method;
   }
   
   /**
@@ -352,6 +378,7 @@ class walletRPC
    * @param  string  $description  Description to apply to tag
    *
    * @return object  Example: {
+   *   // TODO example
    * }
    *
    */
@@ -367,7 +394,7 @@ class walletRPC
   
   /**
    *
-   * Look up current height of wallet
+   * Look up current block height of wallet
    *
    * @param  none
    *
@@ -399,7 +426,7 @@ class walletRPC
 
   /**
    *
-   * Send monero to a number of recipients.  Parameters can be passed in individually (as listed below) or as an array (as listed at bottom.)  If multiple destinations are required, use the array format and use
+   * Send monero.  Parameters can be passed in individually (as listed below) or as an object/dictionary (as listed at bottom.)  If multiple destinations are required, use the object/dictionary (bottom) format and pass an array of objects containing recipient addresses and amount in the destinations field, like destinations: [['amount' => 1, 'address' => ...], ['amount' => 2, 'address' => ...}]
    * 
    * @param  string   $amount           Amount to transfer
    * @param  string   $address          Address to transfer to
@@ -413,7 +440,7 @@ class walletRPC
    * 
    *   OR
    * 
-   * @param  object  $params            Array containing any of the options listed above, where only amount and address are required
+   * @param  object  $params            Array containing any of the options listed above, where only amount and address or a destionarions array are required
    *
    * @return object  Example: {
    *   "amount": "1000000000000",
@@ -425,16 +452,24 @@ class walletRPC
    */
   public function transfer($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
   {
-    if (is_array($amount)) { // Parameters passed in as object
+    if (is_array($amount)) { // Parameters passed in as object/dictionary
       $params = $amount;
 
       if (array_key_exists('destinations', $params)) {
         $destinations = $params['destinations'];
 
-        foreach ($destinations as $key => $amount) {
-          if ($key == 'amount') {
-            // Convert from moneroj to tacoshi (piconero)
-            $destinations[$key] = $amount * 1000000000000;
+        if (!is_array($destinations)) {
+          throw new Exception('Error: destinations must be an array');
+        }
+
+        foreach ($destinations as $destination) {
+          if (array_key_exists('amount', $destinations[$destination])) {
+            $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
+          } else {
+            throw new Exception('Error: Amount required');
+          }
+          if (!array_key_exists('address', $destinations[$destination])) {
+            throw new Exception('Error: Address required');
           }
         }
       } else {
@@ -448,11 +483,7 @@ class walletRPC
         } else {
           throw new Exception('Error: Address required');
         }
-    
-        // Convert from moneroj to tacoshi (piconero)
-        $new_amount = $amount  * 1000000000000;
-
-        $destinations = array('amount' => $new_amount, 'address' => $address);
+        $destinations = array(array('amount' => $new_amount, 'address' => $address));
       }
       if (array_key_exists('payment_id', $params)) {
         $payment_id = $params['payment_id'];
@@ -476,14 +507,10 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-
-      // Convert from moneroj to tacoshi (piconero)
-      $new_amount = $amount  * 1000000000000;
-
-      $destinations = array('amount' => $new_amount, 'address' => $address);
+      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
     }
 
-    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
+    $transfer_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
     $transfer_method = $this->_run('transfer', $transfer_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -498,22 +525,25 @@ class walletRPC
    */
   public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
   {
-    if (is_array($amount)) { // Parameters passed in as object
+    if (is_array($amount)) { // Parameters passed in as object/dictionary
       $params = $amount;
 
       if (array_key_exists('destinations', $params)) {
         $destinations = $params['destinations'];
 
-        foreach ($destinations as $destination => $recipient) {
-          if (!array_key_exists('amount', $destinations[$destination])) {
-            throw new Exception('Error: Amount required for each destination');
+        if (!is_array($destinations)) {
+          throw new Exception('Error: destinations must be an array');
+        }
+
+        foreach ($destinations as $destination) {
+          if (array_key_exists('amount', $destinations[$destination])) {
+            $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
+          } else {
+            throw new Exception('Error: Amount required');
           }
           if (!array_key_exists('address', $destinations[$destination])) {
-            throw new Exception('Error: Address required for each destination');
+            throw new Exception('Error: Address required');
           }
-
-          // Convert from moneroj to tacoshi (piconero)
-          $destinations[$destination]['amount'] = $destinations[$destination]['amount'] * 1000000000000;
         }
       } else {
         if (array_key_exists('amount', $params)) {
@@ -526,11 +556,7 @@ class walletRPC
         } else {
           throw new Exception('Error: Address required');
         }
-    
-        // Convert from moneroj to tacoshi (piconero)
-        $new_amount = $amount * 1000000000000;
-
-        $destinations = array('amount' => $new_amount, 'address' => $address);
+        $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
       }
       if (array_key_exists('mixin', $params)) {
         $mixin = $params['mixin'];
@@ -557,13 +583,10 @@ class walletRPC
         $do_not_relay = $params['do_not_relay'];
       }
     } else { // Legacy parameters used
-      // Convert from moneroj to tacoshi (piconero)
-      $new_amount = $amount * 1000000000000;
-
-      $destinations = array('amount' => $new_amount, 'address' => $address);
+      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
     }
 
-    $transfer_split_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $transfer_split_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
     $transfer_method = $this->_run('transfer_split', $transfer_split_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -589,7 +612,7 @@ class walletRPC
   
   /**
    *
-   * Send all unimzable output back to the wallet
+   * Send all unmixable output back to the wallet
    *
    * @param  none
    *
@@ -605,10 +628,10 @@ class walletRPC
   
   /**
    *
-   * Send all unlocked balance from current account to an address
+   * Send all unlocked balance from an account to an address
    * 
    * @param  string   $address          Address to transfer to
-   * @param  string   $subaddr_indices  Comma-seperated list of Subaddress indices to sweep  (optional)
+   * @param  string   $subaddr_indices  Comma-seperated list of subaddress indices to sweep  (optional)
    * @param  number   $account_index    Account to sweep from                                (optional)
    * @param  string   $payment_id       Payment ID                                           (optional)
    * @param  number   $mixin            Mixin number                                         (optional)
@@ -619,7 +642,7 @@ class walletRPC
    * 
    *   OR
    * 
-   * @param  object  $params            Array containing any of the options listed above, where only amount and address are required
+   * @param  object  $params            Array containing any of the options listed above, where only address is required
    *
    * @return object  Example: {
    *   "amount": "1000000000000",
@@ -631,7 +654,7 @@ class walletRPC
    */
   public function sweep_all($address, $subaddr_indices = '', $account_index = 0, $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = false)
   {
-    if (is_array($address)) { // Parameters passed in as object
+    if (is_array($address)) { // Parameters passed in as object/dictionary
       $params = $address;
 
       if (array_key_exists('address', $params)) {
@@ -656,9 +679,6 @@ class walletRPC
       }
       if (array_key_exists('below_amount', $params)) {
         $below_amount = $params['below_amount'];
-
-        // Convert from moneroj to tacoshi (piconero)
-        $new_below_amount = $below_amount * 1000000000000;
       }
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
@@ -666,12 +686,9 @@ class walletRPC
       if (array_key_exists('do_not_relay', $params)) {
         $do_not_relay = $params['do_not_relay'];
       }
-    } else { // Legacy parameters used
-      // Convert from moneroj to tacoshi (piconero)
-      $new_below_amount = $below_amount * 1000000000000;
     }
 
-    $sweep_all_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'subaddr_indices' => $subaddr_indices, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $new_below_amount, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $sweep_all_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'subaddr_indices' => $subaddr_indices, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
     $sweep_all_method = $this->_run('sweep_all', $sweep_all_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -694,7 +711,7 @@ class walletRPC
    * 
    *   OR
    * 
-   * @param  object  $params         Array containing any of the options listed above, where only amount and address are required
+   * @param  object  $params         Array containing any of the options listed above, where only address is required
    *
    * @return object  Example: {
    *   "amount": "1000000000000",
@@ -706,7 +723,7 @@ class walletRPC
    */
   public function sweep_single($key_image, $address, $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = 0)
   {
-    if (is_array($key_image)) { // Parameters passed in as object
+    if (is_array($key_image)) { // Parameters passed in as object/dictionary
       $params = $key_image;
 
       if (array_key_exists('key_image', $params)) {
@@ -740,19 +757,13 @@ class walletRPC
       }
       if (array_key_exists('below_amount', $params)) {
         $below_amount = $params['below_amount'];
-
-        // Convert from moneroj to tacoshi (piconero)
-        $new_below_amount = $below_amount * 1000000000000;
       }
       if (array_key_exists('do_not_relay', $params)) {
         $do_not_relay = $params['do_not_relay'];
       }
-    } else { // Legacy parameters used
-      // Convert from moneroj to tacoshi (piconero)
-      $new_below_amount = $below_amount * 1000000000000;
     }
 
-    $sweep_single_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $new_below_amount, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $sweep_single_parameters = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
     $sweep_single_method = $this->_run('sweep_single', $sweep_single_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -791,7 +802,7 @@ class walletRPC
   
   /**
    *
-   * Get a list of incoming payments using a given payment id
+   * Get a list of incoming payments using a given payment ID
    *
    * @param  string  $payment_id  Payment ID to look up
    *
@@ -816,7 +827,7 @@ class walletRPC
    *
    * Get a list of incoming payments using a given payment ID (or a list of payments IDs) from a given height
    *
-   * @param  string  $payment_id        Payment ID to look up
+   * @param  array   $payment_ids       Array of payment ID to look up
    * @param  string  $min_block_height  Height to begin search
    *
    * @return object  Example: {
@@ -830,9 +841,9 @@ class walletRPC
    * }
    *
    */
-  public function get_bulk_payments($payment_id, $min_block_height)
+  public function get_bulk_payments($payment_ids, $min_block_height)
   {
-    $get_bulk_payments_parameters = array('payment_id' => $payment_id, 'min_block_height' => $min_block_height);
+    $get_bulk_payments_parameters = array('payment_ids' => $payment_ids, 'min_block_height' => $min_block_height);
     return $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
   }
   
@@ -849,19 +860,19 @@ class walletRPC
    *     "amount": 10000000000000,
    *     "global_index": 711506,
    *     "spent": false,
-   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
+   *     "tx_hash": "c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1",
    *     "tx_size": 5870
    *   },{
    *     "amount": 300000000000,
    *     "global_index": 794232,
    *     "spent": false,
-   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
+   *     "tx_hash": "c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1",
    *     "tx_size": 5870
    *   },{
    *     "amount": 50000000000,
    *     "global_index": 213659,
    *     "spent": false,
-   *     "tx_hash": "&lt;c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1&gt;",
+   *     "tx_hash": "c391089f5b1b02067acc15294e3629a463412af1f1ed0f354113dd4467e4f6c1",
    *     "tx_size": 5870
    *   }]
    * }
@@ -964,14 +975,13 @@ class walletRPC
    * @param  string  $integrated_address  Integrated address to split
    *
    * @return object  Example: {
-   *   "payment_id": "&lt;420fa29b2d9a49f5&gt;",
+   *   "payment_id": "420fa29b2d9a49f5",
    *   "standard_address": "427ZuEhNJQRXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQGaDsaBA"
    * }
    *
    */
   public function split_integrated_address($integrated_address)
   {
- 
     $split_parameters = array('integrated_address' => $integrated_address);
     return $this->_run('split_integrated_address', $split_parameters);
   }
@@ -1053,7 +1063,7 @@ class walletRPC
   
   /**
    *
-   * Get a wallet option
+   * Look up a wallet option
    *
    * @param  string  $key  Wallet option to query
    *
@@ -1126,7 +1136,7 @@ class walletRPC
   
   /**
    *
-   * Verify transaction poof
+   * Verify transaction proof
    *
    * @param  string  $address    Address that spent funds
    * @param  string  $txid       Transaction ID
@@ -1235,7 +1245,7 @@ class walletRPC
    *
    *   OR
    *
-   * @param  object  $inputs_types      Array containing any of the options listed above, where only input types is required
+   * @param  object  $inputs_types      Array containing any of the options listed above, where only an input types array is required
    *
    * @return object  Example: {
    *   "pool": [{
@@ -1256,7 +1266,7 @@ class walletRPC
     if (is_string($input_types)) { // If user is using old method
       $get_transfers_parameters = array($input_type => $account_index); // $get_transfers_parameters = array($input_type => $input_value);
     } else {
-      if (is_object($input_types)) { // Parameters passed in as object
+      if (is_object($input_types)) { // Parameters passed in as object/dictionary
         $params = $input_types;
 
         if (array_key_exists('input_types', $params)) {
@@ -1331,9 +1341,8 @@ class walletRPC
    */
   public function sign($data)
   {
- 
     $sign_parameters = array('string' => $data);
-    return $this->_run('sign',$sign_parameters);
+    return $this->_run('sign', $sign_parameters);
   }
   
   /**
@@ -1355,11 +1364,13 @@ class walletRPC
   
   /**
    *
-   * Export a signed set of key images
+   * Export an array of signed  key images
    *
    * @param  none
    *
-   * @return  array  $signed_key_images  Array of signed key images
+   * @return array  Example: {
+   *   // TODO example
+   * }
    *
    */
   public function export_key_images()
@@ -1373,9 +1384,12 @@ class walletRPC
    *
    * @param  array   $signed_key_images  Array of signed key images
    *
-   * @return number  $height
-   * @return number  $spent
-   * @return number  $unspent
+   * @return object  Example: {
+   *   // TODO example
+   *   height: ,
+   *   spent: ,
+   *   unspent: 
+   * }
    * 
    */
   public function import_key_images($signed_key_images)
@@ -1388,20 +1402,20 @@ class walletRPC
    *
    * Create a payment URI using the official URI spec
    *
-   * @param  string  $address         Address to include
+   * @param  string  $address         Recipient address
    * @param  string  $amount          Amount to request
+   * @param  string  $payment_id      Payment ID           (optional)
    * @param  string  $recipient_name  Name of recipient    (optional)
-   * @param  string  $tx_description     Payment description  (optional)
+   * @param  string  $tx_description  Payment description  (optional)
    *
-   * @return object  Example: 
+   * @return object  Example: {
+   *   // TODO example
+   * }
    *
    */
-  public function make_uri($address, $amount, $recipient_name = null, $tx_description = null)
+  public function make_uri($address, $amount, $payment_id = null, $recipient_name = null, $tx_description = null)
   {
-    // Convert from moneroj to tacoshi (piconero)
-    $new_amount = $amount * 1000000000000;
-       
-    $uri_parameters = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $tx_description);
+    $uri_parameters = array('address' => $address, 'amount' => $this->_transform($amount), 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description);
     return $this->_run('make_uri', $uri_parameters);
   }
 
@@ -1417,8 +1431,7 @@ class walletRPC
    *     "amount": 10,
    *     "payment_id": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
    *     "recipient_name": "Monero Project donation address",
-   *     "tx_description": "Testing out the make_uri function
-   "
+   *     "tx_description": "Testing out the make_uri function"
    *   }
    * }
    *
@@ -1435,7 +1448,9 @@ class walletRPC
    *
    * @param  array   $entries  Array of indices to return from the address book
    *
-   * @return array   $entries  Array of entries returned from the address book
+   * @return boject  Example: {
+   *   // TODO example
+   * }
    * 
    */
   public function get_address_book($entries)
@@ -1537,13 +1552,14 @@ class walletRPC
    *
    * @param  string  $filename  Filename to use for new wallet
    * @param  string  $password  Password to use for new wallet
+   * @param  string  $language  Language to use for new wallet
    *
    * @return none
    *
    */
-  public function create_wallet($filename = 'monero_wallet', $password = null)
+  public function create_wallet($filename = 'monero_wallet', $password = null, $language = 'English')
   {
-    $create_wallet_parameters = array('filename' => $filename, 'password' => $password, 'language' => 'English');
+    $create_wallet_parameters = array('filename' => $filename, 'password' => $password, 'language' => $language);
     return $this->_run('create_wallet', $create_wallet_parameters);
   }
   
@@ -1560,7 +1576,7 @@ class walletRPC
   public function open_wallet($filename = 'monero_wallet', $password = null)
   {
     $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
-    return $this->_run('open_wallet',$open_wallet_parameters);
+    return $this->_run('open_wallet', $open_wallet_parameters);
   }
   
   /**
@@ -1600,7 +1616,7 @@ class walletRPC
   
   /**
    *
-   * Make a multisig account.  Account described by multisig_info must have nonzero balance
+   * Make a multisig account
    *
    * @param  string  $multisig_info  Multisignature information (from eg. prepare_multisig) 
    * @param  string  $threshold      Threshold required to spend from multisig
@@ -1682,7 +1698,6 @@ class walletRPC
   public function sign_multisig($tx_data_hex)
   {
     $sign_multisig_parameters = array('tx_data_hex' => $tx_data_hex);
-
     return $this->_run('sign_multisig', $sign_multisig_parameters);
   }
   
