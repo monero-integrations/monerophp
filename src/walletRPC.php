@@ -443,10 +443,18 @@ class walletRPC
       if (array_key_exists('destinations', $params)) {
         $destinations = $params['destinations'];
 
-        foreach ($destinations as $key => $amount) {
-          if ($key == 'amount') {
-            // Convert from moneroj to tacoshi (piconero)
-            $destinations[$key] = $amount * 1000000000000;
+        if (!is_array($destinations)) {
+          throw new Exception('Error: destinations must be an array');
+        }
+
+        foreach ($destinations as $destination) {
+          if (array_key_exists('amount', $destinations[$destination])) {
+            $destinations[$destination]['amount'] = $destinations[$destination]['amount'] * 1000000000000;
+          } else {
+            throw new Exception('Error: Amount required');
+          }
+          if (!array_key_exists('address', $destinations[$destination])) {
+            throw new Exception('Error: Address required');
           }
         }
       } else {
@@ -464,7 +472,7 @@ class walletRPC
         // Convert from moneroj to tacoshi (piconero)
         $new_amount = $amount  * 1000000000000;
 
-        $destinations = array('amount' => $new_amount, 'address' => $address);
+        $destinations = array(array('amount' => $new_amount, 'address' => $address));
       }
       if (array_key_exists('payment_id', $params)) {
         $payment_id = $params['payment_id'];
@@ -492,10 +500,10 @@ class walletRPC
       // Convert from moneroj to tacoshi (piconero)
       $new_amount = $amount  * 1000000000000;
 
-      $destinations = array('amount' => $new_amount, 'address' => $address);
+      $destinations = array(array('amount' => $new_amount, 'address' => $address));
     }
 
-    $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
+    $transfer_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
     $transfer_method = $this->_run('transfer', $transfer_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
@@ -516,16 +524,19 @@ class walletRPC
       if (array_key_exists('destinations', $params)) {
         $destinations = $params['destinations'];
 
-        foreach ($destinations as $destination => $recipient) {
-          if (!array_key_exists('amount', $destinations[$destination])) {
-            throw new Exception('Error: Amount required for each destination');
+        if (!is_array($destinations)) {
+          throw new Exception('Error: destinations must be an array');
+        }
+
+        foreach ($destinations as $destination) {
+          if (array_key_exists('amount', $destinations[$destination])) {
+            $destinations[$destination]['amount'] = $destinations[$destination]['amount'] * 1000000000000;
+          } else {
+            throw new Exception('Error: Amount required');
           }
           if (!array_key_exists('address', $destinations[$destination])) {
-            throw new Exception('Error: Address required for each destination');
+            throw new Exception('Error: Address required');
           }
-
-          // Convert from moneroj to tacoshi (piconero)
-          $destinations[$destination]['amount'] = $destinations[$destination]['amount'] * 1000000000000;
         }
       } else {
         if (array_key_exists('amount', $params)) {
@@ -542,7 +553,7 @@ class walletRPC
         // Convert from moneroj to tacoshi (piconero)
         $new_amount = $amount * 1000000000000;
 
-        $destinations = array('amount' => $new_amount, 'address' => $address);
+        $destinations = array(array('amount' => $new_amount, 'address' => $address));
       }
       if (array_key_exists('mixin', $params)) {
         $mixin = $params['mixin'];
@@ -572,10 +583,10 @@ class walletRPC
       // Convert from moneroj to tacoshi (piconero)
       $new_amount = $amount * 1000000000000;
 
-      $destinations = array('amount' => $new_amount, 'address' => $address);
+      $destinations = array(array('amount' => $new_amount, 'address' => $address));
     }
 
-    $transfer_split_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+    $transfer_split_parameters = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
     $transfer_method = $this->_run('transfer_split', $transfer_split_parameters);
 
     $save = $this->store(); // Save wallet state after transfer
