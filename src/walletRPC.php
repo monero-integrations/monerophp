@@ -819,7 +819,9 @@ class walletRPC
    */
   public function get_payments($payment_id)
   {
-    $get_payments_parameters = array('payment_id' => $payment_id);
+    // $get_payments_parameters = array('payment_id' => $payment_id); // does not work
+    $get_payments_parameters = [];
+    $get_payments_parameters['payment_id'] = $payment_id;
     return $this->_run('get_payments', $get_payments_parameters);
   }
   
@@ -843,7 +845,18 @@ class walletRPC
    */
   public function get_bulk_payments($payment_ids, $min_block_height)
   {
-    $get_bulk_payments_parameters = array('payment_ids' => $payment_ids, 'min_block_height' => $min_block_height);
+    // $get_bulk_payments_parameters = array('payment_ids' => $payment_ids, 'min_block_height' => $min_block_height); // does not work
+    $get_bulk_payments_parameters = array('min_block_height' => $min_block_height); // does not work
+    $get_bulk_payments_parameters = [];
+    if (!is_array($payment_ids)) {
+      throw new Exception('Error: Payment IDs must be array.');
+    }
+    if ($payment_ids) {
+      $get_bulk_payments_parameters['payment_ids'] = [];
+      foreach ($payment_ids as $payment_id) {
+        array_push($get_bulk_payments_parameters['payment_ids'], $payment_id);
+      }
+    }
     return $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
   }
   
