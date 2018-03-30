@@ -1000,7 +1000,7 @@ class walletRPC
     return $this->_run('stop_wallet');
   }
   
-  /**
+  /*
    *
    * Rescan blockchain from scratch
    *
@@ -1008,7 +1008,8 @@ class walletRPC
    *
    * @return none
    *
-   */
+  */
+   
   public function rescan_blockchain()
   {
     return $this->_run('rescan_blockchain');
