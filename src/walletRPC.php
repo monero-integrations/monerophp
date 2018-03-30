@@ -194,7 +194,7 @@ class walletRPC
    */
   public function create_address($account_index = 0, $label = '')
   {
-    $create_address_parameters = array('account_index' => $account_index ,'label' => $label);
+    $create_address_parameters = array('account_index' => $account_index, 'label' => $label);
     $create_address_method = $this->_run('create_address', $create_address_parameters);
 
     $save = $this->store(); // Save wallet state after subaddress creation
@@ -1342,9 +1342,8 @@ class walletRPC
    */
   public function sign($data)
   {
- 
     $sign_parameters = array('string' => $data);
-    return $this->_run('sign',$sign_parameters);
+    return $this->_run('sign', $sign_parameters);
   }
   
   /**
@@ -1703,7 +1702,6 @@ class walletRPC
   public function sign_multisig($tx_data_hex)
   {
     $sign_multisig_parameters = array('tx_data_hex' => $tx_data_hex);
-
     return $this->_run('sign_multisig', $sign_multisig_parameters);
   }
   
