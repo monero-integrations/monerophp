@@ -483,7 +483,7 @@ class walletRPC
         } else {
           throw new Exception('Error: Address required');
         }
-        $destinations = array(array('amount' => $new_amount, 'address' => $address));
+        $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
       }
       if (array_key_exists('payment_id', $params)) {
         $payment_id = $params['payment_id'];
