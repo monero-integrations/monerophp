@@ -1,8 +1,8 @@
 <?php
 /**
- * 
+ *
  * monerophp/walletRPC
- * 
+ *
  * A class for making calls to monero-wallet-rpc using PHP
  * https://github.com/monero-integrations/monerophp
  *
@@ -11,20 +11,22 @@
  *   Serhack [Monero Integrations] <nico@serhack.me> (https://serhack.me)
  *   TheKoziTwo [xmr-integration] <thekozitwo@gmail.com>
  *   Kacper Rowinski [jsonRPCClient] <krowinski@implix.com>
- * 
+ *
  * @author     Monero Integrations Team <support@monerointegrations.com> (https://github.com/monero-integrations)
  * @copyright  2018
  * @license    MIT
- *  
+ *
  * ============================================================================
- * 
+ *
+ * // See example.php for more examples
+ *
  * // Initialize Monero connection/object
  * $walletRPC = new walletRPC();
- * 
+ *
  * // Examples:
- * $address = $walletRPC->getaddress();
- * $walletRPC->sign('The Times 03/Jan/2009 Chancellor on brink of second bailout for banks');
- * 
+ * $address = $walletRPC->get_address();
+ * $signed = $walletRPC->sign('The Times 03/Jan/2009 Chancellor on brink of second bailout for banks');
+ *
  */
 
 require_once('jsonRPCClient.php');
@@ -33,22 +35,22 @@ class walletRPC
 {
   private $client;
 
-  private $protocol; 
+  private $protocol;
   private $host;
   private $port;
   private $url;
   private $user;
   private $password;
-  
+
   /**
    *
-   * Start a connection with monero-wallet-rpc
+   * Start a connection with the Monero wallet RPC interface (monero-wallet-rpc)
    *
-   * @param  string  $host      IP address of monero-wallet-rpc to connect to  (optional)
-   * @param  int     $port      Port to use when accessing monero-wallet-rpc   (optional)
-   * @param  string  $protocol  Protocol to acces daemon over (eg. 'http')     (optional)
-   * @param  string  $user      RPC username                                   (optional)
-   * @param  string  $password  RPC password                                   (optional)
+   * @param  string  $host      monero-wallet-rpc hostname               (optional)
+   * @param  int     $port      monero-wallet-rpc port                   (optional)
+   * @param  string  $protocol  monero-wallet-rpc protocol (eg. 'http')  (optional)
+   * @param  string  $user      monero-wallet-rpc RPC username           (optional)
+   * @param  string  $password  monero-wallet-rpc RPC passphrase         (optional)
    *
    */
   function __construct ($host = '127.0.0.1', $port = 18083, $protocol = 'http', $user = null, $password = null)
@@ -62,13 +64,13 @@ class walletRPC
     $this->url = $protocol.'://'.$host.':'.$port.'/json_rpc';
     $this->client = new jsonRPCClient($this->url, $this->user, $this->password);
   }
-   
+
   /**
    *
-   * Execute command on the monero-wallet-rpc API
+   * Execute command via jsonRPCClient
    *
    * @param  string  $method  RPC method to call
-   * @param  object  $params  Parameters to include with call  (optional)
+   * @param  object  $params  Parameters to to pass  (optional)
    *
    * @return string  Call result
    *
@@ -78,7 +80,7 @@ class walletRPC
     $result = $this->client->_run($method, $params);
     return $result;
   }
-    
+
   /**
    *
    * Print JSON object (for API)
@@ -90,10 +92,9 @@ class walletRPC
    */
   public function _print($json)
   {
-    $json_parsed = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-    echo $json_parsed;
+    echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
   }
-   
+
   /**
    *
    * Convert from moneroj to tacoshi (piconero)
@@ -105,13 +106,13 @@ class walletRPC
    */
   public function _transform($amount = 0)
   {
-    // 
+    //
     return $amount * 1000000000000;
   }
 
   /**
    *
-   * Get an account's balance
+   * Look up an account's balance
    *
    * @param  number  $account_index  Index of account to look up  (optional)
    *
@@ -126,7 +127,7 @@ class walletRPC
     $get_balance_parameters = array('account_index' => $account_index);
     return $this->_run('get_balance', $get_balance_parameters);
   }
-  
+
   /**
    *
    * Alias of get_balance()
@@ -144,7 +145,7 @@ class walletRPC
     $getbalance_parameters = array('account_index' => $account_index);
     return $this->_run('getbalance', $getbalance_parameters);
   }
-  
+
   /**
    *
    * Look up wallet address(es)
@@ -175,7 +176,7 @@ class walletRPC
     $get_address_parameters = array('account_index' => $account_index, 'address_index' => $address_index);
     return $this->_run('get_address', $get_address_parameters);
   }
-  
+
   /**
    *
    * Alias of get_address()
@@ -193,7 +194,7 @@ class walletRPC
     $getaddress_parameters = array('account_index' => $account_index, 'address_index' => $address_index);
     return $this->_run('getaddress', $getaddress_parameters);
   }
-  
+
   /**
    *
    * Create a new subaddress
@@ -216,13 +217,13 @@ class walletRPC
 
     return $create_address_method;
   }
-  
+
   /**
    *
    * Label a subaddress
    *
-   * @param  number  The subaddress index to label
-   * @param  string  The label to use
+   * @param  number  The index of the subaddress to label
+   * @param  string  The label to apply
    *
    * @return none
    *
@@ -235,7 +236,7 @@ class walletRPC
 
   /**
    *
-   * Get current accounts from wallet
+   * Look up wallet accounts
    *
    * @param  none
    *
@@ -266,12 +267,12 @@ class walletRPC
   {
     return $this->_run('get_accounts');
   }
-  
+
   /**
    *
-   * Create a new sub-account from your wallet
+   * Create a new account
    *
-   * @param  string  A label for the account
+   * @param  string  The label to use apply
    *
    * @return none
    *
@@ -285,7 +286,7 @@ class walletRPC
 
     return $create_account_method;
   }
-  
+
   /**
    *
    * Label an account
@@ -305,10 +306,10 @@ class walletRPC
 
     return $label_account_method;
   }
-  
+
   /**
    *
-   * Get account tags
+   * Look up account tags
    *
    * @param  none
    *
@@ -330,12 +331,12 @@ class walletRPC
   {
     return $this->_run('get_account_tags');
   }
-  
+
   /**
    *
-   * Apply a tag to accounts
+   * Tag accounts
    *
-   * @param  array   $accounts  Account indices to tag
+   * @param  array   $accounts  The indeices of the accounts to tag
    * @param  string  $tag       Tag to apply
    *
    * @return none
@@ -350,12 +351,12 @@ class walletRPC
 
     return $tag_accounts_method;
   }
-  
+
   /**
    *
    * Untag accounts
    *
-   * @param  array   $accounts  Account indices to untag
+   * @param  array   $accounts  The indices of the accounts to untag
    *
    * @return none
    *
@@ -369,11 +370,11 @@ class walletRPC
 
     return $untag_accounts_method;
   }
-  
+
   /**
    *
    * Describe a tag
-   * 
+   *
    * @param  string  $tag          Tag to describe
    * @param  string  $description  Description to apply to tag
    *
@@ -391,10 +392,10 @@ class walletRPC
 
     return $set_account_tag_description_method;
   }
-  
+
   /**
    *
-   * Look up current block height of wallet
+   * Look up how many blocks are in the longest chain known to the wallet
    *
    * @param  none
    *
@@ -407,7 +408,7 @@ class walletRPC
   {
     return $this->_run('get_height');
   }
-  
+
   /**
    *
    * Alias of get_height()
@@ -426,20 +427,22 @@ class walletRPC
 
   /**
    *
-   * Send monero.  Parameters can be passed in individually (as listed below) or as an object/dictionary (as listed at bottom.)  If multiple destinations are required, use the object/dictionary (bottom) format and pass an array of objects containing recipient addresses and amount in the destinations field, like destinations: [['amount' => 1, 'address' => ...], ['amount' => 2, 'address' => ...}]
-   * 
-   * @param  string   $amount           Amount to transfer
-   * @param  string   $address          Address to transfer to
+   * Send monero
+   * Parameters can be passed in individually (as listed below) or as an object/dictionary (as listed at bottom)
+   * To send to multiple recipients, use the object/dictionary (bottom) format and pass an array of recipient addresses and amount arrays in the destinations field (as in "destinations = [['amount' => 1, 'address' => ...], ['amount' => 2, 'address' => ...]]")
+   *
+   * @param  string   $amount           Amount of monero to send
+   * @param  string   $address          Address to receive funds
    * @param  string   $payment_id       Payment ID                                                (optional)
-   * @param  number   $mixin            Mixin number                                              (optional)
+   * @param  number   $mixin            Mixin number (ringsize - 1)                               (optional)
    * @param  number   $account_index    Account to send from                                      (optional)
    * @param  string   $subaddr_indices  Comma-separeted list of subaddress indices to spend from  (optional)
    * @param  number   $priority         Transaction priority                                      (optional)
    * @param  number   $unlock_time      UNIX time or block height to unlock output                (optional)
    * @param  boolean  $do_not_relay     Do not relay transaction                                  (optional)
-   * 
+   *
    *   OR
-   * 
+   *
    * @param  object  $params            Array containing any of the options listed above, where only amount and address or a destionarions array are required
    *
    * @return object  Example: {
@@ -517,7 +520,7 @@ class walletRPC
 
     return $transfer_method;
   }
-  
+
   /**
    *
    * Same as transfer, but splits transfer into more than one transaction if necessary
@@ -593,10 +596,10 @@ class walletRPC
 
     return $transfer_method;
   }
-  
+
   /**
    *
-   * Send all dust outputs back to the wallet to make them easier to spend (and mix)
+   * Send all dust outputs back to the wallet
    *
    * @param  none
    *
@@ -609,10 +612,10 @@ class walletRPC
   {
     return $this->_run('sweep_dust');
   }
-  
+
   /**
    *
-   * Send all unmixable output back to the wallet
+   * Send all unmixable outputs back to the wallet
    *
    * @param  none
    *
@@ -625,23 +628,23 @@ class walletRPC
   {
     return $this->_run('sweep_unmixable');
   }
-  
+
   /**
    *
-   * Send all unlocked balance from an account to an address
-   * 
-   * @param  string   $address          Address to transfer to
+   * Send all unlocked outputs from an account to an address
+   *
+   * @param  string   $address          Address to receive funds
    * @param  string   $subaddr_indices  Comma-seperated list of subaddress indices to sweep  (optional)
-   * @param  number   $account_index    Account to sweep from                                (optional)
+   * @param  number   $account_index    Index of the account to sweep                        (optional)
    * @param  string   $payment_id       Payment ID                                           (optional)
-   * @param  number   $mixin            Mixin number                                         (optional)
+   * @param  number   $mixin            Mixin number (ringsize - 1)                          (optional)
    * @param  number   $priority         Payment ID                                           (optional)
    * @param  number   $below_amount     Only send outputs below this amount                  (optional)
    * @param  number   $unlock_time      UNIX time or block height to unlock output           (optional)
    * @param  boolean  $do_not_relay     Do not relay transaction                             (optional)
-   * 
+   *
    *   OR
-   * 
+   *
    * @param  object  $params            Array containing any of the options listed above, where only address is required
    *
    * @return object  Example: {
@@ -695,22 +698,22 @@ class walletRPC
 
     return $sweep_all_method;
   }
-  
+
   /**
    *
    * Sweep a single key image to an address
-   * 
+   *
    * @param  string   $key_image     Key image to sweep
-   * @param  string   $address       Address to transfer to
+   * @param  string   $address       Address to receive funds
    * @param  string   $payment_id    Payment ID                                  (optional)
    * @param  number   $below_amount  Only send outputs below this amount         (optional)
-   * @param  number   $mixin         Mixin number                                (optional)
+   * @param  number   $mixin         Mixin number (ringsize - 1)                 (optional)
    * @param  number   $priority      Payment ID                                  (optional)
    * @param  number   $unlock_time   UNIX time or block height to unlock output  (optional)
    * @param  boolean  $do_not_relay  Do not relay transaction                    (optional)
-   * 
+   *
    *   OR
-   * 
+   *
    * @param  object  $params         Array containing any of the options listed above, where only address is required
    *
    * @return object  Example: {
@@ -770,12 +773,12 @@ class walletRPC
 
     return $sweep_single_method;
   }
-  
+
   /**
    *
    * Relay a transaction
    *
-   * @param  string  $hex  Transaction blob to relay
+   * @param  string  $hex  Blob of transaction to relay
    *
    * @return object  // TODO example
    *
@@ -789,7 +792,7 @@ class walletRPC
 
     return $this->_run('relay_tx');
   }
-  
+
   /**
    *
    * Save wallet
@@ -799,10 +802,10 @@ class walletRPC
   {
     return $this->_run('store');
   }
-  
+
   /**
    *
-   * Get a list of incoming payments using a given payment ID
+   * Look up incoming payments by payment ID
    *
    * @param  string  $payment_id  Payment ID to look up
    *
@@ -824,12 +827,12 @@ class walletRPC
     $get_payments_parameters['payment_id'] = $payment_id;
     return $this->_run('get_payments', $get_payments_parameters);
   }
-  
+
   /**
    *
-   * Get a list of incoming payments using a given payment ID (or a list of payments IDs) from a given height
+   * Look up incoming payments by payment ID (or a list of payments IDs) from a given height
    *
-   * @param  array   $payment_ids       Array of payment ID to look up
+   * @param  array   $payment_ids       Array of payment IDs to look up
    * @param  string  $min_block_height  Height to begin search
    *
    * @return object  Example: {
@@ -859,7 +862,7 @@ class walletRPC
     }
     return $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
   }
-  
+
   /**
    *
    * Look up incoming transfers
@@ -895,12 +898,12 @@ class walletRPC
     $incoming_parameters = array('transfer_type' => $type, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices);
     return $this->_run('incoming_transfers', $incoming_parameters);
   }
-  
+
   /**
    *
-   * Query wallet key
+   * Look up a wallet key
    *
-   * @param  string  $key_type  Type of key to look up;  must be 'view_key', 'spend_key', or 'mnemonic'
+   * @param  string  $key_type  Type of key to look up; must be 'view_key', 'spend_key', or 'mnemonic'
    *
    * @return object  Example: {
    *   "key": "7e341d..."
@@ -912,7 +915,7 @@ class walletRPC
     $query_key_parameters = array('key_type' => $key_type);
     return $this->_run('query_key', $query_key_parameters);
   }
-  
+
   /**
    *
    * Look up wallet view key
@@ -929,7 +932,7 @@ class walletRPC
     $view_key_parameters = array('key_type' => 'view_key');
     return $this->_run('query_key', $view_key_parameters);
   }
-  
+
   /**
    *
    * Look up wallet spend key
@@ -946,10 +949,10 @@ class walletRPC
     $spend_key_parameters = array('key_type' => 'spend_key');
     return $this->_run('query_key', $spend_key_parameters);
   }
-  
+
   /**
    *
-   * Look up wallet spend key
+   * Look up wallet mnemonic seed
    *
    * @param  none
    *
@@ -963,12 +966,12 @@ class walletRPC
     $mnemonic_parameters = array('key_type' => 'mnemonic');
     return $this->_run('query_key', $mnemonic_parameters);
   }
-  
+
   /**
    *
-   * Make an integrated address from the wallet address and a payment ID
+   * Create an integrated address from a given payment ID
    *
-   * @param  string  $payment_id  Payment ID to use when generating an integrated address  (optional)
+   * @param  string  $payment_id  Payment ID  (optional)
    *
    * @return object  Example: {
    *   "integrated_address": "4BpEv3WrufwXoyJAeEoBaNW56ScQaLXyyQWgxeRL9KgAUhVzkvfiELZV7fCPBuuB2CGuJiWFQjhnhhwiH1FsHYGQQ8H2RRJveAtUeiFs6J"
@@ -980,10 +983,10 @@ class walletRPC
     $integrate_address_parameters = array('payment_id' => $payment_id);
     return $this->_run('make_integrated_address', $integrate_address_parameters);
   }
-  
+
   /**
    *
-   * Retrieve the standard address and payment ID corresponding to an integrated address
+   * Look up the wallet address and payment ID corresponding to an integrated address
    *
    * @param  string  $integrated_address  Integrated address to split
    *
@@ -998,7 +1001,7 @@ class walletRPC
     $split_parameters = array('integrated_address' => $integrated_address);
     return $this->_run('split_integrated_address', $split_parameters);
   }
-  
+
   /**
    *
    * Stop the wallet, saving the state
@@ -1012,27 +1015,27 @@ class walletRPC
   {
     return $this->_run('stop_wallet');
   }
-  
+
   /*
    *
-   * Rescan blockchain from scratch
+   * Rescan the blockchain from scratch
    *
    * @param  none
    *
    * @return none
    *
   */
-   
+
   public function rescan_blockchain()
   {
     return $this->_run('rescan_blockchain');
   }
-  
+
   /**
    *
-   * Set arbitrary string notes for transactions
+   * Add notes to transactions
    *
-   * @param  array  $txids  Array of transaction IDs (strings) to apply notes to
+   * @param  array  $txids  Array of transaction IDs to note
    * @param  array  $notes  Array of notes (strings) to add
    *
    * @return none
@@ -1043,14 +1046,16 @@ class walletRPC
     $notes_parameters = array('txids' => $txids, 'notes' => $notes);
     return $this->_run('set_tx_notes', $notes_parameters);
   }
-  
+
   /**
    *
-   * Get string notes for transactions
+   * Look up transaction note
    *
    * @param  array  $txids  Array of transaction IDs (strings) to look up
    *
-   * @return none
+   * @return obect  Example: {
+   *   // TODO example
+   * }
    *
    */
   public function get_tx_notes($txids)
@@ -1058,10 +1063,10 @@ class walletRPC
     $notes_parameters = array('txids' => $txids);
     return $this->_run('get_tx_notes', $notes_parameters);
   }
-  
+
   /**
    *
-   * Set an option in the wallet
+   * Set a wallet option
    *
    * @param  string  $key    Option to set
    * @param  string  $value  Value to set
@@ -1074,7 +1079,7 @@ class walletRPC
     $set_attribute_parameters = array('key' => $key, 'value' => $value);
     return $this->_run('set_attribute', $set_attribute_parameters);
   }
-  
+
   /**
    *
    * Look up a wallet option
@@ -1091,12 +1096,12 @@ class walletRPC
     $get_attribute_parameters = array('key' => $key);
     return $this->_run('get_attribute', $get_attribute_parameters);
   }
-  
+
   /**
    *
-   * Get a transaction key
+   * Look up a transaction key
    *
-   * @param   string  $txid  Transaction ID
+   * @param   string  $txid  Transaction ID to look up
    *
    * @return  object  Example: {
    *   "tx_key": "e8e97866b1606bd87178eada8f995bf96d2af3fec5db0bc570a451ab1d589b0f"
@@ -1108,12 +1113,12 @@ class walletRPC
     $get_tx_key_parameters = array('txid' => $txid);
     return $this->_run('get_tx_key', $get_tx_key_parameters);
   }
-  
+
   /**
    *
    * Check a transaction key
    *
-   * @param   string  $address  Address that sent transfer
+   * @param   string  $address  Address that sent transaction
    * @param   string  $txid     Transaction ID
    * @param   string  $tx_key   Transaction key
    *
@@ -1129,10 +1134,10 @@ class walletRPC
     $check_tx_key_parameters = array('address' => $address, 'txid' => $txid, 'tx_key' => $tx_key);
     return $this->_run('check_tx_key', $check_tx_key_parameters);
   }
-  
+
   /**
    *
-   * Get proof (signature) of transaction
+   * Create proof (signature) of transaction
    *
    * @param  string  $address  Address that spent funds
    * @param  string  $txid     Transaction ID
@@ -1147,7 +1152,7 @@ class walletRPC
     $get_tx_proof_parameters = array('address' => $address, 'txid' => $txid);
     return $this->_run('get_tx_proof', $get_tx_proof_parameters);
   }
-  
+
   /**
    *
    * Verify transaction proof
@@ -1169,10 +1174,10 @@ class walletRPC
     $check_tx_proof_parameters = array('address' => $address, 'txid' => $txid, 'signature' => $signature);
     return $this->_run('check_tx_proof', $check_tx_proof_parameters);
   }
-  
+
   /**
    *
-   * Get proof of a spend
+   * Create proof of a spend
    *
    * @param  string  $txid  Transaction ID
    *
@@ -1186,7 +1191,7 @@ class walletRPC
     $get_spend_proof_parameters = array('txid' => $txid);
     return $this->_run('get_spend_proof', $get_spend_proof_parameters);
   }
-  
+
   /**
    *
    * Verify spend proof
@@ -1204,12 +1209,12 @@ class walletRPC
     $check_spend_proof_parameters = array('txid' => $txid, 'signature' => $signature);
     return $this->_run('check_spend_proof', $check_spend_proof_parameters);
   }
-  
+
   /**
    *
-   * Get proof of reserves
+   * Create proof of reserves
    *
-   * @param  string  $account_index  Comma-separated list of account indices of which to prove reserves.  If empty, proves reserve of all accounts  (optional)
+   * @param  string  $account_index  Comma-separated list of account indices of which to prove reserves (proves reserve of all accounts if empty)  (optional)
    *
    * @return   Example: {
    *   "signature": "ReserveProofV11BZ23sBt9sZJeGccf84mzyAmNCP3KzYbE111111111111AjsVgKzau88VxXVGACbYgPVrDGC84vBU61Gmm2eiYxdZULAE4yzBxT1D9epWgCT7qiHFvFMbdChf3CpR2YsZj8CEhp8qDbitsfdy7iBdK6d5pPUiMEwCNsCGDp8AiAc6sLRiuTsLEJcfPYEKe"
@@ -1226,7 +1231,7 @@ class walletRPC
 
     return $this->_run('get_reserve_proof');
   }
-  
+
   /**
    *
    * Verify a reserve proof
@@ -1246,7 +1251,7 @@ class walletRPC
     $check_reserve_proof_parameters = array('address' => $address, 'signature' => $signature);
     return $this->_run('check_reserve_proof', $check_reserve_proof_parameters);
   }
-  
+
   /**
    *
    * Look up transfers
@@ -1314,10 +1319,10 @@ class walletRPC
 
     return $this->_run('get_transfers', $get_transfers_parameters);
   }
-  
+
   /**
    *
-   * Show information about a transfer with a given transaction ID
+   * Look up transaction by transaction ID
    *
    * @param  string  $txid           Transaction ID to look up
    * @param  string  $account_index  Index of account to query  (optional)
@@ -1341,7 +1346,7 @@ class walletRPC
     $get_transfer_by_txid_parameters = array('txid' => $txid, 'account_index' => $account_index);
     return $this->_run('get_transfer_by_txid', $get_transfer_by_txid_parameters);
   }
-  
+
   /**
    *
    * Sign a string
@@ -1358,27 +1363,27 @@ class walletRPC
     $sign_parameters = array('string' => $data);
     return $this->_run('sign', $sign_parameters);
   }
-  
+
   /**
    *
-   * Verify a signature on a string
+   * Verify a signature
    *
    * @param  string   $data       Signed data
    * @param  string   $address    Address that signed data
    * @param  string   $signature  Signature to verify
    *
    * @return boolean  $good       Verification status
-   * 
+   *
    */
   public function verify($data, $address, $signature)
   {
     $notes_parameters = array('data' => $data, 'address' => $address, 'signature' => $signature);
     return $this->_run('verify', $notes_parameters);
   }
-  
+
   /**
    *
-   * Export an array of signed  key images
+   * Export an array of signed key images
    *
    * @param  none
    *
@@ -1391,7 +1396,7 @@ class walletRPC
   {
     return $this->_run('export_key_images');
   }
-  
+
   /**
    *
    * Import a signed set of key images
@@ -1402,9 +1407,9 @@ class walletRPC
    *   // TODO example
    *   height: ,
    *   spent: ,
-   *   unspent: 
+   *   unspent:
    * }
-   * 
+   *
    */
   public function import_key_images($signed_key_images)
   {
@@ -1414,13 +1419,13 @@ class walletRPC
 
   /**
    *
-   * Create a payment URI using the official URI spec
+   * Create a payment URI using the official URI specification
    *
-   * @param  string  $address         Recipient address
-   * @param  string  $amount          Amount to request
-   * @param  string  $payment_id      Payment ID           (optional)
-   * @param  string  $recipient_name  Name of recipient    (optional)
-   * @param  string  $tx_description  Payment description  (optional)
+   * @param  string  $address         Address to receive fuids
+   * @param  string  $amount          Amount of monero to request
+   * @param  string  $payment_id      Payment ID                   (optional)
+   * @param  string  $recipient_name  Name of recipient            (optional)
+   * @param  string  $tx_description  Payment description          (optional)
    *
    * @return object  Example: {
    *   // TODO example
@@ -1435,7 +1440,7 @@ class walletRPC
 
   /**
    *
-   * Parse a payment URI to get payment information
+   * Parse a payment URI
    *
    * @param  string  $uri  Payment URI
    *
@@ -1455,41 +1460,41 @@ class walletRPC
     $uri_parameters = array('uri' => $uri);
     return $this->_run('parse_uri', $uri_parameters);
   }
-  
+
   /**
    *
-   * Retrieve entries from the address book
+   * Look up address book entries
    *
-   * @param  array   $entries  Array of indices to return from the address book
+   * @param  array   $entries  Array of address book entry indices to look up
    *
    * @return boject  Example: {
    *   // TODO example
    * }
-   * 
+   *
    */
   public function get_address_book($entries)
   {
     $entries_parameters = array('entries' => $entries);
     return $this->_run('get_address_book', $entries_parameters);
   }
-  
+
   /**
    *
-   * Retrieve entries from the address book
+   * Add entry to the address book
    *
    * @param  string  $address      Address to add to address book
    * @param  string  $payment_id   Payment ID to use with address in address book  (optional)
    * @param  string  $description  Description of address                          (optional)
    *
    * @return number  $index        Index of address in address book
-   * 
+   *
    */
   public function add_address_book($address, $payment_id, $description)
   {
     $address_parameters = array('address' => $address, 'payment_id' => $payment_id, 'description' => $description);
     return $this->_run('add_address_book', $address_parameters);
   }
-  
+
   /**
    *
    * Delete an entry from the address book
@@ -1497,41 +1502,41 @@ class walletRPC
    * @param  array   $index  Index of the address book entry to remove
    *
    * @return none
-   * 
+   *
    */
   public function delete_address_book($index)
   {
     $delete_parameters = array('index' => $index);
     return $this->_run('delete_address_book', $delete_parameters);
   }
-  
+
   /**
    *
    * Rescan the blockchain for spent outputs
-   * 
+   *
    */
   public function rescan_spent()
   {
     return $this->_run('rescan_spent');
   }
-  
+
   /**
    *
-   * Start mining in the Monero daemon
+   * Start mining
    *
    * @param  number   $threads_count         Number of threads with which to mine
    * @param  boolean  $do_background_mining  Mine in backgound?
-   * @param  boolean  $ignore_battery        Ignore battery?  
+   * @param  boolean  $ignore_battery        Ignore battery?
    *
    * @return none
-   * 
+   *
    */
   public function start_mining($threads_count, $do_background_mining, $ignore_battery)
   {
     $mining_parameters = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
     return $this->_run('start_mining', $mining_parameters);
   }
-  
+
   /**
    *
    * Stop mining
@@ -1539,19 +1544,19 @@ class walletRPC
    * @param  none
    *
    * @return none
-   * 
+   *
    */
   public function stop_mining()
   {
     return $this->_run('stop_mining');
   }
-  
+
   /**
    *
-   * Get a list of available languages for your wallet's seed
+   * Look up a list of available languages for your wallet's seed
    *
    * @param  none
-   * 
+   *
    * @return array  List of available languages
    *
    */
@@ -1559,14 +1564,14 @@ class walletRPC
   {
     return $this->_run('get_languages');
   }
-  
+
   /**
    *
    * Create a new wallet
    *
-   * @param  string  $filename  Filename to use for new wallet
-   * @param  string  $password  Password to use for new wallet
-   * @param  string  $language  Language to use for new wallet
+   * @param  string  $filename  Filename of new wallet to create
+   * @param  string  $password  Password of new wallet to create
+   * @param  string  $language  Language of new wallet to create
    *
    * @return none
    *
@@ -1576,13 +1581,13 @@ class walletRPC
     $create_wallet_parameters = array('filename' => $filename, 'password' => $password, 'language' => $language);
     return $this->_run('create_wallet', $create_wallet_parameters);
   }
-  
+
   /**
    *
    * Open a wallet
    *
-   * @param  string  $filename  Filename to use for new wallet
-   * @param  string  $password  Password to use for new wallet
+   * @param  string  $filename  Filename of wallet to open
+   * @param  string  $password  Password of wallet to open
    *
    * @return none
    *
@@ -1592,7 +1597,7 @@ class walletRPC
     $open_wallet_parameters = array('filename' => $filename, 'password' => $password);
     return $this->_run('open_wallet', $open_wallet_parameters);
   }
-  
+
   /**
    *
    * Check if wallet is multisig
@@ -1611,10 +1616,10 @@ class walletRPC
   {
     return $this->_run('is_multisig');
   }
-  
+
   /**
    *
-   * Get information needed to create a multisignature wallet
+   * Create information needed to create a multisignature wallet
    *
    * @param  none
    *
@@ -1627,14 +1632,14 @@ class walletRPC
   {
     return $this->_run('prepare_multisig');
   }
-  
+
   /**
    *
-   * Make a multisig account
+   * Create a multisignature wallet
    *
-   * @param  string  $multisig_info  Multisignature information (from eg. prepare_multisig) 
-   * @param  string  $threshold      Threshold required to spend from multisig
-   * @param  string  $password       Passphrase to apply to multisig address
+   * @param  string  $multisig_info  Multisignature information (from eg. prepare_multisig)
+   * @param  string  $threshold      Threshold required to spend from multisignature wallet
+   * @param  string  $password       Passphrase to apply to multisignature wallet
    *
    * @return object  Example: {
    *   // TODO example
@@ -1646,7 +1651,7 @@ class walletRPC
     $make_multisig_parameters = array('multisig_info' => $multisig_info, 'threshold' => $threshold, 'password' => $password);
     return $this->_run('make_multisig', $make_multisig_parameters);
   }
-  
+
   /**
    *
    * Export multisignature information
@@ -1662,12 +1667,12 @@ class walletRPC
   {
     return $this->_run('export_multisig_info');
   }
-  
+
   /**
    *
    * Import mutlisignature information
    *
-   * @param  string  $info  Multisig info (from eg. prepare_multisig)
+   * @param  string  $info  Multisignature info (from eg. prepare_multisig)
    *
    * @return   Example: {
    *   // TODO example
@@ -1679,13 +1684,13 @@ class walletRPC
     $import_multisig_info_parameters = array('info' => $info);
     return $this->_run('import_multisig_info', $import_multisig_info_parameters);
   }
-  
+
   /**
    *
    * Finalize a multisignature wallet
    *
-   * @param  string  $multisig_info  Multisig info (from eg. prepare_multisig)
-   * @param  string  $password       Multisig info (from eg. prepare_multisig)
+   * @param  string  $multisig_info  Multisignature info (from eg. prepare_multisig)
+   * @param  string  $password       Multisignature info (from eg. prepare_multisig)
    *
    * @return   Example: {
    *   // TODO example
@@ -1697,12 +1702,12 @@ class walletRPC
     $finalize_multisig_parameters = array('multisig_info' => $multisig_info, 'password' => $password);
     return $this->_run('finalize_multisig', $finalize_multisig_parameters);
   }
-  
+
   /**
    *
    * Sign a multisignature transaction
    *
-   * @param  string  $tx_data_hex  Transaction as hex blob
+   * @param  string  $tx_data_hex  Blob of transaction to sign
    *
    * @return object  Example: {
    *   // TODO example
@@ -1714,12 +1719,12 @@ class walletRPC
     $sign_multisig_parameters = array('tx_data_hex' => $tx_data_hex);
     return $this->_run('sign_multisig', $sign_multisig_parameters);
   }
-  
+
   /**
    *
    * Submit (relay) a multisignature transaction
    *
-   * @param  string  $tx_data_hex  Transaction as hex blob
+   * @param  string  $tx_data_hex  Blob of transaction to submit
    *
    * @return   Example: {
    *   // TODO example
