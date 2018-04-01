@@ -20,7 +20,7 @@
  *
  * // See example.php for more examples
  *
- * // Initialize Monero connection/object
+ * // Initialize class
  * $walletRPC = new walletRPC();
  *
  * // Examples:
@@ -49,8 +49,8 @@ class walletRPC
    * @param  string  $host      monero-wallet-rpc hostname               (optional)
    * @param  int     $port      monero-wallet-rpc port                   (optional)
    * @param  string  $protocol  monero-wallet-rpc protocol (eg. 'http')  (optional)
-   * @param  string  $user      monero-wallet-rpc RPC username           (optional)
-   * @param  string  $password  monero-wallet-rpc RPC passphrase         (optional)
+   * @param  string  $user      monero-wallet-rpc username               (optional)
+   * @param  string  $password  monero-wallet-rpc passphrase             (optional)
    *
    */
   function __construct ($host = '127.0.0.1', $port = 18083, $protocol = 'http', $user = null, $password = null)
@@ -154,18 +154,18 @@ class walletRPC
    * @param  number  $address_index  Index of subaddress to look up  (optional)
    *
    * @return object  Example: {
-   *   address: 'A2XE6ArhRkVZqepY2DQ5QpW8p8P2dhDQLhPJ9scSkW6q9aYUHhrhXVvE8sjg7vHRx2HnRv53zLQH4ATSiHHrDzcSFqHpARF',
-   *   addresses: [
+   *   "address": "A2XE6ArhRkVZqepY2DQ5QpW8p8P2dhDQLhPJ9scSkW6q9aYUHhrhXVvE8sjg7vHRx2HnRv53zLQH4ATSiHHrDzcSFqHpARF",
+   *   "addresses": [
    *     {
-   *       address: 'A2XE6ArhRkVZqepY2DQ5QpW8p8P2dhDQLhPJ9scSkW6q9aYUHhrhXVvE8sjg7vHRx2HnRv53zLQH4ATSiHHrDzcSFqHpARF',
-   *       address_index: 0,
-   *       label: 'Primary account',
-   *       used: true
+   *       "address": "A2XE6ArhRkVZqepY2DQ5QpW8p8P2dhDQLhPJ9scSkW6q9aYUHhrhXVvE8sjg7vHRx2HnRv53zLQH4ATSiHHrDzcSFqHpARF",
+   *       "address_index": 0,
+   *       "label": "Primary account",
+   *       "used": true
    *     }, {
-   *       address: 'Bh3ttLbjGFnVGCeGJF1HgVh4DfCaBNpDt7PQAgsC2GFug7WKskgfbTmB6e7UupyiijiHDQPmDC7wSCo9eLoGgbAFJQaAaDS',
-   *       address_index: 1,
-   *       label: '',
-   *       used: true
+   *       "address": "Bh3ttLbjGFnVGCeGJF1HgVh4DfCaBNpDt7PQAgsC2GFug7WKskgfbTmB6e7UupyiijiHDQPmDC7wSCo9eLoGgbAFJQaAaDS",
+   *       "address_index": 1,
+   *       "label": "",
+   *       "used": true
    *     }
    *   ]
    * }
@@ -200,7 +200,7 @@ class walletRPC
    * Create a new subaddress
    *
    * @param  number  $account_index  The subaddress account index
-   * @param  string  $label          The label to use
+   * @param  string  $label          A label to apply to the new subaddress
    *
    * @return object  Example: {
    *   "address": "Bh3ttLbjGFnVGCeGJF1HgVh4DfCaBNpDt7PQAgsC2GFug7WKskgfbTmB6e7UupyiijiHDQPmDC7wSCo9eLoGgbAFJQaAaDS"
@@ -256,7 +256,7 @@ class walletRPC
    *       "base_address": "BcXKsfrvffKYVoNGN4HUFfaruAMRdk5DrLZDmJBnYgXrTFrXyudn81xMj7rsmU5P9dX56kRZGqSaigUxUYoaFETo9gfDKx5",
    *       "label": "Secondary account",
    *       "tag": "",
-   *       "unlocked_balance": 0 )
+   *       "unlocked_balance": 0
    *    },
    *    "total_balance": 2808597352948771,
    *    "total_unlocked_balance": 2717153096298162
@@ -272,7 +272,7 @@ class walletRPC
    *
    * Create a new account
    *
-   * @param  string  The label to use apply
+   * @param  string  $label  Label to apply to new account
    *
    * @return none
    *
@@ -336,7 +336,7 @@ class walletRPC
    *
    * Tag accounts
    *
-   * @param  array   $accounts  The indeices of the accounts to tag
+   * @param  array   $accounts  The indices of the accounts to tag
    * @param  string  $tag       Tag to apply
    *
    * @return none
@@ -604,7 +604,7 @@ class walletRPC
    * @param  none
    *
    * @return object  Example: {
-   *   "multisig_txset": []
+   *   // TODO example
    * }
    *
    */
@@ -620,7 +620,7 @@ class walletRPC
    * @param  none
    *
    * @return object  Example: {
-   *   "multisig_txset": []
+   *   // TODO example
    * }
    *
    */
@@ -796,6 +796,10 @@ class walletRPC
   /**
    *
    * Save wallet
+   *
+   * @param  none
+   *
+   * @return object  Example:
    *
    */
   public function store()
@@ -1372,7 +1376,9 @@ class walletRPC
    * @param  string   $address    Address that signed data
    * @param  string   $signature  Signature to verify
    *
-   * @return boolean  $good       Verification status
+   * @return object  Example: {
+   *   "good": true
+   * }
    *
    */
   public function verify($data, $address, $signature)
@@ -1467,7 +1473,7 @@ class walletRPC
    *
    * @param  array   $entries  Array of address book entry indices to look up
    *
-   * @return boject  Example: {
+   * @return object  Example: {
    *   // TODO example
    * }
    *
@@ -1486,7 +1492,9 @@ class walletRPC
    * @param  string  $payment_id   Payment ID to use with address in address book  (optional)
    * @param  string  $description  Description of address                          (optional)
    *
-   * @return number  $index        Index of address in address book
+   * @return object  Example: {
+   *   // TODO example
+   * }
    *
    */
   public function add_address_book($address, $payment_id, $description)
@@ -1557,7 +1565,9 @@ class walletRPC
    *
    * @param  none
    *
-   * @return array  List of available languages
+   * @return object  Example: {
+   *   // TODO example
+   * }
    *
    */
   public function get_languages()

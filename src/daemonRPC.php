@@ -21,7 +21,7 @@
  *
  * // See example.php for more examples
  *
- * // Initialize Monero connection/object
+ * // Initialize class
  * $daemonRPC = new daemonRPC();
  *
  * // Examples:
@@ -50,7 +50,7 @@ class daemonRPC
    * @param  string  $host      Monero daemon IP hostname            (optional)
    * @param  int     $port      Monero daemon port                   (optional)
    * @param  string  $protocol  Monero daemon protocol (eg. 'http')  (optional)
-   * @param  string  $user      Moenro daemon RPC username           (optional)
+   * @param  string  $user      Monero daemon RPC username           (optional)
    * @param  string  $password  Monero daemon RPC passphrase         (optional)
    *
    */
@@ -102,7 +102,7 @@ class daemonRPC
    *
    * Look up a block's hash by its height
    *
-   * @param  array   $height   Height of block to look up
+   * @param  number  $height   Height of block to look up
    *
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
    *
@@ -154,7 +154,7 @@ class daemonRPC
 
   /**
    *
-   * Look up a block header for the latest block in the longest chain known to the node
+   * Look up the block header of the latest block in the longest chain known to the node
    *
    * @param  none
    *
@@ -245,7 +245,7 @@ class daemonRPC
    *
    * Look up block information by SHA256 hash
    *
-   * @param  string  SHA256 hash of block 
+   * @param  string  $hash  SHA256 hash of block 
    *
    * @return object  Example: {
    *   "blob": "...",
@@ -413,7 +413,7 @@ class daemonRPC
    *
    * Ban another node by IP
    *
-   * @param  none
+   * @param  string  $ip  IP address of node to ban
    *
    * @return object  Example: {
    *   "status": "OK"
