@@ -1,8 +1,8 @@
 <?php
 /**
- * 
+ *
  * monerophp/daemonRPC
- * 
+ *
  * A class for making calls to a Monero daemon's RPC API using PHP
  * https://github.com/monero-integrations/monerophp
  *
@@ -12,20 +12,22 @@
  *   TheKoziTwo [xmr-integration] <thekozitwo@gmail.com>
  *   Andrew LeCody [EasyBitcoin-PHP]
  *   Kacper Rowinski [jsonRPCClient] <krowinski@implix.com>
- * 
+ *
  * @author     Monero Integrations Team <support@monerointegrations.com> (https://github.com/monero-integrations)
  * @copyright  2018
  * @license    MIT
- *  
+ *
  * ============================================================================
- * 
+ *
+ * // See example.php for more examples
+ *
  * // Initialize Monero connection/object
  * $daemonRPC = new daemonRPC();
- * 
+ *
  * // Examples:
  * $height = $daemonRPC->getblockcount();
  * $block = $daemonRPC->getblock_by_height(1);
- * 
+ *
  */
 
 require_once('jsonRPCClient.php');
@@ -43,20 +45,20 @@ class daemonRPC
 
   /**
    *
-   * Start a connection with the Monero daemon
-   * 
-   * @param  string  $host      IP address of Monero daemon to connect to  (optional)
-   * @param  int     $port      Port to use when accessing Monero daemon   (optional)
-   * @param  string  $protocol  Protocol to acces daemon over (eg. 'http') (optional)
-   * @param  string  $user      Username                                   (optional)
-   * @param  string  $password  Password                                   (optional)
+   * Start a connection with the the Monero daemon (monerod)
+   *
+   * @param  string  $host      Monero daemon IP hostname            (optional)
+   * @param  int     $port      Monero daemon port                   (optional)
+   * @param  string  $protocol  Monero daemon protocol (eg. 'http')  (optional)
+   * @param  string  $user      Moenro daemon RPC username           (optional)
+   * @param  string  $password  Monero daemon RPC passphrase         (optional)
    *
    */
   function __construct($host = '127.0.0.1', $port = 18081, $protocol = 'http', $user = null, $password = null)
   {
     $this->host = $host;
     $this->port = $port;
-    $this->protocol = $protocol; 
+    $this->protocol = $protocol;
     $this->user = $user;
     $this->password = $password;
 
@@ -66,10 +68,10 @@ class daemonRPC
 
   /**
    *
-   * Execute command on the Monero RPC API
+   * Execute command via jsonRPCClient
    *
    * @param  string  $method  RPC method to call
-   * @param  string  $params  Options to include (optional)
+   * @param  string  $params  Parameters to pass  (optional)
    *
    * @return string  Call result
    *
@@ -85,10 +87,10 @@ class daemonRPC
    *
    * @param  none
    *
-   * @return object  Example: {  
-   *   "count": 993163,  
-   *   "status": "OK"  
-   * }  
+   * @return object  Example: {
+   *   "count": 993163,
+   *   "status": "OK"
+   * }
    *
    */
   public function getblockcount()
@@ -100,7 +102,7 @@ class daemonRPC
    *
    * Look up a block's hash by its height
    *
-   * @param  array   $height   Height of block to look up 
+   * @param  array   $height   Height of block to look up
    *
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
    *
@@ -114,10 +116,10 @@ class daemonRPC
 
   /**
    *
-   * Retrieve a block template that can be mined upon
+   * Construct a block template that can be mined upon
    *
    * @param  string  $wallet_address  Address of wallet to receive coinbase transactions if block is successfully mined
-   * @param  int     $reserve_size   Reserve size 
+   * @param  int     $reserve_size    Reserve size
    *
    * @return object  Example: {
    *   "blocktemplate_blob": "01029af88cb70568b84a11dc9406ace9e635918ca03b008f7728b9726b327c1b482a98d81ed83000000000018bd03c01ffcfcf3c0493d7cec7020278dfc296544f139394e5e045fcda1ba2cca5b69b39c9ddc90b7e0de859fdebdc80e8eda1ba01029c5d518ce3cc4de26364059eadc8220a3f52edabdaf025a9bff4eec8b6b50e3d8080dd9da417021e642d07a8c33fbe497054cfea9c760ab4068d31532ff0fbb543a7856a9b78ee80c0f9decfae01023ef3a7182cb0c260732e7828606052a0645d3686d7a03ce3da091dbb2b75e5955f01ad2af83bce0d823bf3dbbed01ab219250eb36098c62cbb6aa2976936848bae53023c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001f12d7c87346d6b84e17680082d9b4a1d84e36dd01bd2c7f3b3893478a8d88fb3",
@@ -140,9 +142,9 @@ class daemonRPC
    *
    * Submit a mined block to the network
    *
-   * @param  string  $block  Block blob data string
+   * @param  string  $block  Block blob
    *
-   * @return string  // TODO: example
+   * @return // TODO: example
    *
    */
   public function submitblock($block)
@@ -152,7 +154,7 @@ class daemonRPC
 
   /**
    *
-   * Block header information for the most recent block is easily retrieved with this method
+   * Look up a block header for the latest block in the longest chain known to the node
    *
    * @param  none
    *
@@ -181,7 +183,7 @@ class daemonRPC
 
   /**
    *
-   * Block header information can be retrieved using either a block's hash or height
+   * Look up a block header from a block hash
    *
    * @param  string  $hash  The block's SHA256 hash
    *
@@ -212,9 +214,9 @@ class daemonRPC
 
   /**
    *
-   * Similar to getblockheaderbyhash() above, this method includes a block's height as an input parameter to retrieve basic information about the block
+   * Look up a block header by height
    *
-   * @param  int     $height  The block's height
+   * @param  int     $height  Height of block
    *
    * @return object  Example: {
    *   "block_header": {
@@ -241,9 +243,9 @@ class daemonRPC
 
   /**
    *
-   * Get block information by its SHA256 hash
+   * Look up block information by SHA256 hash
    *
-   * @param  string  The block's SHA256 hash
+   * @param  string  SHA256 hash of block 
    *
    * @return object  Example: {
    *   "blob": "...",
@@ -272,9 +274,9 @@ class daemonRPC
 
   /**
    *
-   * Get block information by its height
+   * Look up block information by height
    *
-   * @param  int     $height  The block's height
+   * @param  int     $height  Height of block
    *
    * @return object  Example: {
    *   "blob": "...",
@@ -304,7 +306,7 @@ class daemonRPC
 
   /**
    *
-   * Retrieve information about incoming and outgoing connections to your node
+   * Look up incoming and outgoing connections to your node
    *
    * @param  none
    *
@@ -340,7 +342,7 @@ class daemonRPC
 
   /**
    *
-   * Retrieve general information about the state of your node and the network
+   * Look up general information about the state of your node and the network
    *
    * @param  none
    *
@@ -409,7 +411,7 @@ class daemonRPC
 
   /**
    *
-   * Ban another node by IP.
+   * Ban another node by IP
    *
    * @param  none
    *
@@ -425,7 +427,7 @@ class daemonRPC
 
   /**
    *
-   * Get list of banned IPs.
+   * Get list of banned IPs
    *
    * @param  none
    *
