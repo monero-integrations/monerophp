@@ -267,7 +267,7 @@ class daemonRPC
    */
   public function getblock_by_hash($hash)
   {
-    return $this->_run('getblock', $hash);
+    return $this->_run('getblock', array('hash'=>$hash));
   }
 
   /**
@@ -298,8 +298,7 @@ class daemonRPC
    */
   public function getblock_by_height($height)
   {
-    $heightString = (string) $height; // Cast input to string
-    return $this->_run('getblock', $heightString);
+    return $this->_run('getblock', array('height'=>$height));
   }
 
   /**
