@@ -1,4 +1,6 @@
 <?php
+namespace Monero;
+
 /*
  * The MIT License (MIT)
  * 

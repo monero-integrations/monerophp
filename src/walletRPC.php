@@ -1,4 +1,6 @@
 <?php
+namespace Monero;
+
 /**
  *
  * monerophp/walletRPC
@@ -29,7 +31,8 @@
  *
  */
 
-require_once('jsonRPCClient.php');
+
+use Monero\jsonRPCClient as jsonRPCClient;
 
 class walletRPC
 {

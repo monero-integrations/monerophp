@@ -1,4 +1,6 @@
 <?php
+namespace Monero;
+
 /**
  *
  * monerophp/daemonRPC
@@ -30,7 +32,7 @@
  *
  */
 
-require_once('jsonRPCClient.php');
+use Monero\jsonRPCClient as jsonRPCClient;
 
 class daemonRPC
 {

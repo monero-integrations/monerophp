@@ -1,10 +1,14 @@
 <?php
+
+namespace Monero;
 /*
 Copyright (c) 2018 Monero-Integrations
 */
-    require_once("SHA3.php");
-    require_once("ed25519.php");
-    require_once("base58.php");
+
+use Monero\base58 as base58;
+use Monero\SHA3 as SHA3;
+use Monero\ed25519 as ed25519;
+
 
     class Cryptonote
     {

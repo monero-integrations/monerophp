@@ -1,4 +1,7 @@
 <?php
+
+namespace Monero;
+
 /**
  * jsonRPCClient.php
  *
