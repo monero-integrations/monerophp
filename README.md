@@ -1,33 +1,43 @@
 # Monero Library
-The Monero Library is built by SerHack with PHP and lots of coffee!
+A Monero library written in PHP by the [Monero Integrations](https://monerointegrations.com) [team](https://github.com/monero-integrations/monerophp/graphs/contributors).
 
 ## How It Works
-The Monero Library (aka Monero_Payments.php) will try to connect to your Monero RPC Daemon (monero-wallet-rpc). See the next section for how to use it and for more information).
-Monero RPC Daemon has a json api that can communicate with the Monero Library. The Monero Library will automatically know your address and other things.
+This library has 3 main parts:
+
+1. A Monero daemon JSON RPC API wrapper, `daemonRPC.php`
+2. A Monero wallet (`monero-wallet-rpc`) JSON RPC API wrapper, `walletRPC.php`
+3. A Monero/Cryptonote toolbox, `cryptonote.php`, with both lower level functions used in Monero related cryptograhy and higher level methods for things like generating Monero private/public keys.
+
+In addition to these features, there are other lower-level libraries included for portability, *eg.* an ed25519 library, a SHA3 library, *etc.*
 
 ## Preview
-![Preview](http://i.imgur.com/fyfRCOS.png)
+![Preview](https://user-images.githubusercontent.com/4107993/38056594-b6cd6e14-3291-11e8-96e2-a771b0e9cee3.png)
+
+## Documention
+
+Documentation can be found in the [`/docs`](https://github.com/sneurlax/monerophp/tree/master/docs) folder.
 
 ## Configuration
 ### Requirements
- - PC + internet
- - Ubuntu or Debian
- - Monero daemon
- - PHP server like XMPP; Apache or ngix
- 
-###
+ - Monero daemon (`monerod`)
+ - Webserver with PHP, for example XMPP, Apache, or NGINX
+    - cURL PHP extension for JSON RPC API(s)
+    - GMP PHP extension for about 100x faster calculations (as opposed to BCMath)
 
-Step 1: Start the Monero Daemon as Testnet
+Debian (or Ubuntu) are recommended.
+ 
+### Getting Started
+
+1. Start the Monero daemon (`monerod`) on testnet.
 ```bash
 monerod --testnet --detach
 ```
 
-Step 2: Start the Monero Wallet RPC
+2. Start the Monero wallet RPC interface (`monero-wallet-rpc`) on testnet.
 ```bash
-monero-wallet-rpc --testnet --rpc-bind-port 28080 --disable-rpc-login --wallet-file /path/walletfile
+monero-wallet-rpc --testnet --rpc-bind-port 28083 --disable-rpc-login --wallet-dir /path/to/wallet/directory
 ```
 
-Step 3: Edit example.php with your ip (127.0.0.1 for localhost) and port of Monero Wallet RPC (in the example it's 127.0.1 and 28080 port)
+3. Edit `example.php` with your the IP address of `monerod` and `monero-wallet-rpc` (use `127.0.0.1:28081` and `127.0.0.1:28083`, respectively, for testnet.)
 
-
-Step 4: Open your browser with your ip of XMPP, apache or nginx server and execute example.php. If the library works, it will print your address
+4. Serve `example.php` with your webserver (*eg.* XMPP, Apache/Apache2, NGINX, *etc.*) and navigate to it.  If everything has been set up correctly, information from your Monero daemon and wallet will be displayed.

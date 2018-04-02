@@ -11,7 +11,7 @@
 class jsonRPCClient
 {
     protected $url = null, $is_debug = false, $parameters_structure = 'array'; 
-private $username;
+    private $username;
     private $password;
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
@@ -54,7 +54,7 @@ private $username;
         return $this;
     }
    
-  /*  public function setParametersStructure($pParametersStructure)
+    /* public function setParametersStructure($pParametersStructure)
     {
         if (in_array($pParametersStructure, array('array', 'object')))
         {
@@ -80,14 +80,14 @@ private $username;
         return $this;
     }
     
-   public function _run($pMethod, $pParams)
+    public function _run($pMethod, $pParams)
     {
         static $requestId = 0;
         // generating uniuqe id per process
         $requestId++;
         // check if given params are correct
         $this->validate(false === is_scalar($pMethod), 'Method name has no scalar value');
-       // $this->validate(false === is_array($pParams), 'Params must be given as array');
+        // $this->validate(false === is_array($pParams), 'Params must be given as array');
         // send params as an object or an array
         //$pParams = ($this->parameters_structure == 'object') ? $pParams[0] : array_values($pParams);
         // Request (method invocation)
@@ -118,6 +118,7 @@ private $username;
         }
         return $responseDecoded['result'];
     }
+    
     protected function & getResponse(&$pRequest)
     {
         // do the actual connection
@@ -127,8 +128,8 @@ private $username;
             throw new RuntimeException('Could\'t initialize a cURL session');
         }
         curl_setopt($ch, CURLOPT_URL, $this->url);
-         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
- 	curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $pRequest);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
