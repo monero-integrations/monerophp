@@ -132,18 +132,10 @@ class walletRPC
    *
    * Alias of get_balance()
    *
-   * @param  number  $account_index  Index of account to look up  (optional)
-   *
-   * @return object  Example: {
-   *   "balance": 140000000000,
-   *   "unlocked_balance": 50000000000
-   * }
-   *
    */
   public function getbalance($account_index = 0)
   {
-    $params = array('account_index' => $account_index);
-    return $this->_run('getbalance', $params);
+    return $this->get_balance($account_index);
   }
 
   /**
@@ -191,8 +183,7 @@ class walletRPC
    */
   public function getaddress($account_index = 0, $address_index = 0)
   {
-    $params = array('account_index' => $account_index, 'address_index' => $address_index);
-    return $this->_run('getaddress', $params);
+    return $this->get_address($account_index = 0, $address_index = 0);
   }
 
   /**
@@ -413,16 +404,10 @@ class walletRPC
    *
    * Alias of get_height()
    *
-   * @param  none
-   *
-   * @return object  Example: {
-   *   "height": 994310
-   * }
-   *
    */
   public function getheight()
   {
-    return $this->_run('getheight');
+    return $this->get_height());
   }
 
   /**

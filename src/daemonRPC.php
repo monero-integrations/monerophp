@@ -269,7 +269,9 @@ class daemonRPC
    */
   public function getblock_by_hash($hash)
   {
-    return $this->_run('getblock', $hash);
+    $params = array('hash' => $hash);
+
+    return $this->_run('getblock', $params);
   }
 
   /**
@@ -300,8 +302,9 @@ class daemonRPC
    */
   public function getblock_by_height($height)
   {
-    $heightString = (string) $height; // Cast input to string
-    return $this->_run('getblock', $heightString);
+    $params = array('height' => $height);
+
+    return $this->_run('getblock', $params);
   }
 
   /**
@@ -413,16 +416,32 @@ class daemonRPC
    *
    * Ban another node by IP
    *
-   * @param  string  $ip  IP address of node to ban
+   * @param  array  $bans  Array of IP addresses to ban
    *
    * @return object  Example: {
    *   "status": "OK"
    * }
    *
    */
-  public function setbans($ip)
+  public function set_bans($bans)
   {
-    return $this->_run('setbans', $ip);
+    if (is_string($bans)) {
+      $bans = array($bans);
+    }
+    $params = array('bans' => $bans);
+
+    return $this->_run('set_bans', $params);
+  }
+
+  /**
+   *
+   * Alias of set_bans
+   * }
+   *
+   */
+  public function setbans($bans)
+  {
+    return $this->set_bans($params);
   }
 
   /**
@@ -440,9 +459,19 @@ class daemonRPC
    * }
    *
    */
+  public function get_bans()
+  {
+    return $this->_run('get_bans');
+  }
+
+  /**
+   *
+   * Alias of get_bans
+   *
+   */
   public function getbans()
   {
-    return $this->_run('getbans');
+    return $this->get_bans();
   }
 
 }
