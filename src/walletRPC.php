@@ -407,7 +407,7 @@ class walletRPC
    */
   public function getheight()
   {
-    return $this->get_height());
+    return $this->get_height();
   }
 
   /**
