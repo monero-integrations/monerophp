@@ -16,6 +16,8 @@ JSON RPC wrappers:
 
 ## [`cryptonote` class](https://github.com/sneurlax/monerophp/tree/master/docs/cryptonote.md)
 
+*Documentation under development*
+
  - [`keccak_256`](https://github.com/sneurlax/monerophp/tree/master/docs/cryptonote.md#keccak_256)
  - [`gen_new_hex_seed`](https://github.com/sneurlax/monerophp/tree/master/docs/cryptonote.md#gen_new_hex_seed)
  - [`sc_reduce`](https://github.com/sneurlax/monerophp/tree/master/docs/cryptonote.md#sc_reduce)
@@ -37,6 +39,8 @@ JSON RPC wrappers:
  - [`address_from_seed`](https://github.com/sneurlax/monerophp/tree/master/docs/cryptonote.md#address_from_seed)
 
 ## [`ed25519` class](https://github.com/sneurlax/monerophp/tree/master/docs/ed25519.md)
+
+*Documentation under development*
 
  - [`H`](https://github.com/sneurlax/monerophp/tree/master/docs/ed25519.md#H)
  - [`pymod`](https://github.com/sneurlax/monerophp/tree/master/docs/ed25519.md#pymod)
