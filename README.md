@@ -26,7 +26,7 @@ Documentation can be found in the [`/docs`](https://github.com/sneurlax/moneroph
 
 Debian (or Ubuntu) are recommended.
  
-## Getting Started
+### Getting Started
 
 1. Start the Monero daemon (`monerod`) on testnet.
 ```bash
