@@ -1272,7 +1272,7 @@ class walletRPC
   public function get_transfers($input_types = ['all'], $account_index = 0, $subaddr_indices = '', $min_height = 0, $max_height = 4206931337)
   {
     if (is_string($input_types)) { // If user is using old method
-      $params = array($input_type => $account_index); // $params = array($input_type => $input_value);
+      $params = array($input_types => $account_index); // $params = array($input_type => $input_value);
     } else {
       if (is_object($input_types)) { // Parameters passed in as object/dictionary
         $params = $input_types;
