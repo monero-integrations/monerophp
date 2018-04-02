@@ -785,7 +785,7 @@ Look up transfers
 
 Parameters:
 
- - `$input_types <Array>` Array of transfer type strings; possible values include 'all', in', 'out', 'pending', 'failed', and 'pool' *(optional)*
+ - `$input_types <Array>` Array of transfer type strings; possible values include 'all', 'in', 'out', 'pending', 'failed', and 'pool' *(optional)*
  - `$account_index <number>` Index of account to look *(optional)*
  - `$subaddr_indices <String>` Comma-seperated list of subaddress indices to look up *(optional)*
  - `$min_height <number>` Minimum block height to use when looking up *(optional)*

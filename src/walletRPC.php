@@ -1245,11 +1245,11 @@ class walletRPC
    *
    * Look up transfers
    *
-   * @param  array   $input_types      Array of transfer type strings; possible values include 'all', in', 'out', 'pending', 'failed', and 'pool'  (optional)
-   * @param  number  $account_index    Index of account to look up                                                                                 (optional)
-   * @param  string  $subaddr_indices  Comma-seperated list of subaddress indices to look up                                                       (optional)
-   * @param  number  $min_height       Minimum block height to use when looking up transfers                                                       (optional)
-   * @param  number  $max_height       Maximum block height to use when looking up transfers                                                       (optional)
+   * @param  array   $input_types      Array of transfer type strings; possible values include 'all', 'in', 'out', 'pending', 'failed', and 'pool'  (optional)
+   * @param  number  $account_index    Index of account to look up                                                                                  (optional)
+   * @param  string  $subaddr_indices  Comma-seperated list of subaddress indices to look up                                                        (optional)
+   * @param  number  $min_height       Minimum block height to use when looking up transfers                                                        (optional)
+   * @param  number  $max_height       Maximum block height to use when looking up transfers                                                        (optional)
    *
    *   OR
    *
@@ -1272,7 +1272,14 @@ class walletRPC
   public function get_transfers($input_types = ['all'], $account_index = 0, $subaddr_indices = '', $min_height = 0, $max_height = 4206931337)
   {
     if (is_string($input_types)) { // If user is using old method
-      $params = array($input_types => $account_index); // $params = array($input_type => $input_value);
+        $params = array('subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height);
+      if (is_bool($account_index)) { // If user passed eg. get_transfers('in', true)
+        $params['account_index'] = 0;
+        $params[$input_types] = $account_index; // $params = array($input_type => $input_value);
+      } else { // If user passed eg. get_transfers('in')
+        $params['account_index'] = $account_index;
+        $params[$input_types] = true;
+      }
     } else {
       if (is_object($input_types)) { // Parameters passed in as object/dictionary
         $params = $input_types;
@@ -1300,6 +1307,15 @@ class walletRPC
       for ($i = 0; $i < count($input_types); $i++) {
         $params[$input_types[$i]] = true;
       }
+    }
+
+    if (array_key_exists('all', $params)) {
+      unset($params['all']);
+      $params['in'] = true;
+      $params['out'] = true;
+      $params['pending'] = true;
+      $params['failed'] = true;
+      $params['pool'] = true;
     }
 
     if (($min_height || $max_height) && $max_height != 4206931337) {
