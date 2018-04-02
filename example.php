@@ -27,8 +27,8 @@ $get_info = $daemonRPC->get_info();
 require_once('src/walletRPC.php');
 
 $walletRPC = new walletRPC('127.0.0.1', 28083); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18083 is the customary port for mainnet, 28083 for testnet, 38083 for stagenet
-// $create_wallet = $walletRPC->create_wallet('multisig_wallet5', ''); // Creates a new wallet named monero_wallet with no passphrase.  Comment this line and edit the next line to use your own wallet
-$open_wallet = $walletRPC->open_wallet('multisig_wallet4', '');
+$create_wallet = $walletRPC->create_wallet('monero_wallet', ''); // Creates a new wallet named monero_wallet with no passphrase.  Comment this line and edit the next line to use your own wallet
+$open_wallet = $walletRPC->open_wallet('monero_wallet', '');
 $get_address = $walletRPC->get_address();
 $get_accounts = $walletRPC->get_accounts();
 $get_balance = $walletRPC->get_balance();
@@ -43,15 +43,6 @@ $get_balance = $walletRPC->get_balance();
 // $get_transfers = $walletRPC->get_transfers('in', true);
 // $incoming_transfers = $walletRPC->incoming_transfers('all');
 // $mnemonic = $walletRPC->mnemonic();
-
-// $test = $walletRPC->prepare_multisig();
-// print_r($test);
-
-// 1 
-// 2 
-// 3 
-// 4 MultisigV1faCYKpgh2E74sjJXy1Cpfb4cctTkxGNTSPyLaA8veYBxQJ2VFWyVRZZdXDwVHR1K37a5Y5i5Z7nrXNrzq1k7Sy3yBrtioSW7NbqAZm1aD7zZwNGD6eboNiC8MebnBw7UmB8sRrDanBdSz9HWfq8R6KoVf9hxjXYokUP2dhkXc8yBK7aA
-// 5 MultisigV1ZVegfjMqnm2GuUH8p2jcK5N2KYJCV7758W1ddwPcxYjed2agdpwquKuX9BWxpvB54YCkGtwzzgxZ77bT7hf4yX9PJQknc94ZGiZXRGRGXBZ1UmUGwd8QfTWUm9QWgnKaFPjtBkhGRh2GT6SMW5nb7WnnHqVfXeFsnD6VxQ5nwq9sm6df
 
 ?>
 <html>
