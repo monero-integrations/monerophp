@@ -1,17 +1,34 @@
 <?php
-/*
- * base58.php
+/**
  *
- * PHP Base58 codec
+ * monerophp/base58
  *
- * Based on https://github.com/MoneroPy/moneropy/base58.py and https://github.com/mymonero/mymonero-core-js/cryptonote_utils/cryptonote_base58.js
+ * A PHP Base58 codec
+ * https://github.com/monero-integrations/monerophp
+ *
+ * Using work from
+ *   bigreddmachine [MoneroPy] (https://github.com/bigreddmachine)
+ *   Paul Shapiro [mymonero-core-js] (https://github.com/paulshapiro)
+ *
+ * @author     Monero Integrations Team <support@monerointegrations.com> (https://github.com/monero-integrations)
+ * @copyright  2018
+ * @license    MIT
+ *
+ * ============================================================================
+ *
+ * // Initialize class
+ * $base58 = new base58();
+ *
+ * // Encode a hexadecimal (base16) string as base58
+ * $encoded = $base58->encode('0137F8F06C971B168745F562AA107B4D172F336271BC0F9D3B510C14D3460DFB27D8CEBE561E73AC1E11833D5EA40200EB3C82E9C66ACAF1AB1A6BB53C40537C0B7A22160B0E');
+ *
+ * // Decode
+ * $decoded = $base58->decode('479cG5opa54beQWSyqNoWw5tna9sHUNmMTtiFqLPaUhDevpJ2YLwXAggSx5ePdeFrYF8cdbmVRSmp1Kn3t4Y9kFu7rZ7pFw');
  *
  */
 
-class base58 {
-  /**
-   * @var string
-   */
+class base58
+{
   static $alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   static $encoded_block_sizes = [0, 2, 3, 5, 6, 7, 9, 10, 11];
   static $full_block_size = 8;
@@ -22,10 +39,12 @@ class base58 {
    * Convert a hexadecimal string to a binary array
    *
    * @param    string  $hex  A hexadecimal string to convert to a binary array
+   *
    * @return   array
    *
    */
-  private function hex_to_bin($hex) {
+  private function hex_to_bin($hex)
+  {
     if (gettype($hex) != 'string') {
       throw new Exception('base58->hex_to_bin(): Invalid input type (must be a string)');
     }
@@ -45,10 +64,12 @@ class base58 {
    * Convert a binary array to a hexadecimal string
    *
    * @param    array   $bin  A binary array to convert to a hexadecimal string
+   *
    * @return   string
    *
    */
-  private function bin_to_hex($bin) {
+  private function bin_to_hex($bin)
+  {
     if (gettype($bin) != 'array') {
       throw new Exception('base58->bin_to_hex(): Invalid input type (must be an array)');
     }
@@ -65,10 +86,12 @@ class base58 {
    * Convert a string to a binary array
    *
    * @param    string   $str  A string to convert to a binary array
+   *
    * @return   array
    *
    */
-  private function str_to_bin($str) {
+  private function str_to_bin($str)
+  {
     if (gettype($str) != 'string') {
       throw new Exception('base58->str_to_bin(): Invalid input type (must be a string)');
     }
@@ -85,10 +108,12 @@ class base58 {
    * Convert a binary array to a string
    *
    * @param    array   $bin  A binary array to convert to a string
+   *
    * @return   string
    *
    */
-  private function bin_to_str($bin) {
+  private function bin_to_str($bin)
+  {
     if (gettype($bin) != 'array') {
       throw new Exception('base58->bin_to_str(): Invalid input type (must be an array)');
     }
@@ -105,10 +130,12 @@ class base58 {
    * Convert a UInt8BE (one unsigned big endian byte) array to UInt64
    *
    * @param    array   $data  A UInt8BE array to convert to UInt64
+   *
    * @return   number
    *
    */
-  private function uint8_be_to_64($data) {
+  private function uint8_be_to_64($data)
+  {
     if (gettype($data) != 'array') {
       throw new Exception ('base58->uint8_be_to_64(): Invalid input type (must be an array)');
     }
@@ -116,7 +143,7 @@ class base58 {
     $res = 0;
     $i = 0;
     switch (9 - count($data)) {
-      case 1: 
+      case 1:
         $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
       case 2:
         $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
@@ -145,10 +172,12 @@ class base58 {
    *
    * @param    number   $num   A UInt64 number to convert to a UInt8BE array
    * @param    integer  $size  Size of array to return
+   *
    * @return   array
    *
    */
-  private function uint64_to_8_be($num, $size) {
+  private function uint64_to_8_be($num, $size)
+  {
     if (gettype($num) != ('integer' || 'double')) {
       throw new Exception ('base58->uint64_to_8_be(): Invalid input type ($num must be a number)');
     }
@@ -166,18 +195,20 @@ class base58 {
     }
     return $res;
   }
-  
+
   /**
    *
    * Convert a hexadecimal (Base16) array to a Base58 string
    *
    * @param    array   $data
    * @param    array   $buf
-   * @param    number  $index 
+   * @param    number  $index
+   *
    * @return   array
    *
    */
-  private function encode_block($data, $buf, $index) {
+  private function encode_block($data, $buf, $index)
+  {
     if (gettype($data) != 'array') {
       throw new Exception('base58->encode_block(): Invalid input type ($data must be an array)');
     }
@@ -207,10 +238,12 @@ class base58 {
    * Encode a hexadecimal (Base16) string to Base58
    *
    * @param    string  $hex  A hexadecimal (Base16) string to convert to Base58
+   *
    * @return   string
    *
    */
-  public function encode($hex) {
+  public function encode($hex)
+  {
     if (gettype($hex) != 'string') {
       throw new Exception ('base58->encode(): Invalid input type (must be a string)');
     }
@@ -239,7 +272,7 @@ class base58 {
 
     return self::bin_to_str($res);
   }
-  
+
   /**
    *
    * Convert a Base58 input to hexadecimal (Base16)
@@ -247,10 +280,12 @@ class base58 {
    * @param    array    $data
    * @param    array    $buf
    * @param    integer  $index
+   *
    * @return   array
    *
    */
-  private function decode_block($data, $buf, $index) {
+  private function decode_block($data, $buf, $index)
+  {
     if (gettype($data) != 'array') {
       throw new Exception('base58->decode_block(): Invalid input type ($data must be an array)');
     }
@@ -285,7 +320,7 @@ class base58 {
     if ($res_size < self::$full_block_size && bcpow(2, 8 * $res_size) <= 0) {
       throw new Exception('base58->decode_block(): Integer overflow (bcpow(2, 8 * $res_size) exceeds the maximum 64bit integer)');
     }
-    
+  
     $tmp_buf = self::uint64_to_8_be($res_num, $res_size);
     for ($i = 0; $i < count($tmp_buf); $i++) {
       $buf[$i + $index] = $tmp_buf[$i];
@@ -298,10 +333,12 @@ class base58 {
    * Decode a Base58 string to hexadecimal (Base16)
    *
    * @param    string  $hex  A Base58 string to convert to hexadecimal (Base16)
+   *
    * @return   string
    *
    */
-  public function decode($enc) {
+  public function decode($enc)
+  {
     if (gettype($enc) != 'string') {
       throw new Exception ('base58->decode(): Invalid input type (must be a string)');
     }
@@ -335,10 +372,12 @@ class base58 {
    *
    * @param    array   $haystack  An array to search
    * @param    string  $needle    A string to search for
+   *)
    * @return   number             The index of the element found (or -1 for no match)
    *
    */
-  private function index_of($haystack, $needle) {
+  private function index_of($haystack, $needle)
+  {
     if (gettype($haystack) != 'array') {
       throw new Exception ('base58->decode(): Invalid input type ($haystack must be an array)');
     }
