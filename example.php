@@ -5,9 +5,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-use Monero\jsonRPCClient;
-use Monero\daemonRPC;
-use Monero\walletRPC;
+require_once('src/daemonRPC.php');
+use MoneroPHP\daemonRPC;
 
 $daemonRPC = new daemonRPC('127.0.0.1', 28081); // Change to match your daemon (monerod) IP address and port; 18081 is the default port for mainnet, 28081 for testnet, 38081 for stagenet
 $getblockcount = $daemonRPC->getblockcount();
@@ -25,6 +24,8 @@ $get_info = $daemonRPC->get_info();
 // $setbans = $daemonRPC->setbans('8.8.8.8');
 // $getbans = $daemonRPC->getbans();
 
+require_once('src/walletRPC.php');
+use MoneroPHP\walletRPC;
 
 $walletRPC = new walletRPC('127.0.0.1', 28083); // Change to match your wallet (monero-wallet-rpc) IP address and port; 18083 is the customary port for mainnet, 28083 for testnet, 38083 for stagenet
 $create_wallet = $walletRPC->create_wallet('monero_wallet', ''); // Creates a new wallet named monero_wallet with no passphrase.  Comment this line and edit the next line to use your own wallet

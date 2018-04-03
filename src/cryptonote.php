@@ -1,13 +1,12 @@
 <?php
-
-namespace Monero;
 /*
 Copyright (c) 2018 Monero-Integrations
 */
+namespace MoneroPHP;
 
-use Monero\base58 as base58;
-use Monero\SHA3 as SHA3;
-use Monero\ed25519 as ed25519;
+use MoneroPHP\base58;
+use MoneroPHP\SHA3;
+use MoneroPHP\ed25519;
 
 
     class Cryptonote

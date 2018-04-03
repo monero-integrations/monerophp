@@ -1,6 +1,4 @@
 <?php
-namespace Monero;
-
 /**
  *
  * monerophp/walletRPC
@@ -30,9 +28,10 @@ namespace Monero;
  * $signed = $walletRPC->sign('The Times 03/Jan/2009 Chancellor on brink of second bailout for banks');
  *
  */
+namespace MoneroPHP;
 
-
-use Monero\jsonRPCClient as jsonRPCClient;
+require_once('jsonRPCClient.php'); 
+use MoneroPHP\jsonRPCClient;
 
 class walletRPC
 {

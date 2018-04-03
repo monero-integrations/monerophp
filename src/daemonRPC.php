@@ -1,6 +1,4 @@
 <?php
-namespace Monero;
-
 /**
  *
  * monerophp/daemonRPC
@@ -31,8 +29,10 @@ namespace Monero;
  * $block = $daemonRPC->getblock_by_height(1);
  *
  */
+namespace MoneroPHP;
 
-use Monero\jsonRPCClient as jsonRPCClient;
+require_once('jsonRPCClient.php');
+use MoneroPHP\jsonRPCClient;
 
 class daemonRPC
 {

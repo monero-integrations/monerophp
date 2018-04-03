@@ -1,7 +1,4 @@
-<?php /* -*- coding: utf-8; indent-tabs-mode: t; tab-width: 4 -*-
-vim: ts=4 noet ai */
-namespace Monero;
-
+<?php
 /**
 	Streamable SHA-3 for PHP 5.2+, with no lib/ext dependencies!
 
@@ -23,7 +20,7 @@ namespace Monero;
 	@license LGPL-3+
 	@file
 */
-
+namespace MoneroPHP;
 
 /**
 	SHA-3 (FIPS-202) for PHP strings (byte arrays) (PHP 5.2.1+)

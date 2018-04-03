@@ -1,6 +1,5 @@
 <?php
-
-namespace Monero;
+namespace MoneroPHP;
 
 /**
  *

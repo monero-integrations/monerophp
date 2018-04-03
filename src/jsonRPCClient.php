@@ -1,7 +1,4 @@
 <?php
-
-namespace Monero;
-
 /**
  * jsonRPCClient.php
  *
@@ -11,6 +8,8 @@ namespace Monero;
  * @author Kacper Rowinski <krowinski@implix.com>
  * http://implix.com
  */
+namespace MoneroPHP;
+
 class jsonRPCClient
 {
     protected $url = null, $is_debug = false, $parameters_structure = 'array'; 
@@ -142,7 +141,7 @@ class jsonRPCClient
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         if ( !curl_setopt_array($ch, $this->curl_options))
         {
-            throw new RuntimeException('Error while setting curl options');
+            throw new \Exception('Error while setting curl options');
         }
         // send the request
         $response = curl_exec($ch);
@@ -150,12 +149,12 @@ class jsonRPCClient
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         if (isset($this->httpErrors[$httpCode]))
         {
-            throw new RuntimeException('Response Http Error - ' . $this->httpErrors[$httpCode]);
+            throw new \Exception('Response Http Error - ' . $this->httpErrors[$httpCode]);
         }
         // check for curl error
         if (0 < curl_errno($ch))
         {
-            throw new RuntimeException('Unable to connect to '.$this->url . ' Error: ' . curl_error($ch));
+            throw new \Exception('Unable to connect to '.$this->url . ' Error: ' . curl_error($ch));
         }
         // close the connection
         curl_close($ch);
@@ -166,7 +165,7 @@ class jsonRPCClient
     {
         if ($pFailed)
         {
-            throw new RuntimeException($pErrMsg);
+            throw new \RuntimeException($pErrMsg);
         }
     }
     
