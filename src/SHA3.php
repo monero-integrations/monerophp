@@ -43,7 +43,7 @@ class SHA3 {
 	const SHAKE128 = 5;
 	const SHAKE256 = 6;
 
-    	const KECCAK_256 = 7;
+		const KECCAK_256 = 7;
 
 
 	public static function init ($type = null) {
@@ -54,7 +54,7 @@ class SHA3 {
 			case self::SHA3_512: return new self (576, 1024, 0x06, 64);
 			case self::SHAKE128: return new self (1344, 256, 0x1f);
 			case self::SHAKE256: return new self (1088, 512, 0x1f);
-            		case self::KECCAK_256: return new self (1088, 512, 0x01, 32);
+					case self::KECCAK_256: return new self (1088, 512, 0x01, 32);
 		}
 
 		throw new Exception ('Invalid operation type');
