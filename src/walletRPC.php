@@ -1748,6 +1748,13 @@ class walletRPC
     return $this->_run('submit_multisig', $params);
   }
 
+    /**
+     * @return jsonRPCClient
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
 }
 
 ?>
