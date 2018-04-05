@@ -98,8 +98,8 @@ Copyright (c) 2018 Monero-Integrations
          */
         public function pk_from_sk($privKey)
         {
-	    $keyInt = $this->ed25519->decodeint(hex2bin($privKey));
-	    $aG = $this->ed25519->scalarmult_base($keyInt);
+        $keyInt = $this->ed25519->decodeint(hex2bin($privKey));
+        $aG = $this->ed25519->scalarmult_base($keyInt);
             return bin2hex($this->ed25519->encodepoint($aG));
         }
 
@@ -220,49 +220,49 @@ Copyright (c) 2018 Monero-Integrations
          *
          * @return string Base58 encoded Monero address
          */
-	public function encode_address($pSpendKey, $pViewKey)
-	{
-	    // mainnet network byte is 18 (0x12)
-	    $data = "12" . $pSpendKey . $pViewKey;
-	    $encoded = $this->base58->encode($data);
-	    return $encoded;
-	}
+    public function encode_address($pSpendKey, $pViewKey)
+    {
+        // mainnet network byte is 18 (0x12)
+        $data = "12" . $pSpendKey . $pViewKey;
+        $encoded = $this->base58->encode($data);
+        return $encoded;
+    }
 
-	public function verify_checksum($address)
-	{
-	    $decoded = $this->base58->decode($address);
-	    $checksum = substr($decoded, -8);
-	    $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
-	    $calculated = substr($checksum_hash, 0, 8);
-	    if($checksum == $calculated){
-	    	return true;
-	    }
-	    else
-		return false;
-	}
+    public function verify_checksum($address)
+    {
+        $decoded = $this->base58->decode($address);
+        $checksum = substr($decoded, -8);
+        $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
+        $calculated = substr($checksum_hash, 0, 8);
+        if($checksum == $calculated){
+            return true;
+        }
+        else
+        return false;
+    }
 
-	/*
+    /*
          * Decode a base58 encoded Monero address
          *
          * @param string A base58 encoded Monero address
          *
          * @return array An array containing the Address network byte, public spend key, and public view key
          */
-	public function decode_address($address)
+    public function decode_address($address)
         {
             $decoded = $this->base58->decode($address);
 
-	    if(!$this->verify_checksum($address)){
-		throw new Exception("Error: invalid checksum");
-	    }
+        if(!$this->verify_checksum($address)){
+        throw new Exception("Error: invalid checksum");
+        }
 
-	    $network_byte = substr($decoded, 0, 2);
-	    $public_spendKey = substr($decoded, 2, 64);
-	    $public_viewKey = substr($decoded, 66, 64);
+        $network_byte = substr($decoded, 0, 2);
+        $public_spendKey = substr($decoded, 2, 64);
+        $public_viewKey = substr($decoded, 66, 64);
 
-	    $result = array("networkByte" => $network_byte,
-			    "spendKey" => $public_spendKey,
-			    "viewKey" => $public_viewKey);
+        $result = array("networkByte" => $network_byte,
+                "spendKey" => $public_spendKey,
+                "viewKey" => $public_viewKey);
             return $result;
         }
 
@@ -289,16 +289,16 @@ Copyright (c) 2018 Monero-Integrations
          *
          * @return string A base58 encoded Monero address
          */
-	public function address_from_seed($hex_seed)
-	{
-	    $private_keys = $this->gen_private_keys($hex_seed);
-	    $private_viewKey = $private_keys["viewKey"];
-	    $private_spendKey = $private_keys["spendKey"];
+    public function address_from_seed($hex_seed)
+    {
+        $private_keys = $this->gen_private_keys($hex_seed);
+        $private_viewKey = $private_keys["viewKey"];
+        $private_spendKey = $private_keys["spendKey"];
 
-	    $public_spendKey = $this->pk_from_sk($private_spendKey);
-	    $public_viewKey = $this->pk_from_sk($private_viewKey);
+        $public_spendKey = $this->pk_from_sk($private_spendKey);
+        $public_viewKey = $this->pk_from_sk($private_viewKey);
 
-	    $address = $this->encode_address($public_spendKey, $public_viewKey);
-	    return $address;
-	}
+        $address = $this->encode_address($public_spendKey, $public_viewKey);
+        return $address;
+    }
     }
