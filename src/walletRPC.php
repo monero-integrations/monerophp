@@ -125,7 +125,7 @@ class walletRPC
   public function get_balance($account_index = 0)
   {
     $params = array('account_index' => $account_index);
-    return $this->_run('get_balance', $params);
+    return $this->_run('getbalance', $params);
   }
 
   /**
