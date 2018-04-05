@@ -1,19 +1,19 @@
 <?php
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013 John Judy
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
  * the Software without restriction, including without limitation the rights to
  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
  * the Software, and to permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -164,7 +164,7 @@ class ed25519
             $com = bcmul($this->d, bcmul($xmul, $ymul));
             $x3 = bcmul(bcadd(bcmul($x1, $y2), bcmul($x2, $y1)), $this->inv(bcadd(1, $com)));
             $y3 = bcmul(bcadd($ymul, $xmul), $this->inv(bcsub(1, $com)));
-        
+
             return array($this->pymod($x3, $this->q), $this->pymod($y3, $this->q));
         }
     }
@@ -384,7 +384,7 @@ class ed25519
             list($x, $y) = $P;
             $x2 = bcpow($x, 2);
             $y2 = bcpow($y, 2);
-            
+
             return $this->pymod(bcsub(bcsub(bcsub($y2, $x2), 1), bcmul($this->d, bcmul($x2, $y2))), $this->q) == 0;
         }
     }

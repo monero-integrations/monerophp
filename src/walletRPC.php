@@ -1749,5 +1749,3 @@ class walletRPC
   }
 
 }
-
-?>

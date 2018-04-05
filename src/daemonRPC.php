@@ -245,7 +245,7 @@ class daemonRPC
    *
    * Look up block information by SHA256 hash
    *
-   * @param  string  $hash  SHA256 hash of block 
+   * @param  string  $hash  SHA256 hash of block
    *
    * @return object  Example: {
    *   "blob": "...",

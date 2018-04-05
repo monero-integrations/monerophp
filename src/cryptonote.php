@@ -12,7 +12,7 @@ Copyright (c) 2018 Monero-Integrations
         public function __construct()
         {
             $this->ed25519 = new ed25519();
-	    $this->base58 = new base58();
+            $this->base58 = new base58();
         }
 
         /*
@@ -26,7 +26,7 @@ Copyright (c) 2018 Monero-Integrations
             $keccak256->absorb (hex2bin($message));
             return bin2hex ($keccak256->squeeze (32)) ;
         }
-        
+
         /*
          * @return string A hex encoded string of 32 random bytes
          *
@@ -36,13 +36,13 @@ Copyright (c) 2018 Monero-Integrations
             $bytes = random_bytes(32);
             return bin2hex($bytes);
         }
-        
+
         public function sc_reduce($input)
         {
             $integer = $this->ed25519->decodeint(hex2bin($input));
-            
+
             $modulo = bcmod($integer , $this->ed25519->l);
-            
+
             $result = bin2hex($this->ed25519->encodeint($modulo));
             return $result;
         }
@@ -60,24 +60,24 @@ Copyright (c) 2018 Monero-Integrations
             $scalar = $this->sc_reduce($hash);
             return $scalar;
         }
-        
+
         /*
          * Derive a deterministic private view key from a private spend key
          * @param string A private spend key represented as a 32 byte hex string
-         * 
+         *
          * @return string A deterministic private view key represented as a 32 byte hex string
          */
         public function derive_viewKey($spendKey)
         {
             return $this->hash_to_scalar($spendkey);
         }
-        
+
         /*
          * Generate a pair of random private keys
          *
          * @param string A hex string to be used as a seed (this should be random)
          *
-         * @return array An array containing a private spend key and a deterministic view key 
+         * @return array An array containing a private spend key and a deterministic view key
          */
         public function gen_private_keys($seed)
         {
@@ -88,7 +88,7 @@ Copyright (c) 2018 Monero-Integrations
 
             return $result;
         }
-        
+
         /*
          * Get a public key from a private key on the ed25519 curve
          *
@@ -98,8 +98,8 @@ Copyright (c) 2018 Monero-Integrations
          */
         public function pk_from_sk($privKey)
         {
-	    $keyInt = $this->ed25519->decodeint(hex2bin($privKey));
-	    $aG = $this->ed25519->scalarmult_base($keyInt);
+        $keyInt = $this->ed25519->decodeint(hex2bin($privKey));
+        $aG = $this->ed25519->scalarmult_base($keyInt);
             return bin2hex($this->ed25519->encodepoint($aG));
         }
 
@@ -211,7 +211,7 @@ Copyright (c) 2018 Monero-Integrations
             else
               return false;
         }
-        
+
         /*
          * Create a valid base58 encoded Monero address from public keys
          *
@@ -220,58 +220,58 @@ Copyright (c) 2018 Monero-Integrations
          *
          * @return string Base58 encoded Monero address
          */
-	public function encode_address($pSpendKey, $pViewKey)
-	{
-	    // mainnet network byte is 18 (0x12)
-	    $data = "12" . $pSpendKey . $pViewKey;
-	    $encoded = $this->base58->encode($data);
-	    return $encoded;
-	}
+    public function encode_address($pSpendKey, $pViewKey)
+    {
+        // mainnet network byte is 18 (0x12)
+        $data = "12" . $pSpendKey . $pViewKey;
+        $encoded = $this->base58->encode($data);
+        return $encoded;
+    }
 
-	public function verify_checksum($address)
-	{
-	    $decoded = $this->base58->decode($address);
-	    $checksum = substr($decoded, -8);
-	    $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
-	    $calculated = substr($checksum_hash, 0, 8);
-	    if($checksum == $calculated){
-	    	return true;
-	    }
-	    else
-		return false;
-	}
+    public function verify_checksum($address)
+    {
+        $decoded = $this->base58->decode($address);
+        $checksum = substr($decoded, -8);
+        $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
+        $calculated = substr($checksum_hash, 0, 8);
+        if($checksum == $calculated){
+            return true;
+        }
+        else
+        return false;
+    }
 
-	/*
+    /*
          * Decode a base58 encoded Monero address
          *
          * @param string A base58 encoded Monero address
          *
          * @return array An array containing the Address network byte, public spend key, and public view key
          */
-	public function decode_address($address)
+    public function decode_address($address)
         {
             $decoded = $this->base58->decode($address);
 
-	    if(!$this->verify_checksum($address)){
-		throw new Exception("Error: invalid checksum");
-	    }
+        if(!$this->verify_checksum($address)){
+        throw new Exception("Error: invalid checksum");
+        }
 
-	    $network_byte = substr($decoded, 0, 2);
-	    $public_spendKey = substr($decoded, 2, 64);
-	    $public_viewKey = substr($decoded, 66, 64);
+        $network_byte = substr($decoded, 0, 2);
+        $public_spendKey = substr($decoded, 2, 64);
+        $public_viewKey = substr($decoded, 66, 64);
 
-	    $result = array("networkByte" => $network_byte,
-			    "spendKey" => $public_spendKey,
-			    "viewKey" => $public_viewKey);
+        $result = array("networkByte" => $network_byte,
+                "spendKey" => $public_spendKey,
+                "viewKey" => $public_viewKey);
             return $result;
         }
-        
+
         /*
          * Get an integrated address from public keys and a payment id
          *
          * @param string A 32 byte hex encoded public spend key
          * @param string A 32 byte hex encoded public view key
-         * @param string An 8 byte hex string to use as a payment id 
+         * @param string An 8 byte hex string to use as a payment id
          */
         public function integrated_addr_from_keys($public_spendkey, $public_viewkey, $payment_id)
         {
@@ -289,16 +289,16 @@ Copyright (c) 2018 Monero-Integrations
          *
          * @return string A base58 encoded Monero address
          */
-	public function address_from_seed($hex_seed)
-	{
-	    $private_keys = $this->gen_private_keys($hex_seed);
-	    $private_viewKey = $private_keys["viewKey"];
-	    $private_spendKey = $private_keys["spendKey"];
+    public function address_from_seed($hex_seed)
+    {
+        $private_keys = $this->gen_private_keys($hex_seed);
+        $private_viewKey = $private_keys["viewKey"];
+        $private_spendKey = $private_keys["spendKey"];
 
-	    $public_spendKey = $this->pk_from_sk($private_spendKey);
-	    $public_viewKey = $this->pk_from_sk($private_viewKey);
+        $public_spendKey = $this->pk_from_sk($private_spendKey);
+        $public_viewKey = $this->pk_from_sk($private_viewKey);
 
-	    $address = $this->encode_address($public_spendKey, $public_viewKey);
-	    return $address;
-	}
+        $address = $this->encode_address($public_spendKey, $public_viewKey);
+        return $address;
+    }
     }
