@@ -166,7 +166,7 @@ class walletRPC
   public function get_address($account_index = 0, $address_index = 0)
   {
     $params = array('account_index' => $account_index, 'address_index' => $address_index);
-    return $this->_run('get_address', $params);
+    return $this->_run('getaddress', $params);
   }
 
   /**
@@ -397,7 +397,7 @@ class walletRPC
    */
   public function get_height()
   {
-    return $this->_run('get_height');
+    return $this->_run('getheight');
   }
 
   /**
