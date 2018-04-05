@@ -389,5 +389,3 @@ class base58
     return -1;
   }
 }
-
-?>
