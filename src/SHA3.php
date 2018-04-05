@@ -27,10 +27,10 @@ vim: ts=4 noet ai */
 /**
 	SHA-3 (FIPS-202) for PHP strings (byte arrays) (PHP 5.2.1+)
 	PHP 7.0 computes SHA-3 about 4 times faster than PHP 5.2 - 5.6 (on x86_64)
-	
+
 	Based on the reference implementations, which are under CC-0
 	Reference: http://keccak.noekeon.org/
-	
+
 	This uses PHP's native byte strings. Supports 32-bit as well as 64-bit
 	systems. Also for LE vs. BE systems.
 */
@@ -39,13 +39,13 @@ class SHA3 {
 	const SHA3_256 = 2;
 	const SHA3_384 = 3;
 	const SHA3_512 = 4;
-	
+
 	const SHAKE128 = 5;
 	const SHAKE256 = 6;
-    
+
     	const KECCAK_256 = 7;
-	
-	
+
+
 	public static function init ($type = null) {
 		switch ($type) {
 			case self::SHA3_224: return new self (1152, 448, 0x06, 28);
@@ -56,11 +56,11 @@ class SHA3 {
 			case self::SHAKE256: return new self (1088, 512, 0x1f);
             		case self::KECCAK_256: return new self (1088, 512, 0x01, 32);
 		}
-		
+
 		throw new Exception ('Invalid operation type');
 	}
-	
-	
+
+
 	/**
 		Feed input to SHA-3 "sponge"
 	*/
@@ -68,26 +68,26 @@ class SHA3 {
 		if (self::PHASE_INPUT != $this->phase) {
 			throw new Exception ('No more input accepted');
 		}
-		
+
 		$rateInBytes = $this->rateInBytes;
 		$this->inputBuffer .= $data;
 		while (strlen ($this->inputBuffer) >= $rateInBytes) {
 			list ($input, $this->inputBuffer) = array (
 				substr ($this->inputBuffer, 0, $rateInBytes)
 				, substr ($this->inputBuffer, $rateInBytes));
-			
+
 			$blockSize = $rateInBytes;
 			for ($i = 0; $i < $blockSize; $i++) {
 				$this->state[$i] = $this->state[$i] ^ $input[$i];
 			}
-			
+
 			$this->state = self::keccakF1600Permute ($this->state);
 			$this->blockSize = 0;
 		}
-		
+
 		return $this;
 	}
-	
+
 	/**
 		Get hash output
 	*/
@@ -96,11 +96,11 @@ class SHA3 {
 		if ($length && 0 < $outputLength && $outputLength != $length) {
 			throw new Exception ('Invalid length');
 		}
-		
+
 		if (self::PHASE_INPUT == $this->phase) {
 			$this->finalizeInput ();
 		}
-		
+
 		if (self::PHASE_OUTPUT != $this->phase) {
 			throw new Exception ('No more output allowed');
 		}
@@ -108,7 +108,7 @@ class SHA3 {
 			$this->phase = self::PHASE_DONE;
 			return $this->getOutputBytes ($outputLength);
 		}
-		
+
 		$blockLength = $this->rateInBytes;
 		list ($output, $this->outputBuffer) = array (
 			substr ($this->outputBuffer, 0, $length)
@@ -121,19 +121,19 @@ class SHA3 {
 		} else {
 			$readLength = $neededLength;
 		}
-		
+
 		$read = $this->getOutputBytes ($readLength);
 		$this->outputBuffer .= substr ($read, $neededLength);
 		return $output . substr ($read, 0, $neededLength);
 	}
-	
-	
+
+
 	// internally used
 	const PHASE_INIT = 1;
 	const PHASE_INPUT = 2;
 	const PHASE_OUTPUT = 3;
 	const PHASE_DONE = 4;
-	
+
 	private $phase = self::PHASE_INIT;
 	private $state; // byte array (string)
 	private $rateInBytes; // positive integer
@@ -141,8 +141,8 @@ class SHA3 {
 	private $inputBuffer = ''; // byte array (string): max length = rateInBytes
 	private $outputLength = 0;
 	private $outputBuffer = '';
-	
-	
+
+
 	public function __construct ($rate, $capacity, $suffix, $length = 0) {
 		if (1600 != ($rate + $capacity)) {
 			throw new Error ('Invalid parameters');
@@ -150,20 +150,20 @@ class SHA3 {
 		if (0 != ($rate % 8)) {
 			throw new Error ('Invalid rate');
 		}
-		
+
 		$this->suffix = $suffix;
 		$this->state = str_repeat ("\0", 200);
 		$this->blockSize = 0;
-		
+
 		$this->rateInBytes = $rate / 8;
 		$this->outputLength = $length;
 		$this->phase = self::PHASE_INPUT;
 		return;
 	}
-	
+
 	protected function finalizeInput () {
 		$this->phase = self::PHASE_OUTPUT;
-		
+
 		$input = $this->inputBuffer;
 		$inputLength = strlen ($input);
 		if (0 < $inputLength) {
@@ -171,10 +171,10 @@ class SHA3 {
 			for ($i = 0; $i < $blockSize; $i++) {
 				$this->state[$i] = $this->state[$i] ^ $input[$i];
 			}
-			
+
 			$this->blockSize = $blockSize;
 		}
-		
+
 		// Padding
 		$rateInBytes = $this->rateInBytes;
 		$this->state[$this->blockSize] = $this->state[$this->blockSize]
@@ -186,7 +186,7 @@ class SHA3 {
 		$this->state[$rateInBytes - 1] = $this->state[$rateInBytes - 1] ^ "\x80";
 		$this->state = self::keccakF1600Permute ($this->state);
 	}
-	
+
 	protected function getOutputBytes ($outputLength) {
 		// Squeeze
 		$output = '';
@@ -198,10 +198,10 @@ class SHA3 {
 				$this->state = self::keccakF1600Permute ($this->state);
 			}
 		}
-		
+
 		return $output;
 	}
-	
+
 	/**
 		1600-bit state version of Keccak's permutation
 	*/
@@ -209,7 +209,7 @@ class SHA3 {
 		$lanes = str_split ($state, 8);
 		$R = 1;
 		$values = "\1\2\4\10\20\40\100\200";
-		
+
 		for ($round = 0; $round < 24; $round++) {
 			// θ step
 			$C = array ();
@@ -227,7 +227,7 @@ class SHA3 {
 				}
 			}
 			unset ($C, $D);
-			
+
 			// ρ and π steps
 			$x = 1;
 			$y = 0;
@@ -240,7 +240,7 @@ class SHA3 {
 						, (($t + 1) * ($t + 2) / 2) % 64));
 			}
 			unset ($temp, $current);
-			
+
 			// χ step
 			$temp = array ();
 			for ($y = 0; $y < 5; $y++) {
@@ -250,11 +250,11 @@ class SHA3 {
 				for ($x = 0; $x < 5; $x++) {
 					$lanes[$x + 5 * $y] = $temp[$x]
 						^ ((~ $temp[($x + 1) % 5]) & $temp[($x + 2) % 5]);
-					
+
 				}
 			}
 			unset ($temp);
-			
+
 			// ι step
 			for ($j = 0; $j < 7; $j++) {
 				$R = (($R << 1) ^ (($R >> 7) * 0x71)) & 0xff;
@@ -264,35 +264,35 @@ class SHA3 {
 					$octetShift = ($offset - $shift) / 8;
 					$n = "\0\0\0\0\0\0\0\0";
 					$n[$octetShift] = $values[$shift];
-					
+
 					$lanes[0] = $lanes[0]
 						^ $n;
 						//^ self::rotL64 ("\1\0\0\0\0\0\0\0", (1 << $j) - 1);
 				}
 			}
 		}
-		
+
 		return implode ($lanes);
 	}
-	
+
 	protected static function rotL64_64 ($n, $offset) {
 		return ($n << $offset) & ($n >> (64 - $offset));
 	}
-	
+
 	/**
 		64-bit bitwise left rotation (Little endian)
 	*/
 	protected static function rotL64 ($n, $offset) {
-		
+
 		//$n = (binary) $n;
 		//$offset = ((int) $offset) % 64;
 		//if (8 != strlen ($n)) throw new Exception ('Invalid number');
 		//if ($offset < 0) throw new Exception ('Invalid offset');
-		
+
 		$shift = $offset % 8;
 		$octetShift = ($offset - $shift) / 8;
 		$n = substr ($n, - $octetShift) . substr ($n, 0, - $octetShift);
-		
+
 		$overflow = 0x00;
 		for ($i = 0; $i < 8; $i++) {
 			$a = ord ($n[$i]) << $shift;
@@ -302,7 +302,7 @@ class SHA3 {
 		$n[0] = chr (ord ($n[0]) | $overflow);
 		return $n;
 	}
-	
+
 	/**
 		64-bit bitwise left rotation (Little endian)
 	*/

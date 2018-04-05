@@ -26,7 +26,7 @@ Copyright (c) 2018 Monero-Integrations
             $keccak256->absorb (hex2bin($message));
             return bin2hex ($keccak256->squeeze (32)) ;
         }
-        
+
         /*
          * @return string A hex encoded string of 32 random bytes
          *
@@ -36,13 +36,13 @@ Copyright (c) 2018 Monero-Integrations
             $bytes = random_bytes(32);
             return bin2hex($bytes);
         }
-        
+
         public function sc_reduce($input)
         {
             $integer = $this->ed25519->decodeint(hex2bin($input));
-            
+
             $modulo = bcmod($integer , $this->ed25519->l);
-            
+
             $result = bin2hex($this->ed25519->encodeint($modulo));
             return $result;
         }
@@ -60,24 +60,24 @@ Copyright (c) 2018 Monero-Integrations
             $scalar = $this->sc_reduce($hash);
             return $scalar;
         }
-        
+
         /*
          * Derive a deterministic private view key from a private spend key
          * @param string A private spend key represented as a 32 byte hex string
-         * 
+         *
          * @return string A deterministic private view key represented as a 32 byte hex string
          */
         public function derive_viewKey($spendKey)
         {
             return $this->hash_to_scalar($spendkey);
         }
-        
+
         /*
          * Generate a pair of random private keys
          *
          * @param string A hex string to be used as a seed (this should be random)
          *
-         * @return array An array containing a private spend key and a deterministic view key 
+         * @return array An array containing a private spend key and a deterministic view key
          */
         public function gen_private_keys($seed)
         {
@@ -88,7 +88,7 @@ Copyright (c) 2018 Monero-Integrations
 
             return $result;
         }
-        
+
         /*
          * Get a public key from a private key on the ed25519 curve
          *
@@ -211,7 +211,7 @@ Copyright (c) 2018 Monero-Integrations
             else
               return false;
         }
-        
+
         /*
          * Create a valid base58 encoded Monero address from public keys
          *
@@ -265,13 +265,13 @@ Copyright (c) 2018 Monero-Integrations
 			    "viewKey" => $public_viewKey);
             return $result;
         }
-        
+
         /*
          * Get an integrated address from public keys and a payment id
          *
          * @param string A 32 byte hex encoded public spend key
          * @param string A 32 byte hex encoded public view key
-         * @param string An 8 byte hex string to use as a payment id 
+         * @param string An 8 byte hex string to use as a payment id
          */
         public function integrated_addr_from_keys($public_spendkey, $public_viewkey, $payment_id)
         {

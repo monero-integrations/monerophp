@@ -10,15 +10,15 @@
  */
 class jsonRPCClient
 {
-    protected $url = null, $is_debug = false, $parameters_structure = 'array'; 
+    protected $url = null, $is_debug = false, $parameters_structure = 'array';
     private $username;
     private $password;
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
         CURLOPT_TIMEOUT => 8
     );
-    
-    
+
+
     private $httpErrors = array(
         400 => '400 Bad Request',
         401 => '401 Unauthorized',
@@ -31,29 +31,29 @@ class jsonRPCClient
         502 => '502 Bad Gateway',
         503 => '503 Service Unavailable'
     );
-   
+
     public function __construct($pUrl, $pUser, $pPass)
     {
-        
+
         $this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded to use this class!');
         $this->validate(false === extension_loaded('json'), 'The json extension must be loaded to use this class!');
-    
+
         $this->url = $pUrl;
         $this->username = $pUser;
         $this->password = $pPass;
     }
-   
+
     private function getHttpErrorMessage($pErrorNumber)
     {
         return isset($this->httpErrors[$pErrorNumber]) ? $this->httpErrors[$pErrorNumber] : null;
     }
-    
+
     public function setDebug($pIsDebug)
     {
         $this->is_debug = !empty($pIsDebug);
         return $this;
     }
-   
+
     /* public function setParametersStructure($pParametersStructure)
     {
         if (in_array($pParametersStructure, array('array', 'object')))
@@ -66,7 +66,7 @@ class jsonRPCClient
         }
         return $this;
     } */
-   
+
     public function setCurlOptions($pOptionsArray)
     {
         if (is_array($pOptionsArray))
@@ -79,7 +79,7 @@ class jsonRPCClient
         }
         return $this;
     }
-    
+
     public function _run($pMethod, $pParams)
     {
         static $requestId = 0;
@@ -118,7 +118,7 @@ class jsonRPCClient
         }
         return $responseDecoded['result'];
     }
-    
+
     protected function & getResponse(&$pRequest)
     {
         // do the actual connection
@@ -135,7 +135,7 @@ class jsonRPCClient
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-       
+
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         if ( !curl_setopt_array($ch, $this->curl_options))
         {
@@ -158,7 +158,7 @@ class jsonRPCClient
         curl_close($ch);
         return $response;
     }
-    
+
     public function validate($pFailed, $pErrMsg)
     {
         if ($pFailed)
@@ -166,7 +166,7 @@ class jsonRPCClient
             throw new RuntimeException($pErrMsg);
         }
     }
-    
+
     protected function debug($pAdd, $pShow = false)
     {
         static $debug, $startTime;
@@ -192,7 +192,7 @@ class jsonRPCClient
             $debug = $startTime = null;
         }
     }
-    
+
     function getJsonLastErrorMsg()
     {
         if (!function_exists('json_last_error_msg'))
@@ -211,7 +211,7 @@ class jsonRPCClient
                 return array_key_exists($error, $errors) ? $errors[$error] : 'Unknown error (' . $error . ')';
             }
         }
-        
+
         // Fix PHP 5.2 error caused by missing json_last_error function
         if (function_exists('json_last_error'))
         {
@@ -222,4 +222,4 @@ class jsonRPCClient
             return null;
         }
     }
-} 
+}
