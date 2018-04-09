@@ -15,8 +15,8 @@ Parameters:
 ### Methods
 
  - [`_transform`](#_transform)
- - [`get_balance`](#get_balance)
- - [`get_address`](#get_address)
+ - [`get_balance` (alias: `getbalance`)](#get_balance)
+ - [`get_address` (alias: `getaddress`)](#get_address)
  - [`create_address`](#create_address)
  - [`label_address`](#label_address)
  - [`get_accounts`](#get_accounts)
@@ -26,7 +26,7 @@ Parameters:
  - [`tag_accounts`](#tag_accounts)
  - [`untag_accounts`](#untag_accounts)
  - [`set_account_tag_description`](#set_account_tag_description)
- - [`get_height`](#get_height)
+ - [`get_height` (alias: `getheight`)](#get_height)
  - [`transfer`](#transfer)
  - [`transfer_split`](#transfer_split)
  - [`sweep_dust`](#sweep_dust)
@@ -83,6 +83,7 @@ Parameters:
  - [`finalize_multisig`](#finalize_multisig)
  - [`sign_multisig`](#sign_multisig)
  - [`submit_multisig`](#submit_multisig)
+ - [`get_client` (alias: `getClient`)](#get_client)
 
 #### `_transform`
 
@@ -1113,6 +1114,14 @@ Parameters:
 Return: `<Object>`
 
 [//]: # (TODO example)
+
+#### `get_client`
+
+Return the `jsonRPCClient` used by the class
+
+Return: `jsonRPCClient`
+
+Alias: `getClient`
 
 ### Credits
 
