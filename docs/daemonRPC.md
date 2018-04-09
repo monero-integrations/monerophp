@@ -6,12 +6,19 @@ A class for making calls to a Monero daemon's RPC API using PHP
 
 Parameters:
 
- - `$protocol <String>` Monero daemon IP hostname *(optional)*
  - `$host <String>` Monero daemon port *(optional)*
  - `$port <nNmber>` Monero daemon protocol (*eg.* 'http') *(optional)*
- - `$url <String>` Monero daemon RPC username *(optional)*
- - `$user <String>` Monero daemon RPC passphrase *(optional)*
+ - `$protocol <String>` Monero daemon IP hostname *(optional)*
+ - `$user <String>` Monero daemon RPC username *(optional)*
  - `$password <String>` Monero daemon RPC passphrase *(optional)*
+
+Parameters can also be passed in as an associative array (object/dictionary,) as in:
+
+```php
+$daemonRPC = new daemonRPC(['host' => '127.0.0.1', 'port' => 28081])
+```
+
+If an object is used to provide parameters (as above,) parameters can be declared in any order.
 
 ### Methods
 
