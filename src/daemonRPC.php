@@ -56,6 +56,28 @@ class daemonRPC
    */
   function __construct($host = '127.0.0.1', $port = 18081, $protocol = 'http', $user = null, $password = null)
   {
+    if (is_array($host)) { // Parameters passed in as object/dictionary
+      $params = $host;
+
+      if (array_key_exists('host', $params)) {
+        $host = $params['host'];
+      } else {
+        $host = '127.0.0.1';
+      }
+      if (array_key_exists('port', $params)) {
+        $port = $params['port'];
+      }
+      if (array_key_exists('protocol', $params)) {
+        $protocol = $params['protocol'];
+      }
+      if (array_key_exists('user', $params)) {
+        $user = $params['user'];
+      }
+      if (array_key_exists('password', $params)) {
+        $password = $params['password'];
+      }
+    }
+    
     $this->host = $host;
     $this->port = $port;
     $this->protocol = $protocol;

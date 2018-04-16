@@ -12,6 +12,14 @@ Parameters:
  - `$user <String>` monero-wallet-rpc RPC username *(optional)*
  - `$password <String>` monero-wallet-rpc RPC passphrase *(optional)*
 
+Parameters can also be passed in as an associative array (object/dictionary,) as in:
+
+```php
+$walletRPC = new walletRPC(['host' => '127.0.0.1', 'port' => 28083])
+```
+
+If an object is used to provide parameters (as above,) parameters can be declared in any order.
+
 ### Methods
 
  - [`_transform`](#_transform)
