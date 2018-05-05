@@ -586,9 +586,6 @@ class walletRPC
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
       if (array_key_exists('do_not_relay', $params)) {
         $do_not_relay = $params['do_not_relay'];
       }
@@ -1197,9 +1194,12 @@ class walletRPC
    * }
    *
    */
-  public function get_spend_proof($txid)
+  public function get_spend_proof($txid, $message=null)
   {
     $params = array('txid' => $txid);
+    if( $message !== null ) {
+      $params['message'] = $message;
+    }
     return $this->_run('get_spend_proof', $params);
   }
 
@@ -1215,9 +1215,12 @@ class walletRPC
    * }
    *
    */
-  public function check_spend_proof($txid, $signature)
+  public function check_spend_proof($txid, $signature, $message=null)
   {
     $params = array('txid' => $txid, 'signature' => $signature);
+    if( $message !== null ) {
+      $params['message'] = $message;
+    }
     return $this->_run('check_spend_proof', $params);
   }
 
