@@ -112,6 +112,12 @@ class jsonRPCClient
                 'Request: ' . $request . '; ';
             if (isset($responseDecoded['error']['data']))
             {
+                /* check_spend_proof fix in case of checking a different txid than one used to sign the signature */
+                if( $responseDecoded['error']['message'] == 'incorrect signature size' ) {
+                    $fakeReturn = array( 'result' => array( 'good' => false ) );
+                    return $fakeReturn['result'];
+                }
+                
                 $errorMessage .= "\n" . 'Error data: ' . $responseDecoded['error']['data'];
             }
             $this->validate( !is_null($responseDecoded['error']), $errorMessage);
