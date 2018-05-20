@@ -6,14 +6,14 @@ This library has 3 main parts:
 
 1. A Monero daemon JSON RPC API wrapper, `daemonRPC.php`
 2. A Monero wallet (`monero-wallet-rpc`) JSON RPC API wrapper, `walletRPC.php`
-3. A Monero/Cryptonote toolbox, `cryptonote.php`, with both lower level functions used in Monero related cryptograhy and higher level methods for things like generating Monero private/public keys.
+3. A Monero/Cryptonote toolbox, `cryptonote.php`, with both lower level functions used in Monero related cryptography and higher level methods for things like generating Monero private/public keys.
 
 In addition to these features, there are other lower-level libraries included for portability, *eg.* an ed25519 library, a SHA3 library, *etc.*
 
 ## Preview
 ![Preview](https://user-images.githubusercontent.com/4107993/38056594-b6cd6e14-3291-11e8-96e2-a771b0e9cee3.png)
 
-## Documention
+## Documentation
 
 Documentation can be found in the [`/docs`](https://github.com/sneurlax/monerophp/tree/master/docs) folder.
 

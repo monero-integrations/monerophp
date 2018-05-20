@@ -48,7 +48,7 @@ class ed25519
 
     public $B;
 
-    private $gmp; // Is the GMP extention available?
+    private $gmp; // Is the GMP extension available?
 
     public function __construct()
     {

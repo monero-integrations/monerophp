@@ -175,8 +175,8 @@ Perform the calculation P = P' as described in the cryptonote whitepaper
 Parameters:
 
  - `$txPublic <String>` 32 byte transaction public key R
- - `$privViewkey <String>` 32 byte reciever private view key a
- - `$publicSpendkey <String>` 32 byte reciever public spend key B
+ - `$privViewkey <String>` 32 byte receiver private view key a
+ - `$publicSpendkey <String>` 32 byte receiver public spend key B
  - `$index <Number>` Otput index
  - `$P <String>` Output you want to check against P
 
