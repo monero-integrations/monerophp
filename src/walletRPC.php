@@ -92,7 +92,7 @@ class walletRPC
    * Execute command via jsonRPCClient
    *
    * @param  string  $method  RPC method to call
-   * @param  object  $params  Parameters to to pass  (optional)
+   * @param  object  $params  Parameters to pass  (optional)
    *
    * @return string  Call result
    *
@@ -360,7 +360,7 @@ class walletRPC
     $params = array('accounts' => $accounts, 'tag' => $tag);
     $tag_accounts_method = $this->_run('tag_accounts', $params);
 
-    $save = $this->store(); // Save wallet state after account tagginng
+    $save = $this->store(); // Save wallet state after account tagging
 
     return $tag_accounts_method;
   }
@@ -443,14 +443,14 @@ class walletRPC
    * @param  string   $payment_id       Payment ID                                                (optional)
    * @param  number   $mixin            Mixin number (ringsize - 1)                               (optional)
    * @param  number   $account_index    Account to send from                                      (optional)
-   * @param  string   $subaddr_indices  Comma-separeted list of subaddress indices to spend from  (optional)
+   * @param  string   $subaddr_indices  Comma-separated list of subaddress indices to spend from  (optional)
    * @param  number   $priority         Transaction priority                                      (optional)
    * @param  number   $unlock_time      UNIX time or block height to unlock output                (optional)
    * @param  boolean  $do_not_relay     Do not relay transaction                                  (optional)
    *
    *   OR
    *
-   * @param  object  $params            Array containing any of the options listed above, where only amount and address or a destionarions array are required
+   * @param  object  $params            Array containing any of the options listed above, where only amount and address or a destionation's array are required
    *
    * @return object  Example: {
    *   "amount": "1000000000000",
@@ -638,7 +638,7 @@ class walletRPC
    * Send all unlocked outputs from an account to an address
    *
    * @param  string   $address          Address to receive funds
-   * @param  string   $subaddr_indices  Comma-seperated list of subaddress indices to sweep  (optional)
+   * @param  string   $subaddr_indices  Comma-separated list of subaddress indices to sweep  (optional)
    * @param  number   $account_index    Index of the account to sweep                        (optional)
    * @param  string   $payment_id       Payment ID                                           (optional)
    * @param  number   $mixin            Mixin number (ringsize - 1)                          (optional)
@@ -877,7 +877,7 @@ class walletRPC
    *
    * @param  string  $type             Type of transfer to look up; must be 'all', 'available', or 'unavailable' (incoming transfers which have already been spent)
    * @param  number  $account_index    Index of account to look up                                                                                                   (optional)
-   * @param  string  $subaddr_indices  Comma-seperated list of subaddress indices to look up                                                                         (optional)
+   * @param  string  $subaddr_indices  Comma-separated list of subaddress indices to look up                                                                         (optional)
    *
    * @return object  Example: {
    *   "transfers": [{
@@ -1272,7 +1272,7 @@ class walletRPC
    *
    * @param  array   $input_types      Array of transfer type strings; possible values include 'all', 'in', 'out', 'pending', 'failed', and 'pool'  (optional)
    * @param  number  $account_index    Index of account to look up                                                                                  (optional)
-   * @param  string  $subaddr_indices  Comma-seperated list of subaddress indices to look up                                                        (optional)
+   * @param  string  $subaddr_indices  Comma-separated list of subaddress indices to look up                                                        (optional)
    * @param  number  $min_height       Minimum block height to use when looking up transfers                                                        (optional)
    * @param  number  $max_height       Maximum block height to use when looking up transfers                                                        (optional)
    *
@@ -1453,7 +1453,7 @@ class walletRPC
    *
    * Create a payment URI using the official URI specification
    *
-   * @param  string  $address         Address to receive fuids
+   * @param  string  $address         Address to receive funds
    * @param  string  $amount          Amount of monero to request
    * @param  string  $payment_id      Payment ID                   (optional)
    * @param  string  $recipient_name  Name of recipient            (optional)
@@ -1559,7 +1559,7 @@ class walletRPC
    * Start mining
    *
    * @param  number   $threads_count         Number of threads with which to mine
-   * @param  boolean  $do_background_mining  Mine in backgound?
+   * @param  boolean  $do_background_mining  Mine in background?
    * @param  boolean  $ignore_battery        Ignore battery?
    *
    * @return none

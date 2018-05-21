@@ -194,8 +194,8 @@ Copyright (c) 2018 Monero-Integrations
          * Perform the calculation P = P' as described in the cryptonote whitepaper
          *
          * @param string 32 byte transaction public key R
-         * @param string 32 byte reciever private view key a
-         * @param string 32 byte reciever public spend key B
+         * @param string 32 byte receiver private view key a
+         * @param string 32 byte receiver public spend key B
          * @param int output index
          * @param string output you want to check against P
          */

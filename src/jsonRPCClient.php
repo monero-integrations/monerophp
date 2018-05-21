@@ -83,7 +83,7 @@ class jsonRPCClient
     public function _run($pMethod, $pParams)
     {
         static $requestId = 0;
-        // generating uniuqe id per process
+        // generating unique id per process
         $requestId++;
         // check if given params are correct
         $this->validate(false === is_scalar($pMethod), 'Method name has no scalar value');
@@ -186,7 +186,7 @@ class jsonRPCClient
             // performance summary
             $debug .= 'Request time: ' . round($endTime - $startTime, 3) . ' s Memory usage: ' . round(memory_get_usage() / 1024) . " kb\r\n";
             echo nl2br($debug);
-            // send output imidiately
+            // send output immediately
             flush();
             // clean static
             $debug = $startTime = null;

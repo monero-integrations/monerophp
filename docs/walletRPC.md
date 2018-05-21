@@ -298,7 +298,7 @@ Alias: `getheight`
 
 Send monero
 
-Parameters can be passed in individually (as listed below) or as an object/dictionary (as as listed below) or as an object/dictionary (as listed at bottom)
+Parameters can be passed in individually (as listed below) or as an object/dictionary (as listed below) or as an object/dictionary (as listed at bottom)
 
 To send to multiple recipients, use the object/dictionary (bottom) format and pass an array of recipient addresses and amount arrays in the destinations field (as in "destinations = [['amount' => 1, 'address' => ...], ['amount' => 2, 'address' => ...]]")
 
@@ -309,14 +309,14 @@ Parameters:
  - `$payment_id <String>` Payment
  - `$mixin <number>` Mixin number (ringsize - 1)
  - `$account_index <number>` Account to send
- - `$subaddr_indices <String>` Comma-separeted list of subaddress indices to spend
+ - `$subaddr_indices <String>` Comma-separated list of subaddress indices to spend
  - `$priority <number>` Transaction
  - `$unlock_time <number>` UNIX time or block height to unlock
  - `$do_not_relay <boolean>` Do not relay
 
     *or*
 
- - `$params <Object>` Array containing any of the options listed above, where only amount and address or a destionarions array are required
+ - `$params <Object>` Array containing any of the options listed above, where only amount and address or a destionation's array are required
 
 Return: `<Object>`
 
@@ -360,7 +360,7 @@ Send all unlocked outputs from an account to an address
 Parameters:
 
  - `$address <String>` Address to receive funds
- - `$subaddr_indices <String>` Comma-seperated list of subaddress indices to sweep *(optional)*
+ - `$subaddr_indices <String>` Comma-separated list of subaddress indices to sweep *(optional)*
  - `$account_index <number>` Index of the account to sweep *(optional)*
  - `$payment_id <String>` Payment ID *(optional)*
  - `$mixin <number>` Mixin number (ringsize - 1) *(optional)*
@@ -484,7 +484,7 @@ Parameters:
 
  - `$type <String>` Type of transfer to look up; must be 'all', 'available', or 'unavailable' (incoming transfers which have already been spent)
  - `$account_index <number>` Index of account to look up *(optional)*
- - `$subaddr_indices <String>` Comma-seperated list of subaddress indices to look up *(optional)*
+ - `$subaddr_indices <String>` Comma-separated list of subaddress indices to look up *(optional)*
 
 Return: `<Object>`
 
@@ -796,7 +796,7 @@ Parameters:
 
  - `$input_types <Array>` Array of transfer type strings; possible values include 'all', 'in', 'out', 'pending', 'failed', and 'pool' *(optional)*
  - `$account_index <number>` Index of account to look *(optional)*
- - `$subaddr_indices <String>` Comma-seperated list of subaddress indices to look up *(optional)*
+ - `$subaddr_indices <String>` Comma-separated list of subaddress indices to look up *(optional)*
  - `$min_height <number>` Minimum block height to use when looking up *(optional)*
  - `$max_height <number>` Maximum block height to use when looking up *(optional)*
 
@@ -914,7 +914,7 @@ Create a payment URI using the official URI specification
 
 Parameters:
 
- - `$address <String>` Address to receive fuids
+ - `$address <String>` Address to receive funds
  - `$amount <String>` Amount of monero to request
  - `$payment_id <String>` Payment ID *(optional)*
  - `$recipient_name <String>` Name of recipient *(optional)*
@@ -989,7 +989,7 @@ Rescan the blockchain for spent outputs
 Start mining
 
  - `$threads_count <number>` Number of threads with which to mine
- - `$do_background_mining <boolean>` Mine in backgound?
+ - `$do_background_mining <boolean>` Mine in background?
  - `$ignore_battery <boolean>` Ignore battery?
 
 #### `stop_mining`
@@ -1076,7 +1076,7 @@ Return: `<Object>`
 
 #### `import_multisig_info`
 
-Import mutlisignature information
+Import multisignature information
 
 Parameters:
 
