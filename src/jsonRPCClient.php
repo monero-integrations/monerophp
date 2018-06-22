@@ -77,7 +77,7 @@ class jsonRPCClient
         }
         else
         {
-            throw new InvalidArgumentException('Invalid options type.');
+            throw new \Exception('Invalid options type.');
         }
         return $this;
     }
@@ -127,7 +127,7 @@ class jsonRPCClient
         $ch = curl_init();
         if ( !$ch)
         {
-            throw new RuntimeException('Could\'t initialize a cURL session');
+            throw new \Exception('Could\'t initialize a cURL session');
         }
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
@@ -165,7 +165,7 @@ class jsonRPCClient
     {
         if ($pFailed)
         {
-            throw new \RuntimeException($pErrMsg);
+            throw new \Exception($pErrMsg);
         }
     }
     

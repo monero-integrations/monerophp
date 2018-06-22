@@ -449,29 +449,29 @@ class walletRPC
         $destinations = $params['destinations'];
 
         if (!is_array($destinations)) {
-          throw new Exception('Error: destinations must be an array');
+          throw new \Exception('Error: destinations must be an array');
         }
 
         foreach ($destinations as $destination) {
           if (array_key_exists('amount', $destinations[$destination])) {
             $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
           } else {
-            throw new Exception('Error: Amount required');
+            throw new \Exception('Error: Amount required');
           }
           if (!array_key_exists('address', $destinations[$destination])) {
-            throw new Exception('Error: Address required');
+            throw new \Exception('Error: Address required');
           }
         }
       } else {
         if (array_key_exists('amount', $params)) {
           $amount = $params['amount'];
         } else {
-          throw new Exception('Error: Amount required');
+          throw new \Exception('Error: Amount required');
         }
         if (array_key_exists('address', $params)) {
           $address = $params['address'];
         } else {
-          throw new Exception('Error: Address required');
+          throw new \Exception('Error: Address required');
         }
         $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
       }
@@ -522,29 +522,29 @@ class walletRPC
         $destinations = $params['destinations'];
 
         if (!is_array($destinations)) {
-          throw new Exception('Error: destinations must be an array');
+          throw new \Exception('Error: destinations must be an array');
         }
 
         foreach ($destinations as $destination) {
           if (array_key_exists('amount', $destinations[$destination])) {
             $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
           } else {
-            throw new Exception('Error: Amount required');
+            throw new \Exception('Error: Amount required');
           }
           if (!array_key_exists('address', $destinations[$destination])) {
-            throw new Exception('Error: Address required');
+            throw new \Exception('Error: Address required');
           }
         }
       } else {
         if (array_key_exists('amount', $params)) {
           $amount = $params['amount'];
         } else {
-          throw new Exception('Error: Amount required');
+          throw new \Exception('Error: Amount required');
         }
         if (array_key_exists('address', $params)) {
           $address = $params['address'];
         } else {
-          throw new Exception('Error: Address required');
+          throw new \Exception('Error: Address required');
         }
         $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
       }
@@ -719,12 +719,12 @@ class walletRPC
       if (array_key_exists('key_image', $params)) {
         $key_image = $params['key_image'];
       } else {
-        throw new Exception('Error: Key image required');
+        throw new \Exception('Error: Key image required');
       }
       if (array_key_exists('address', $params)) {
         $address = $params['address'];
       } else {
-        throw new Exception('Error: Address required');
+        throw new \Exception('Error: Address required');
       }
 
       if (array_key_exists('payment_id', $params)) {
@@ -843,7 +843,7 @@ class walletRPC
     $params = array('min_block_height' => $min_block_height); // does not work
     $params = [];
     if (!is_array($payment_ids)) {
-      throw new Exception('Error: Payment IDs must be array.');
+      throw new \Exception('Error: Payment IDs must be array.');
     }
     if ($payment_ids) {
       $params['payment_ids'] = [];

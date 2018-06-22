@@ -154,7 +154,7 @@ use MoneroPHP\ed25519;
         {
             if(strlen($payment_id) != 16)
             {
-               throw new Exception("Error: Incorrect payment ID size. Should be 8 bytes");
+               throw new \Exception("Error: Incorrect payment ID size. Should be 8 bytes");
             }
             $der = $this->gen_key_derivation($tx_pub_key, $viewkey);
             $data = $der . '8d';
@@ -256,7 +256,8 @@ use MoneroPHP\ed25519;
             $decoded = $this->base58->decode($address);
 
 	    if(!$this->verify_checksum($address)){
-		throw new Exception("Error: invalid checksum");
+		    die('');
+	        throw new \Exception("Error: invalid checksum");
 	    }
 
 	    $network_byte = substr($decoded, 0, 2);

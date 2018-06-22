@@ -55,7 +55,7 @@ class SHA3 {
             		case self::KECCAK_256: return new self (1088, 512, 0x01, 32);
 		}
 		
-		throw new Exception ('Invalid operation type');
+		throw new \Exception ('Invalid operation type');
 	}
 	
 	
@@ -64,7 +64,7 @@ class SHA3 {
 	*/
 	public function absorb ($data) {
 		if (self::PHASE_INPUT != $this->phase) {
-			throw new Exception ('No more input accepted');
+			throw new \Exception ('No more input accepted');
 		}
 		
 		$rateInBytes = $this->rateInBytes;
@@ -92,7 +92,7 @@ class SHA3 {
 	public function squeeze ($length = null) {
 		$outputLength = $this->outputLength; // fixed length output
 		if ($length && 0 < $outputLength && $outputLength != $length) {
-			throw new Exception ('Invalid length');
+			throw new \Exception ('Invalid length');
 		}
 		
 		if (self::PHASE_INPUT == $this->phase) {
@@ -100,7 +100,7 @@ class SHA3 {
 		}
 		
 		if (self::PHASE_OUTPUT != $this->phase) {
-			throw new Exception ('No more output allowed');
+			throw new \Exception ('No more output allowed');
 		}
 		if (0 < $outputLength) {
 			$this->phase = self::PHASE_DONE;
