@@ -30,10 +30,10 @@
  */
 namespace MoneroPHP;
 
-require_once('jsonRPCClient.php'); 
-use MoneroPHP\jsonRPCClient;
+require_once('JsonRPCClient.php');
+use MoneroPHP\JsonRPCClient;
 
-class walletRPC
+class WalletRPC
 {
   private $client;
 

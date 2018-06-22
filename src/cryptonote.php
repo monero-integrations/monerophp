@@ -4,9 +4,9 @@ Copyright (c) 2018 Monero-Integrations
 */
 namespace MoneroPHP;
 
-use MoneroPHP\base58;
+use MoneroPHP\Base58;
 use MoneroPHP\SHA3;
-use MoneroPHP\ed25519;
+use MoneroPHP\Ed25519;
 
 
     class Cryptonote
@@ -14,8 +14,8 @@ use MoneroPHP\ed25519;
         protected $ed25519;
         public function __construct()
         {
-            $this->ed25519 = new ed25519();
-	    $this->base58 = new base58();
+            $this->ed25519 = new Ed25519();
+	    $this->base58 = new Base58();
         }
 
         /*

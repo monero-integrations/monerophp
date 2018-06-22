@@ -10,7 +10,7 @@
  */
 namespace MoneroPHP;
 
-class jsonRPCClient
+class JsonRPCClient
 {
     protected $url = null, $is_debug = false, $parameters_structure = 'array'; 
     private $username;

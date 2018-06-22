@@ -31,7 +31,7 @@ namespace MoneroPHP;
  *
  * @link   http://ed25519.cr.yp.to/software.html Other ED25519 implementations this is referenced from
  */
-class ed25519
+class Ed25519
 {
     public $b;
 
