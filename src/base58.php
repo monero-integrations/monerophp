@@ -257,10 +257,7 @@ class base58
     $last_block_size = count($data) % self::$full_block_size;
     $res_size = $full_block_count * self::$full_encoded_block_size + self::$encoded_block_sizes[$last_block_size];
 
-    $res = array_fill(0, $res_size, 0);
-    for ($i = 0; $i < $res_size; $i++) {
-      $res[$i] = self::$alphabet[0];
-    }
+    $res = array_fill(0, $res_size, ord(self::$alphabet[0]));
 
     for ($i = 0; $i < $full_block_count; $i++) {
       $res = self::encode_block(array_slice($data, $i * self::$full_block_size, ($i * self::$full_block_size + self::$full_block_size) - ($i * self::$full_block_size)), $res, $i * self::$full_encoded_block_size);
