@@ -23,6 +23,7 @@
  */
 
 //ini_set('xdebug.max_nesting_level', 0);
+
 /**
  * A PHP implementation of the Python ED25519 library
  *
@@ -126,7 +127,7 @@ class ed25519
             if ($this->pymod(gmp_sub(gmp_pow($x, 2), $xx), $this->q) != 0) {
                 $x = $this->pymod(gmp_mul($x, $this->I), $this->q);
             }
-            if (substr($x, -1)%2 != 0) {
+            if (substr($x, -1) % 2 != 0) {
                 $x = gmp_sub($this->q, $x);
             }
         } else {
@@ -136,7 +137,7 @@ class ed25519
             if ($this->pymod(bcsub(bcpow($x, 2), $xx), $this->q) != 0) {
                 $x = $this->pymod(bcmul($x, $this->I), $this->q);
             }
-            if (substr($x, -1)%2 != 0) {
+            if (substr($x, -1) % 2 != 0) {
                 $x = bcsub($this->q, $x);
             }
         }
@@ -177,7 +178,7 @@ class ed25519
             }
             $Q = $this->scalarmult($P, gmp_div($e, 2, 0));
             $Q = $this->edwards($Q, $Q);
-            if (substr($e, -1)%2 == 1) {
+            if (substr($e, -1) % 2 == 1) {
                 $Q = $this->edwards($Q, $P);
             }
         } else {
@@ -186,7 +187,7 @@ class ed25519
             }
             $Q = $this->scalarmult($P, bcdiv($e, 2, 0));
             $Q = $this->edwards($Q, $Q);
-            if (substr($e, -1)%2 == 1) {
+            if (substr($e, -1) % 2 == 1) {
                 $Q = $this->edwards($Q, $P);
             }
         }
@@ -207,7 +208,7 @@ class ed25519
             foreach ($temp as $e) {
                 if ($e == 1) {
                     $Q = $this->edwards(array(0, 1), $P);
-                } elseif (substr($e, -1)%2 == 1) {
+                } elseif (substr($e, -1) % 2 == 1) {
                     $Q = $this->edwards($this->edwards($Q, $Q), $P);
                 } else {
                     $Q = $this->edwards($Q, $Q);
@@ -224,7 +225,7 @@ class ed25519
             foreach ($temp as $e) {
                 if ($e == 1) {
                     $Q = $this->edwards(array(0, 1), $P);
-                } elseif (substr($e, -1)%2 == 1) {
+                } elseif (substr($e, -1) % 2 == 1) {
                     $Q = $this->edwards($this->edwards($Q, $Q), $P);
                 } else {
                     $Q = $this->edwards($Q, $Q);
@@ -238,11 +239,11 @@ class ed25519
     public function bitsToString($bits)
     {
         $string = '';
-        for ($i = 0; $i < $this->b/8; $i++) {
+        for ($i = 0; $i < $this->b / 8; $i++) {
             $sum = 0;
             for ($j = 0; $j < 8; $j++) {
-                $bit = $bits[$i*8+$j];
-                $sum += (int) $bit << $j;
+                $bit = $bits[$i * 8 + $j];
+                $sum += (int)$bit << $j;
             }
             $string .= chr($sum);
         }
@@ -253,15 +254,15 @@ class ed25519
     public function dec2bin_i($decimal_i)
     {
         if ($this->gmp) {
-        $binary_i = '';
+            $binary_i = '';
             do {
-                $binary_i = substr($decimal_i, -1)%2 .$binary_i;
+                $binary_i = substr($decimal_i, -1) % 2 . $binary_i;
                 $decimal_i = gmp_div($decimal_i, '2', 0);
             } while (gmp_cmp($decimal_i, '0'));
         } else {
             $binary_i = '';
             do {
-                $binary_i = substr($decimal_i, -1)%2 .$binary_i;
+                $binary_i = substr($decimal_i, -1) % 2 . $binary_i;
                 $decimal_i = bcdiv($decimal_i, '2', 0);
             } while (bccomp($decimal_i, '0'));
         }
@@ -279,8 +280,8 @@ class ed25519
     public function encodepoint($P)
     {
         list($x, $y) = $P;
-        $bits = substr(str_pad(strrev($this->dec2bin_i($y)), $this->b-1, '0', STR_PAD_RIGHT), 0, $this->b-1);
-        $bits .= (substr($x, -1)%2 == 1 ? '1' : '0');
+        $bits = substr(str_pad(strrev($this->dec2bin_i($y)), $this->b - 1, '0', STR_PAD_RIGHT), 0, $this->b - 1);
+        $bits .= (substr($x, -1) % 2 == 1 ? '1' : '0');
 
         return $this->bitsToString($bits);
     }
@@ -288,9 +289,9 @@ class ed25519
     public function bit($h, $i)
     {
         if ($this->gmp) {
-            return (ord($h[(int) gmp_div($i, 8, 0)]) >> substr($i, -3)%8) & 1;
+            return (ord($h[(int)gmp_div($i, 8, 0)]) >> substr($i, -3) % 8) & 1;
         } else {
-            return (ord($h[(int) bcdiv($i, 8, 0)]) >> substr($i, -3)%8) & 1;
+            return (ord($h[(int)bcdiv($i, 8, 0)]) >> substr($i, -3) % 8) & 1;
         }
     }
 
@@ -306,19 +307,19 @@ class ed25519
         if ($this->gmp) {
             $h = $this->H($sk);
             $sum = 0;
-            for ($i = 3; $i < $this->b-2; $i++) {
+            for ($i = 3; $i < $this->b - 2; $i++) {
                 $sum = gmp_add($sum, gmp_mul(gmp_pow(2, $i), $this->bit($h, $i)));
             }
-            $a = gmp_add(gmp_pow(2, $this->b-2), $sum);
+            $a = gmp_add(gmp_pow(2, $this->b - 2), $sum);
             $A = $this->scalarmult($this->B, $a);
             $data = $this->encodepoint($A);
         } else {
             $h = $this->H($sk);
             $sum = 0;
-            for ($i = 3; $i < $this->b-2; $i++) {
+            for ($i = 3; $i < $this->b - 2; $i++) {
                 $sum = bcadd($sum, bcmul(bcpow(2, $i), $this->bit($h, $i)));
             }
-            $a = bcadd(bcpow(2, $this->b-2), $sum);
+            $a = bcadd(bcpow(2, $this->b - 2), $sum);
             $A = $this->scalarmult($this->B, $a);
             $data = $this->encodepoint($A);
         }
@@ -331,13 +332,13 @@ class ed25519
         if ($this->gmp) {
             $h = $this->H($m);
             $sum = 0;
-            for ($i = 0; $i < $this->b*2; $i++) {
+            for ($i = 0; $i < $this->b * 2; $i++) {
                 $sum = gmp_add($sum, gmp_mul(gmp_pow(2, $i), $this->bit($h, $i)));
             }
         } else {
             $h = $this->H($m);
             $sum = 0;
-            for ($i = 0; $i < $this->b*2; $i++) {
+            for ($i = 0; $i < $this->b * 2; $i++) {
                 $sum = bcadd($sum, bcmul(bcpow(2, $i), $this->bit($h, $i)));
             }
         }
@@ -350,26 +351,26 @@ class ed25519
         if ($this->gmp) {
             $h = $this->H($sk);
             $a = gmp_pow(2, (gmp_sub($this->b, 2)));
-            for ($i = 3; $i < $this->b-2; $i++) {
+            for ($i = 3; $i < $this->b - 2; $i++) {
                 $a = gmp_add($a, gmp_mul(gmp_pow(2, $i), $this->bit($h, $i)));
             }
-            $r = $this->Hint(substr($h, $this->b/8, ($this->b/4-$this->b/8)).$m);
+            $r = $this->Hint(substr($h, $this->b / 8, ($this->b / 4 - $this->b / 8)) . $m);
             $R = $this->scalarmult($this->B, $r);
             $encR = $this->encodepoint($R);
-            $S = $this->pymod(gmp_add($r, gmp_mul($this->Hint($encR.$pk.$m), $a)), $this->l);
+            $S = $this->pymod(gmp_add($r, gmp_mul($this->Hint($encR . $pk . $m), $a)), $this->l);
         } else {
             $h = $this->H($sk);
             $a = bcpow(2, (bcsub($this->b, 2)));
-            for ($i = 3; $i < $this->b-2; $i++) {
+            for ($i = 3; $i < $this->b - 2; $i++) {
                 $a = bcadd($a, bcmul(bcpow(2, $i), $this->bit($h, $i)));
             }
-            $r = $this->Hint(substr($h, $this->b/8, ($this->b/4-$this->b/8)).$m);
+            $r = $this->Hint(substr($h, $this->b / 8, ($this->b / 4 - $this->b / 8)) . $m);
             $R = $this->scalarmult($this->B, $r);
             $encR = $this->encodepoint($R);
-            $S = $this->pymod(bcadd($r, bcmul($this->Hint($encR.$pk.$m), $a)), $this->l);
+            $S = $this->pymod(bcadd($r, bcmul($this->Hint($encR . $pk . $m), $a)), $this->l);
         }
 
-        return $encR.$this->encodeint($S);
+        return $encR . $this->encodeint($S);
     }
 
     public function isoncurve($P)
@@ -379,7 +380,8 @@ class ed25519
             $x2 = gmp_pow($x, 2);
             $y2 = gmp_pow($y, 2);
 
-            return $this->pymod(gmp_sub(gmp_sub(gmp_sub($y2, $x2), 1), gmp_mul($this->d, gmp_mul($x2, $y2))), $this->q) == 0;
+            return $this->pymod(gmp_sub(gmp_sub(gmp_sub($y2, $x2), 1), gmp_mul($this->d, gmp_mul($x2, $y2))),
+                    $this->q) == 0;
         } else {
             list($x, $y) = $P;
             $x2 = bcpow($x, 2);
@@ -420,11 +422,11 @@ class ed25519
     {
         if ($this->gmp) {
             $y = 0;
-            for ($i = 0; $i < $this->b-1; $i++) {
+            for ($i = 0; $i < $this->b - 1; $i++) {
                 $y = gmp_add($y, gmp_mul(gmp_pow(2, $i), $this->bit($s, $i)));
             }
             $x = $this->xrecover($y);
-            if (substr($x, -1)%2 != $this->bit($s, $this->b-1)) {
+            if (substr($x, -1) % 2 != $this->bit($s, $this->b - 1)) {
                 $x = gmp_sub($this->q, $x);
             }
             $P = array($x, $y);
@@ -433,11 +435,11 @@ class ed25519
             }
         } else {
             $y = 0;
-            for ($i = 0; $i < $this->b-1; $i++) {
+            for ($i = 0; $i < $this->b - 1; $i++) {
                 $y = bcadd($y, bcmul(bcpow(2, $i), $this->bit($s, $i)));
             }
             $x = $this->xrecover($y);
-            if (substr($x, -1)%2 != $this->bit($s, $this->b-1)) {
+            if (substr($x, -1) % 2 != $this->bit($s, $this->b - 1)) {
                 $x = bcsub($this->q, $x);
             }
             $P = array($x, $y);
@@ -451,20 +453,20 @@ class ed25519
 
     public function checkvalid($s, $m, $pk)
     {
-        if (strlen($s) != $this->b/4) {
+        if (strlen($s) != $this->b / 4) {
             throw new \Exception('Signature length is wrong');
         }
-        if (strlen($pk) != $this->b/8) {
-            throw new \Exception('Public key length is wrong: '.strlen($pk));
+        if (strlen($pk) != $this->b / 8) {
+            throw new \Exception('Public key length is wrong: ' . strlen($pk));
         }
-        $R = $this->decodepoint(substr($s, 0, $this->b/8));
+        $R = $this->decodepoint(substr($s, 0, $this->b / 8));
         try {
             $A = $this->decodepoint($pk);
         } catch (\Exception $e) {
             return false;
         }
-        $S = $this->decodeint(substr($s, $this->b/8, $this->b/4));
-        $h = $this->Hint($this->encodepoint($R).$pk.$m);
+        $S = $this->decodeint(substr($s, $this->b / 8, $this->b / 4));
+        $h = $this->Hint($this->encodepoint($R) . $pk . $m);
 
         return $this->scalarmult($this->B, $S) == $this->edwards($R, $this->scalarmult($A, $h));
     }
@@ -479,7 +481,7 @@ class ed25519
             }
             $Q = $this->scalarmult($this->B, gmp_div($e, 2, 0));
             $Q = $this->edwards($Q, $Q);
-            if (substr($e, -1)%2 == 1) {
+            if (substr($e, -1) % 2 == 1) {
                 $Q = $this->edwards($Q, $this->B);
             }
         } else {
@@ -488,7 +490,7 @@ class ed25519
             }
             $Q = $this->scalarmult($this->B, bcdiv($e, 2, 0));
             $Q = $this->edwards($Q, $Q);
-            if (substr($e, -1)%2 == 1) {
+            if (substr($e, -1) % 2 == 1) {
                 $Q = $this->edwards($Q, $this->B);
             }
         }
