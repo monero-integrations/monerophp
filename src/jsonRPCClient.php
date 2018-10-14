@@ -1,4 +1,5 @@
 <?php
+
 /**
  * jsonRPCClient.php
  *
@@ -69,12 +70,9 @@ class jsonRPCClient
 
     public function setCurlOptions($pOptionsArray)
     {
-        if (is_array($pOptionsArray))
-        {
+        if (is_array($pOptionsArray)) {
             $this->curl_options = $pOptionsArray + $this->curl_options;
-        }
-        else
-        {
+        } else {
             throw new InvalidArgumentException('Invalid options type.');
         }
         return $this;
@@ -91,7 +89,12 @@ class jsonRPCClient
         // send params as an object or an array
         //$pParams = ($this->parameters_structure == 'object') ? $pParams[0] : array_values($pParams);
         // Request (method invocation)
-        $request = json_encode(array('jsonrpc' => '2.0', 'method' => $pMethod, 'params' => $pParams, 'id' => $requestId));
+        $request = json_encode(array(
+            'jsonrpc' => '2.0',
+            'method' => $pMethod,
+            'params' => $pParams,
+            'id' => $requestId
+        ));
         // if is_debug mode is true then add url and request to is_debug
         $this->debug('Url: ' . $this->url . "\r\n", false);
         $this->debug('Request: ' . $request . "\r\n", false);
@@ -102,19 +105,18 @@ class jsonRPCClient
         $responseDecoded = json_decode($responseMessage, true);
         // check if decoding json generated any errors
         $jsonErrorMsg = $this->getJsonLastErrorMsg();
-        $this->validate( !is_null($jsonErrorMsg), $jsonErrorMsg . ': ' . $responseMessage);
+        $this->validate(!is_null($jsonErrorMsg), $jsonErrorMsg . ': ' . $responseMessage);
         // check if response is correct
         $this->validate(empty($responseDecoded['id']), 'Invalid response data structure: ' . $responseMessage);
-        $this->validate($responseDecoded['id'] != $requestId, 'Request id: ' . $requestId . ' is different from Response id: ' . $responseDecoded['id']);
-        if (isset($responseDecoded['error']))
-        {
+        $this->validate($responseDecoded['id'] != $requestId,
+            'Request id: ' . $requestId . ' is different from Response id: ' . $responseDecoded['id']);
+        if (isset($responseDecoded['error'])) {
             $errorMessage = 'Request have return error: ' . $responseDecoded['error']['message'] . '; ' . "\n" .
                 'Request: ' . $request . '; ';
-            if (isset($responseDecoded['error']['data']))
-            {
+            if (isset($responseDecoded['error']['data'])) {
                 $errorMessage .= "\n" . 'Error data: ' . $responseDecoded['error']['data'];
             }
-            $this->validate( !is_null($responseDecoded['error']), $errorMessage);
+            $this->validate(!is_null($responseDecoded['error']), $errorMessage);
         }
         return $responseDecoded['result'];
     }
@@ -123,8 +125,7 @@ class jsonRPCClient
     {
         // do the actual connection
         $ch = curl_init();
-        if ( !$ch)
-        {
+        if (!$ch) {
             throw new RuntimeException('Could\'t initialize a cURL session');
         }
         curl_setopt($ch, CURLOPT_URL, $this->url);
@@ -137,22 +138,19 @@ class jsonRPCClient
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        if ( !curl_setopt_array($ch, $this->curl_options))
-        {
+        if (!curl_setopt_array($ch, $this->curl_options)) {
             throw new RuntimeException('Error while setting curl options');
         }
         // send the request
         $response = curl_exec($ch);
         // check http status code
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (isset($this->httpErrors[$httpCode]))
-        {
+        if (isset($this->httpErrors[$httpCode])) {
             throw new RuntimeException('Response Http Error - ' . $this->httpErrors[$httpCode]);
         }
         // check for curl error
-        if (0 < curl_errno($ch))
-        {
-            throw new RuntimeException('Unable to connect to '.$this->url . ' Error: ' . curl_error($ch));
+        if (0 < curl_errno($ch)) {
+            throw new RuntimeException('Unable to connect to ' . $this->url . ' Error: ' . curl_error($ch));
         }
         // close the connection
         curl_close($ch);
@@ -161,8 +159,7 @@ class jsonRPCClient
 
     public function validate($pFailed, $pErrMsg)
     {
-        if ($pFailed)
-        {
+        if ($pFailed) {
             throw new RuntimeException($pErrMsg);
         }
     }
@@ -171,20 +168,19 @@ class jsonRPCClient
     {
         static $debug, $startTime;
         // is_debug off return
-        if (false === $this->is_debug)
-        {
+        if (false === $this->is_debug) {
             return;
         }
         // add
         $debug .= $pAdd;
         // get starttime
         $startTime = empty($startTime) ? array_sum(explode(' ', microtime())) : $startTime;
-        if (true === $pShow and !empty($debug))
-        {
+        if (true === $pShow and !empty($debug)) {
             // get endtime
             $endTime = array_sum(explode(' ', microtime()));
             // performance summary
-            $debug .= 'Request time: ' . round($endTime - $startTime, 3) . ' s Memory usage: ' . round(memory_get_usage() / 1024) . " kb\r\n";
+            $debug .= 'Request time: ' . round($endTime - $startTime,
+                    3) . ' s Memory usage: ' . round(memory_get_usage() / 1024) . " kb\r\n";
             echo nl2br($debug);
             // send output immediately
             flush();
@@ -195,17 +191,16 @@ class jsonRPCClient
 
     function getJsonLastErrorMsg()
     {
-        if (!function_exists('json_last_error_msg'))
-        {
+        if (!function_exists('json_last_error_msg')) {
             function json_last_error_msg()
             {
                 static $errors = array(
-                    JSON_ERROR_NONE           => 'No error',
-                    JSON_ERROR_DEPTH          => 'Maximum stack depth exceeded',
+                    JSON_ERROR_NONE => 'No error',
+                    JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
                     JSON_ERROR_STATE_MISMATCH => 'Underflow or the modes mismatch',
-                    JSON_ERROR_CTRL_CHAR      => 'Unexpected control character found',
-                    JSON_ERROR_SYNTAX         => 'Syntax error',
-                    JSON_ERROR_UTF8           => 'Malformed UTF-8 characters, possibly incorrectly encoded'
+                    JSON_ERROR_CTRL_CHAR => 'Unexpected control character found',
+                    JSON_ERROR_SYNTAX => 'Syntax error',
+                    JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded'
                 );
                 $error = json_last_error();
                 return array_key_exists($error, $errors) ? $errors[$error] : 'Unknown error (' . $error . ')';
@@ -213,12 +208,9 @@ class jsonRPCClient
         }
 
         // Fix PHP 5.2 error caused by missing json_last_error function
-        if (function_exists('json_last_error'))
-        {
+        if (function_exists('json_last_error')) {
             return json_last_error() ? json_last_error_msg() : null;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
