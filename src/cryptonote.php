@@ -5,6 +5,7 @@ Copyright (c) 2018 Monero-Integrations
     require_once("SHA3.php");
     require_once("ed25519.php");
     require_once("base58.php");
+    require_once("varint.php");
 
     class Cryptonote
     {
@@ -13,6 +14,7 @@ Copyright (c) 2018 Monero-Integrations
         {
             $this->ed25519 = new ed25519();
             $this->base58 = new base58();
+            $this->varint = new varint();
         }
 
         /*
@@ -118,30 +120,9 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex($this->ed25519->encodepoint($res));
         }
 
-        public function encode_varint($data)
-        {
-            $orig = $data;
-
-            if ($data < 0x80)
-            {
-               return bin2hex(pack('C', $data));
-            }
-
-            $encodedBytes = [];
-            while ($data > 0)
-            {
-               $encodedBytes[] = 0x80 | ($data & 0x7f);
-               $data >>= 7;
-            }
-
-            $encodedBytes[count($encodedBytes)-1] &= 0x7f;
-            $bytes = call_user_func_array('pack', array_merge(array('C*'), $encodedBytes));;
-            return bin2hex($bytes);
-        }
-
         public function derivation_to_scalar($der, $index)
         {
-            $encoded = $this->encode_varint($index);
+            $encoded = $this->varint->encode_varint($index);
             $data = $der . $encoded;
             return $this->hash_to_scalar($data);
         }
