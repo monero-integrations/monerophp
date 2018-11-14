@@ -69,7 +69,7 @@ Copyright (c) 2018 Monero-Integrations
          */
         public function derive_viewKey($spendKey)
         {
-            return $this->hash_to_scalar($spendkey);
+            return $this->hash_to_scalar($spendKey);
         }
 
         /*
