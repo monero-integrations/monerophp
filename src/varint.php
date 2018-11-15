@@ -25,6 +25,7 @@ Copyright (c) 2018 Monero-Integrations
             return bin2hex($bytes);
         }
         
+        // https://github.com/monero-project/research-lab/blob/master/source-code/StringCT-java/src/how/monero/hodl/util/VarInt.java
         public function decode_varint($data)
         {
             $result = 0;
@@ -40,13 +41,40 @@ Copyright (c) 2018 Monero-Integrations
                     $isLastByteInVarInt = false;
                     $i -= 128;
                 }
-                $result += ($i * (128 ** $c));
+                $result += ($i * (pow(128, $c)));
                 $c += 1;
                 $pos += 1;
                 
-                if ($isLastByteInVarInt);
+                if ($isLastByteInVarInt)
                     break;
             }
             return $result;
+        }
+        
+        public function pop_varint($data)
+        {
+            $result = 0;
+            $c = 0;
+            $pos = 0;
+            
+            while (true)
+            {
+                $isLastByteInVarInt = true;
+                $i = hexdec($data[$pos]);
+		        if ($i >= 128)
+		        {
+                    $isLastByteInVarInt = false;
+                    $i -= 128;
+                }
+                $result += ($i * (pow(128, $c)));
+                $c += 1;
+                $pos += 1;
+                
+                if ($isLastByteInVarInt)
+                    break;
+            }
+            for ($x = 0; $x < $pos; $x++)
+               array_shift($data);
+            return $data;
         }
     }
