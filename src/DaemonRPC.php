@@ -476,4 +476,22 @@ class DaemonRPC
     return $this->get_bans();
   }
 
+/**
+   *
+   * Look up information regarding hard fork voting and readiness
+   *
+   * @param  none
+   *
+   * @return object  Example: {
+   *   "fee": 0,
+   *   "status": "OK",
+   *   "untrusted": false
+   * }
+   *
+   */
+ public function getfeeestimate()
+  {
+    return $this->_run('get_fee_estimate');
+  }
+  
 }
