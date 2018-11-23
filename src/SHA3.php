@@ -34,6 +34,7 @@ vim: ts=4 noet ai */
 	This uses PHP's native byte strings. Supports 32-bit as well as 64-bit
 	systems. Also for LE vs. BE systems.
 */
+// Keccak-256 added by cryptochangements
 class SHA3 {
 	const SHA3_224 = 1;
 	const SHA3_256 = 2;
