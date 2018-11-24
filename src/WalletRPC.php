@@ -440,149 +440,147 @@ class WalletRPC
    * }
    *
    */
-  public function transfer($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
-  {
-    if (is_array($amount)) { // Parameters passed in as object/dictionary
-      $params = $amount;
+    public function transfer($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
+    {
+        if (is_array($amount)) { // Parameters passed in as object/dictionary
+            $params = $amount;
 
-      if (array_key_exists('destinations', $params)) {
-        $destinations = $params['destinations'];
+            if (array_key_exists('destinations', $params)) {
+                $destinations = $params['destinations'];
+                if (!is_array($destinations)) {
+                    throw new \Exception('Error: destinations must be an array');
+                }
 
-        if (!is_array($destinations)) {
-          throw new \Exception('Error: destinations must be an array');
+                foreach ($destinations as $id => $destination) {
+                    if (array_key_exists('amount', $destination)) {
+                        $destinations[$id]['amount'] = $this->_transform($destination['amount']);
+                    } else {
+                        throw new \Exception('Error: Amount required');
+                    }
+                    if (!array_key_exists('address', $destination)) {
+                        throw new \Exception('Error: Address required');
+                    }
+                }
+            } else {
+                if (array_key_exists('amount', $params)) {
+                    $amount = $params['amount'];
+                } else {
+                    throw new \Exception('Error: Amount required');
+                }
+                if (array_key_exists('address', $params)) {
+                    $address = $params['address'];
+                } else {
+                    throw new \Exception('Error: Address required');
+                }
+                $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+            }
+            if (array_key_exists('payment_id', $params)) {
+                $payment_id = $params['payment_id'];
+            }
+            if (array_key_exists('mixin', $params)) {
+                $mixin = $params['mixin'];
+            }
+            if (array_key_exists('account_index', $params)) {
+                $account_index = $params['account_index'];
+            }
+            if (array_key_exists('subaddr_indices', $params)) {
+                $subaddr_indices = $params['subaddr_indices'];
+            }
+            if (array_key_exists('priority', $params)) {
+                $priority = $params['priority'];
+            }
+            if (array_key_exists('unlock_time', $params)) {
+                $unlock_time = $params['unlock_time'];
+            }
+            if (array_key_exists('do_not_relay', $params)) {
+                $do_not_relay = $params['do_not_relay'];
+            }
+        } else { // Legacy parameters used
+            $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
         }
 
-        foreach ($destinations as $destination) {
-          if (array_key_exists('amount', $destinations[$destination])) {
-            $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
-          } else {
-            throw new \Exception('Error: Amount required');
-          }
-          if (!array_key_exists('address', $destinations[$destination])) {
-            throw new \Exception('Error: Address required');
-          }
-        }
-      } else {
-        if (array_key_exists('amount', $params)) {
-          $amount = $params['amount'];
-        } else {
-          throw new \Exception('Error: Amount required');
-        }
-        if (array_key_exists('address', $params)) {
-          $address = $params['address'];
-        } else {
-          throw new \Exception('Error: Address required');
-        }
-        $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
-      }
-      if (array_key_exists('payment_id', $params)) {
-        $payment_id = $params['payment_id'];
-      }
-      if (array_key_exists('mixin', $params)) {
-        $mixin = $params['mixin'];
-      }
-      if (array_key_exists('account_index', $params)) {
-        $account_index = $params['account_index'];
-      }
-      if (array_key_exists('subaddr_indices', $params)) {
-        $subaddr_indices = $params['subaddr_indices'];
-      }
-      if (array_key_exists('priority', $params)) {
-        $priority = $params['priority'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
-      if (array_key_exists('do_not_relay', $params)) {
-        $do_not_relay = $params['do_not_relay'];
-      }
-    } else { // Legacy parameters used
-      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+        $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
+        $transfer_method = $this->_run('transfer', $params);
+
+        $save = $this->store(); // Save wallet state after transfer
+
+        return $transfer_method;
     }
-
-    $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
-    $transfer_method = $this->_run('transfer', $params);
-
-    $save = $this->store(); // Save wallet state after transfer
-
-    return $transfer_method;
-  }
 
   /**
    *
    * Same as transfer, but splits transfer into more than one transaction if necessary
    *
    */
-  public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
-  {
-    if (is_array($amount)) { // Parameters passed in as object/dictionary
-      $params = $amount;
+    public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
+    {
+        if (is_array($amount)) { // Parameters passed in as object/dictionary
+            $params = $amount;
 
-      if (array_key_exists('destinations', $params)) {
-        $destinations = $params['destinations'];
+            if (array_key_exists('destinations', $params)) {
+                $destinations = $params['destinations'];
+                if (!is_array($destinations)) {
+                    throw new \Exception('Error: destinations must be an array');
+                }
 
-        if (!is_array($destinations)) {
-          throw new \Exception('Error: destinations must be an array');
+                foreach ($destinations as $id => $destination) {
+                    if (array_key_exists('amount', $destination)) {
+                        $destinations[$id]['amount'] = $this->_transform($destination['amount']);
+                    } else {
+                        throw new \Exception('Error: Amount required');
+                    }
+                    if (!array_key_exists('address', $destination)) {
+                        throw new \Exception('Error: Address required');
+                    }
+                }
+            } else {
+                if (array_key_exists('amount', $params)) {
+                    $amount = $params['amount'];
+                } else {
+                    throw new \Exception('Error: Amount required');
+                }
+                if (array_key_exists('address', $params)) {
+                    $address = $params['address'];
+                } else {
+                    throw new \Exception('Error: Address required');
+                }
+                $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+            }
+            if (array_key_exists('mixin', $params)) {
+                $mixin = $params['mixin'];
+            }
+            if (array_key_exists('payment_id', $params)) {
+                $payment_id = $params['payment_id'];
+            }
+            if (array_key_exists('account_index', $params)) {
+                $account_index = $params['account_index'];
+            }
+            if (array_key_exists('subaddr_indices', $params)) {
+                $subaddr_indices = $params['subaddr_indices'];
+            }
+            if (array_key_exists('priority', $params)) {
+                $priority = $params['priority'];
+            }
+            if (array_key_exists('unlock_time', $params)) {
+                $unlock_time = $params['unlock_time'];
+            }
+            if (array_key_exists('unlock_time', $params)) {
+                $unlock_time = $params['unlock_time'];
+            }
+            if (array_key_exists('do_not_relay', $params)) {
+                $do_not_relay = $params['do_not_relay'];
+            }
+        } else { // Legacy parameters used
+            $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
         }
 
-        foreach ($destinations as $destination) {
-          if (array_key_exists('amount', $destinations[$destination])) {
-            $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
-          } else {
-            throw new \Exception('Error: Amount required');
-          }
-          if (!array_key_exists('address', $destinations[$destination])) {
-            throw new \Exception('Error: Address required');
-          }
-        }
-      } else {
-        if (array_key_exists('amount', $params)) {
-          $amount = $params['amount'];
-        } else {
-          throw new \Exception('Error: Amount required');
-        }
-        if (array_key_exists('address', $params)) {
-          $address = $params['address'];
-        } else {
-          throw new \Exception('Error: Address required');
-        }
-        $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
-      }
-      if (array_key_exists('mixin', $params)) {
-        $mixin = $params['mixin'];
-      }
-      if (array_key_exists('payment_id', $params)) {
-        $payment_id = $params['payment_id'];
-      }
-      if (array_key_exists('account_index', $params)) {
-        $account_index = $params['account_index'];
-      }
-      if (array_key_exists('subaddr_indices', $params)) {
-        $subaddr_indices = $params['subaddr_indices'];
-      }
-      if (array_key_exists('priority', $params)) {
-        $priority = $params['priority'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
-      if (array_key_exists('do_not_relay', $params)) {
-        $do_not_relay = $params['do_not_relay'];
-      }
-    } else { // Legacy parameters used
-      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+        $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+        $transfer_method = $this->_run('transfer_split', $params);
+
+        $save = $this->store(); // Save wallet state after transfer
+
+        return $transfer_method;
     }
-
-    $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
-    $transfer_method = $this->_run('transfer_split', $params);
-
-    $save = $this->store(); // Save wallet state after transfer
-
-    return $transfer_method;
-  }
 
   /**
    *
