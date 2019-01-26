@@ -300,4 +300,39 @@
         $address = $this->encode_address($public_spendKey, $public_viewKey);
         return $address;
     }
+      
+    // m = Hs(a || i)
+    public function generate_subaddr_secret_key($major_index, $minor_index, $sec_key)
+    {
+	$prefix = "5375624164647200";
+	$index = pack("II", $major_index, $minor_index);
+	return $this->hash_to_scalar($prefix . $sec_key . bin2hex($index));
+    }
+	
+	public function generate_subaddress_spend_public_key($spend_public_key, $subaddr_secret_key)
+	{
+	$mInt = $this->ed25519->decodeint(hex2bin($subaddr_secret_key));
+	$mG = $this->ed25519->scalarmult_base($mInt);
+	$D = $this->ed25519->edwards($this->ed25519->decodepoint(hex2bin($spend_public_key)), $mG);
+	return bin2hex($this->ed25519->encodepoint($D));
+	}
+	
+	public function generate_subaddr_view_public_key($subaddr_spend_public_key, $view_secret_key)
+	{
+		$point = $this->ed25519->scalarmult($this->ed25519->decodepoint(hex2bin($subaddr_spend_public_key)), $this->ed25519->decodeint(hex2bin($view_secret_key)));
+		return bin2hex($this->ed25519->encodepoint($point));
+	}
+	
+	public function generate_subaddress($major_index, $minor_index, $view_secret_key, $spend_public_key)
+	{
+		$subaddr_secret_key = $this->generate_subaddr_secret_key($major_index, $minor_index, $view_secret_key);
+		$subaddr_public_spend_key = $this->generate_subaddress_spend_public_key($spend_public_key, $subaddr_secret_key);
+		$subaddr_public_view_key = $this->generate_subaddr_view_public_key($subaddr_public_spend_key, $view_secret_key);
+		// mainnet subaddress network byte is 42 (0x2a)
+        $data = "2a" . $subaddr_public_spend_key . $subaddr_public_view_key;
+        $checksum = $this->keccak_256($data);
+        $encoded = $this->base58->encode($data . substr($checksum, 0, 8));
+		return $encoded;
+	}
+      
     }
