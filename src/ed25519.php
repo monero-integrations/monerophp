@@ -30,6 +30,8 @@
  *
  * @link   http://ed25519.cr.yp.to/software.html Other ED25519 implementations this is referenced from
  */
+namespace MoneroIntegrations\MoneroPhp;
+
 class ed25519
 {
     public $b;

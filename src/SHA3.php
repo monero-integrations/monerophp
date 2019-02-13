@@ -35,6 +35,9 @@ vim: ts=4 noet ai */
 	systems. Also for LE vs. BE systems.
 */
 // Keccak-256 added by cryptochangements
+
+namespace MoneroIntegrations\MoneroPhp;
+
 class SHA3 {
 	const SHA3_224 = 1;
 	const SHA3_256 = 2;

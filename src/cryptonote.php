@@ -20,10 +20,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 */
-    require_once("SHA3.php");
-    require_once("ed25519.php");
-    require_once("base58.php");
-    require_once("varint.php");
+
+namespace MoneroIntegrations\MoneroPhp;
 
     class Cryptonote
     {

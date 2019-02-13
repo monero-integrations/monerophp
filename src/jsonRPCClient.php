@@ -8,6 +8,8 @@
  * @author Kacper Rowinski <krowinski@implix.com>
  * http://implix.com
  */
+namespace MoneroIntegrations\MoneroPhp;
+
 class jsonRPCClient
 {
     protected $url = null, $is_debug = false, $parameters_structure = 'array';
