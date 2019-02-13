@@ -101,7 +101,7 @@ class jsonRPCClient
         // decode and create array ( can be object, just set to false )
         $responseDecoded = json_decode($responseMessage, true);
         // check if decoding json generated any errors
-        $jsonErrorMsg = $this->getJsonLastErrorMsg();
+        $jsonErrorMsg = json_last_error_msg();
         $this->validate( !is_null($jsonErrorMsg), $jsonErrorMsg . ': ' . $responseMessage);
         // check if response is correct
         $this->validate(empty($responseDecoded['id']), 'Invalid response data structure: ' . $responseMessage);
@@ -190,36 +190,6 @@ class jsonRPCClient
             flush();
             // clean static
             $debug = $startTime = null;
-        }
-    }
-
-    function getJsonLastErrorMsg()
-    {
-        if (!function_exists('json_last_error_msg'))
-        {
-            function json_last_error_msg()
-            {
-                static $errors = array(
-                    JSON_ERROR_NONE           => 'No error',
-                    JSON_ERROR_DEPTH          => 'Maximum stack depth exceeded',
-                    JSON_ERROR_STATE_MISMATCH => 'Underflow or the modes mismatch',
-                    JSON_ERROR_CTRL_CHAR      => 'Unexpected control character found',
-                    JSON_ERROR_SYNTAX         => 'Syntax error',
-                    JSON_ERROR_UTF8           => 'Malformed UTF-8 characters, possibly incorrectly encoded'
-                );
-                $error = json_last_error();
-                return array_key_exists($error, $errors) ? $errors[$error] : 'Unknown error (' . $error . ')';
-            }
-        }
-
-        // Fix PHP 5.2 error caused by missing json_last_error function
-        if (function_exists('json_last_error'))
-        {
-            return json_last_error() ? json_last_error_msg() : null;
-        }
-        else
-        {
-            return null;
         }
     }
 }
