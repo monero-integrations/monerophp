@@ -20,7 +20,13 @@
         }
     ],
     "require": {
-        "php": ">=5.6.0"
+        "php": ">=5.6.0",
+        "ext-bcmath": "*",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "suggest": {
+        "ext-gmp": "Used to have a multiple math precision for generating address"
     },
     "autoload": {
         "psr-4": {
