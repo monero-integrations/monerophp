@@ -30,7 +30,7 @@
  *
  */
 
-require_once('jsonRPCClient.php');
+namespace MoneroIntegrations\MoneroPhp;
 
 class daemonRPC
 {
