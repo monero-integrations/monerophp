@@ -104,7 +104,7 @@ class jsonRPCClient
         $responseDecoded = json_decode($responseMessage, true);
         // check if decoding json generated any errors
         $jsonErrorMsg = json_last_error_msg();
-        $this->validate( !is_null($jsonErrorMsg), $jsonErrorMsg . ': ' . $responseMessage);
+        $this->validate( !is_null($jsonErrorMsg) && $jsonErrorMsg !== 'No error' , $jsonErrorMsg . ': ' . $responseMessage);
         // check if response is correct
         $this->validate(empty($responseDecoded['id']), 'Invalid response data structure: ' . $responseMessage);
         $this->validate($responseDecoded['id'] != $requestId, 'Request id: ' . $requestId . ' is different from Response id: ' . $responseDecoded['id']);
