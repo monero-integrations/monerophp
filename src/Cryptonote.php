@@ -23,6 +23,8 @@
 
 namespace MoneroIntegrations\MoneroPhp;
 
+    use Exception;
+
     class Cryptonote
     {
         protected $ed25519;
@@ -30,7 +32,7 @@ namespace MoneroIntegrations\MoneroPhp;
         {
             $this->ed25519 = new ed25519();
             $this->base58 = new base58();
-            $this->varint = new varint();
+            $this->varint = new Varint();
         }
 
         /*

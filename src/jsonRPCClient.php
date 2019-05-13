@@ -10,6 +10,9 @@
  */
 namespace MoneroIntegrations\MoneroPhp;
 
+use InvalidArgumentException;
+use RuntimeException;
+
 class jsonRPCClient
 {
     protected $url = null, $is_debug = false, $parameters_structure = 'array';

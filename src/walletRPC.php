@@ -31,6 +31,8 @@
 
 namespace MoneroIntegrations\MoneroPhp;
 
+use Exception;
+
 class walletRPC
 {
   private $client;

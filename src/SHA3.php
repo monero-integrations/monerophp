@@ -38,6 +38,9 @@ vim: ts=4 noet ai */
 
 namespace MoneroIntegrations\MoneroPhp;
 
+use Error;
+use Exception;
+
 class SHA3 {
 	const SHA3_224 = 1;
 	const SHA3_256 = 2;
