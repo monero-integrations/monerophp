@@ -37,6 +37,9 @@ vim: ts=4 noet ai */
 
 namespace MoneroIntegrations\MoneroPhp;
 
+use Error;
+use Exception;
+
 class SHA3 {
 	const SHA3_224 = 1;
 	const SHA3_256 = 2;
@@ -754,7 +757,7 @@ class ed25519
             }
             $P = array($x, $y);
             if (!$this->isoncurve($P)) {
-                throw new \Exception("Decoding point that is not on curve");
+                throw new Exception("Decoding point that is not on curve");
             }
         } else {
             $y = 0;
@@ -767,7 +770,7 @@ class ed25519
             }
             $P = array($x, $y);
             if (!$this->isoncurve($P)) {
-                throw new \Exception("Decoding point that is not on curve");
+                throw new Exception("Decoding point that is not on curve");
             }
         }
 
@@ -777,15 +780,15 @@ class ed25519
     public function checkvalid($s, $m, $pk)
     {
         if (strlen($s) != $this->b/4) {
-            throw new \Exception('Signature length is wrong');
+            throw new Exception('Signature length is wrong');
         }
         if (strlen($pk) != $this->b/8) {
-            throw new \Exception('Public key length is wrong: '.strlen($pk));
+            throw new Exception('Public key length is wrong: '.strlen($pk));
         }
         $R = $this->decodepoint(substr($s, 0, $this->b/8));
         try {
             $A = $this->decodepoint($pk);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
         $S = $this->decodeint(substr($s, $this->b/8, $this->b/4));
