@@ -535,7 +535,7 @@ class walletRPC
    * Same as transfer, but splits transfer into more than one transaction if necessary
    *
    */
-  public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
+  public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 10, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
   {
     if (is_array($amount)) { // Parameters passed in as object/dictionary
       $params = $amount;
@@ -661,7 +661,7 @@ class walletRPC
    * }
    *
    */
-  public function sweep_all($address, $subaddr_indices = '', $account_index = 0, $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = false)
+  public function sweep_all($address, $subaddr_indices = '', $account_index = 0, $payment_id = '', $mixin = 10, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = false)
   {
     if (is_array($address)) { // Parameters passed in as object/dictionary
       $params = $address;
@@ -730,7 +730,7 @@ class walletRPC
    * }
    *
    */
-  public function sweep_single($key_image, $address, $payment_id = '', $mixin = 6, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = 0)
+  public function sweep_single($key_image, $address, $payment_id = '', $mixin = 10, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = 0)
   {
     if (is_array($key_image)) { // Parameters passed in as object/dictionary
       $params = $key_image;
