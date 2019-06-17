@@ -462,7 +462,7 @@ class walletRPC
    * }
    *
    */
-  public function transfer($amount, $address = '', $payment_id = '', $mixin = 6, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
+  public function transfer($amount, $address = '', $payment_id = '', $mixin = 10, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
   {
     if (is_array($amount)) { // Parameters passed in as object/dictionary
       $params = $amount;
