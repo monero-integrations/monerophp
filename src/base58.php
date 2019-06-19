@@ -29,8 +29,6 @@
 
 namespace MoneroIntegrations\MoneroPhp;
 
-use Exception;
-
 class base58
 {
   static $alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
