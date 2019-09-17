@@ -223,7 +223,9 @@ namespace MoneroIntegrations\MoneroPhp;
     {
         // mainnet network byte is 18 (0x12)
         $data = "12" . $pSpendKey . $pViewKey;
-        $encoded = $this->base58->encode($data);
+        $checksum = $this->keccak_256($data);
+        $encoded  = $this->base58->encode($data . substr($checksum, 0, 8));
+	    
         return $encoded;
     }
 
