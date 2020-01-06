@@ -47,7 +47,7 @@ class base58
    */
   private function hex_to_bin($hex)
   {
-    if (gettype($hex) != 'string') {
+    if (!is_string($hex)) {
       throw new Exception('base58->hex_to_bin(): Invalid input type (must be a string)');
     }
     if (strlen($hex) % 2 != 0) {
@@ -72,7 +72,7 @@ class base58
    */
   private function bin_to_hex($bin)
   {
-    if (gettype($bin) != 'array') {
+    if (!is_array($bin) {
       throw new Exception('base58->bin_to_hex(): Invalid input type (must be an array)');
     }
 
@@ -94,7 +94,7 @@ class base58
    */
   private function str_to_bin($str)
   {
-    if (gettype($str) != 'string') {
+    if (!is_string($str) {
       throw new Exception('base58->str_to_bin(): Invalid input type (must be a string)');
     }
 
@@ -116,7 +116,7 @@ class base58
    */
   private function bin_to_str($bin)
   {
-    if (gettype($bin) != 'array') {
+    if (!is_array($bin)) {
       throw new Exception('base58->bin_to_str(): Invalid input type (must be an array)');
     }
 
@@ -138,7 +138,7 @@ class base58
    */
   private function uint8_be_to_64($data)
   {
-    if (gettype($data) != 'array') {
+    if (!is_array($data)) {
       throw new Exception ('base58->uint8_be_to_64(): Invalid input type (must be an array)');
     }
 
@@ -180,10 +180,10 @@ class base58
    */
   private function uint64_to_8_be($num, $size)
   {
-    if (gettype($num) != ('integer' || 'double')) {
+    if (!is_numeric($num)) {
       throw new Exception ('base58->uint64_to_8_be(): Invalid input type ($num must be a number)');
     }
-    if (gettype($size) != 'integer') {
+    if (!is_int($size)) {
       throw new Exception ('base58->uint64_to_8_be(): Invalid input type ($size must be an integer)');
     }
     if ($size < 1 || $size > 8) {
@@ -211,13 +211,13 @@ class base58
    */
   private function encode_block($data, $buf, $index)
   {
-    if (gettype($data) != 'array') {
+    if (!is_array($data)) {
       throw new Exception('base58->encode_block(): Invalid input type ($data must be an array)');
     }
-    if (gettype($buf) != 'array') {
+    if (!is_array($buf)) {
       throw new Exception('base58->encode_block(): Invalid input type ($buf must be an array)');
     }
-    if (gettype($index) != ('integer' || 'double')) {
+    if (!is_int($index)) {
       throw new Exception('base58->encode_block(): Invalid input type ($index must be a number)');
     }
     if (count($data) < 1 or count($data) > self::$full_encoded_block_size) {
@@ -246,7 +246,7 @@ class base58
    */
   public function encode($hex)
   {
-    if (gettype($hex) != 'string') {
+    if (!is_string($hex)) {
       throw new Exception ('base58->encode(): Invalid input type (must be a string)');
     }
 
@@ -285,13 +285,13 @@ class base58
    */
   private function decode_block($data, $buf, $index)
   {
-    if (gettype($data) != 'array') {
+    if (!is_array($data)) {
       throw new Exception('base58->decode_block(): Invalid input type ($data must be an array)');
     }
-    if (gettype($buf) != 'array') {
+    if (!is_array($buf)) {
       throw new Exception('base58->decode_block(): Invalid input type ($buf must be an array)');
     }
-    if (gettype($index) != ('integer' || 'double')) {
+    if (!is_int($index)) {
       throw new Exception('base58->decode_block(): Invalid input type ($index must be a number)');
     }
 
@@ -338,7 +338,7 @@ class base58
    */
   public function decode($enc)
   {
-    if (gettype($enc) != 'string') {
+    if (!is_string($enc)) {
       throw new Exception ('base58->decode(): Invalid input type (must be a string)');
     }
 
@@ -381,7 +381,7 @@ class base58
    */
   private function index_of($haystack, $needle)
   {
-    if (gettype($haystack) != 'array') {
+    if (!is_string($haystack)) {
       throw new Exception ('base58->decode(): Invalid input type ($haystack must be an array)');
     }
     // if (gettype($needle) != 'string') {
