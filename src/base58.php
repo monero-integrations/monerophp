@@ -381,7 +381,7 @@ class base58
    */
   private function index_of($haystack, $needle)
   {
-    if (!is_string($haystack)) {
+    if (!is_array($haystack)) {
       throw new Exception ('base58->decode(): Invalid input type ($haystack must be an array)');
     }
     // if (gettype($needle) != 'string') {
