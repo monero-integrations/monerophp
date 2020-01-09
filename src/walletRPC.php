@@ -1547,6 +1547,23 @@ class walletRPC
 
   /**
    *
+   * Refresh the wallet after opening
+   *
+   * @param  int  $start_height  Block height from which to start    (optional)
+   *
+   * @return object  Example: {
+   *   // TODO example
+   * }
+   *
+   */
+  public function refresh($start_height = null)
+  {
+    $params = array('start_height' => $start_height);
+    return $this->_run('refresh', $params);
+  }
+
+  /**
+   *
    * Rescan the blockchain for spent outputs
    *
    */
