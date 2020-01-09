@@ -78,7 +78,7 @@ class walletRPC
         $password = $params['password'];
       }
     }
-    
+
     $this->host = $host;
     $this->port = $port;
     $this->protocol = $protocol;
@@ -130,9 +130,8 @@ class walletRPC
    */
   public function _transform($amount = 0)
   {
-    //
     return intval(bcmul($amount, 1000000000000));
-   }
+  }
 
   /**
    *
@@ -452,7 +451,7 @@ class walletRPC
    *
    *   OR
    *
-   * @param  object  $params            Array containing any of the options listed above, where only amount and address or a destionation's array are required
+   * @param  object  $params            Array containing any of the options listed above, where only amount and address or a destination's array are required
    *
    * @return object  Example: {
    *   "amount": "1000000000000",
