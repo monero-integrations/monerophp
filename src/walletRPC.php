@@ -192,6 +192,20 @@ class walletRPC
     return $this->_run('get_address', $params);
   }
 
+    /**
+     * @param string $address Monero address
+     * @return object Example: {
+    * "index": {
+    * "major": 0,
+    * "minor": 1
+    * }
+    * }
+     */
+  public function get_address_index($address){
+      $params = array('address' => $address);
+      return $this->_run('get_address_index', $params);
+  }
+
   /**
    *
    * Alias of get_address()
