@@ -266,7 +266,7 @@ class walletRPC
    *
    * Look up wallet accounts
    *
-   * @param  none
+   * @param  string $tag Optional filtering by tag
    *
    * @return object  Example: {
    *   "subaddress_accounts": {
@@ -291,9 +291,9 @@ class walletRPC
    * }
    *
    */
-  public function get_accounts()
+  public function get_accounts($tag = null)
   {
-    return $this->_run('get_accounts');
+    return (is_null($tag)) ? $this->_run('get_accounts') : $this->_run('get_accounts', array('tag' => $tag));
   }
 
   /**
