@@ -28,6 +28,7 @@
  */
 
 namespace MoneroIntegrations\MoneroPhp;
+use Exception;
 
 class base58
 {
@@ -72,7 +73,7 @@ class base58
    */
   private function bin_to_hex($bin)
   {
-    if (!is_array($bin) {
+    if (!is_array($bin)) {
       throw new Exception('base58->bin_to_hex(): Invalid input type (must be an array)');
     }
 
@@ -94,7 +95,7 @@ class base58
    */
   private function str_to_bin($str)
   {
-    if (!is_string($str) {
+    if (!is_string($str)) {
       throw new Exception('base58->str_to_bin(): Invalid input type (must be a string)');
     }
 
@@ -217,7 +218,7 @@ class base58
     if (!is_array($buf)) {
       throw new Exception('base58->encode_block(): Invalid input type ($buf must be an array)');
     }
-    if (!is_int($index)) {
+    if (!is_int($index) && !is_float($index)) {
       throw new Exception('base58->encode_block(): Invalid input type ($index must be a number)');
     }
     if (count($data) < 1 or count($data) > self::$full_encoded_block_size) {
