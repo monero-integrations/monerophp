@@ -292,7 +292,7 @@ class base58
     if (!is_array($buf)) {
       throw new Exception('base58->decode_block(): Invalid input type ($buf must be an array)');
     }
-    if (!is_int($index)) {
+    if (!is_int($index) && !is_float($index)) {
       throw new Exception('base58->decode_block(): Invalid input type ($index must be a number)');
     }
 
