@@ -1820,4 +1820,68 @@ class walletRPC
   {
       return $this->client;
   }
+
+  /**
+   *
+   * Validate a wallet address
+   *
+   * @param  address  The wallet address to verify
+   *
+   * @return TODO
+   *
+   */
+  public function validate_address($address)
+  {
+    $params = array('address' => $address);
+    return $this->_run('validate_address', $params);
+  }
+
+  /**
+   *
+   * Create a wallet on the RPC server from an address, view key, and (optionally) spend key.
+   * 
+   * @param filename is the name of the wallet to create on the RPC server
+   * @param password is the password encrypt the wallet
+   * @param address is the address of the wallet to construct
+   * @param viewKey is the view key of the wallet to construct
+   * @param spendKey is the spend key of the wallet to construct or null to create a view-only wallet
+   * @param language is the wallet and mnemonic's language (default = "English")
+   * @param restoreHeight is the block height to restore (i.e. scan the chain) from (default = 0)
+   * @param saveCurrent specifies if the current RPC wallet should be saved before being closed (default = true)
+   *
+   * @return TODO
+   *
+   */
+  public function generate_from_keys($filename, $password, $address, $viewKey, $spendKey = '', $language = 'English', $restoreHeight = 0, $saveCurrent = true)
+  {
+    $params = array(
+      'filename'          => $filename,
+      'password'          => $password,
+      'address'           => $address,
+      'viewkey'           => $viewKey,
+      'spendkey'          => $spendKey,
+      'language'          => $language,
+      'restore_height'    => $restoreHeight,
+      'autosave_current'  => $saveCurrent
+    );
+    return $this->_run('generate_from_keys', $params);
+  }
+
+  /**
+   *
+   * Exchange mutlisignature information
+   *
+   * @param  password wallet password
+   * @param multisig_info info (from eg. prepare_multisig)
+   *
+   *
+   */
+  public function exchange_multisig_keys($password, $multisig_info)
+  {
+    $params = array(
+      'password' => $password,
+      'multisig_info' => $multisig_info
+    );
+    return $this->_run('exchange_multisig_keys', $params);
+  }
 }
