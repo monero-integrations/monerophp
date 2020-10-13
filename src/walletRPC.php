@@ -1872,8 +1872,7 @@ class walletRPC
    * Exchange mutlisignature information
    *
    * @param  password wallet password
-   * @param multisig_info info (from eg. prepare_multisig)
-   *
+   * @param  multisig_info info (from eg. prepare_multisig)
    *
    */
   public function exchange_multisig_keys($password, $multisig_info)
@@ -1883,5 +1882,76 @@ class walletRPC
       'multisig_info' => $multisig_info
     );
     return $this->_run('exchange_multisig_keys', $params);
+  }
+
+  /**
+   * Export all outputs in hex format
+   */
+  public function export_outputs()
+  {
+    return $this->_run('export_outputs');
+  }
+
+  /**
+   *
+   * Import outputs in hex format
+   *
+   * @param outputs_data_hex wallet outputs in hex format
+   *
+   *
+   */
+  public function import_outputs($outputs_data_hex)
+  {
+    $params = array(
+      'outputs_data_hex' => $outputs_data_hex,
+    );
+    return $this->_run('import_outputs', $params);
+  }
+
+  /**
+   * Set whether and how often to automatically refresh the current wallet
+   * 
+   * @param enable Enable or disable automatic refreshing (default = true)
+   * @param period The period of the wallet refresh cycle (i.e. time between refreshes) in seconds
+   * 
+   */
+  public function auto_refresh($enable = true, $period = 10)
+  {
+    $params = array(
+      'enable' => $enable,
+      'period' => $period
+    );
+    return $this->_run('auto_refresh', $params);
+  }
+
+  /**
+   * Change a wallet password
+   * 
+   * @param old_password old password or blank
+   * @param new_password new password or blank
+   */
+  public function change_wallet_password($old_password = '', $new_password = '')
+  {
+    $params = array(
+      'old_password' => $old_password,
+      'new_password' => $new_password
+    );
+    return $this->_run('change_wallet_password', $params);
+  }
+
+  /**
+   * Close wallet
+   */
+  public function close_wallet()
+  {
+    return $this->_run('close_wallet');
+  }
+
+  /**
+   * Get RPC version Major & Minor integer-format, where Major is the first 16 bits and Minor the last 16 bits.
+   */
+  public function get_version()
+  {
+    return $this->_run('get_version');
   }
 }
