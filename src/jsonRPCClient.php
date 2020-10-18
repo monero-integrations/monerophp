@@ -23,7 +23,6 @@ class jsonRPCClient
         CURLOPT_TIMEOUT => 8
     );
 
-
     private $httpErrors = array(
         400 => '400 Bad Request',
         401 => '401 Unauthorized',
@@ -87,16 +86,13 @@ class jsonRPCClient
 
     public function _run($pMethod, $pParams)
     {
-        static $requestId = 0;
-        // generating unique id per process
-        $requestId++;
-        // check if given params are correct
+         // check if given params are correct
         $this->validate(false === is_scalar($pMethod), 'Method name has no scalar value');
         // $this->validate(false === is_array($pParams), 'Params must be given as array');
         // send params as an object or an array
         //$pParams = ($this->parameters_structure == 'object') ? $pParams[0] : array_values($pParams);
         // Request (method invocation)
-        $request = json_encode(array('jsonrpc' => '2.0', 'method' => $pMethod, 'params' => $pParams, 'id' => $requestId));
+        $request = json_encode(array('jsonrpc' => '2.0', 'method' => $pMethod, 'params' => $pParams));
         // if is_debug mode is true then add url and request to is_debug
         $this->debug('Url: ' . $this->url . "\r\n", false);
         $this->debug('Request: ' . $request . "\r\n", false);
@@ -109,8 +105,6 @@ class jsonRPCClient
         $jsonErrorMsg = json_last_error_msg();
         $this->validate( !is_null($jsonErrorMsg) && $jsonErrorMsg !== 'No error' , $jsonErrorMsg . ': ' . $responseMessage);
         // check if response is correct
-        //$this->validate(empty($responseDecoded['id']), 'Invalid response data structure: ' . $responseMessage);
-        //$this->validate($responseDecoded['id'] != $requestId, 'Request id: ' . $requestId . ' is different from Response id: ' . $responseDecoded['id']);
         if (isset($responseDecoded['error']))
         {
             $errorMessage = 'Request have return error: ' . $responseDecoded['error']['message'] . '; ' . "\n" .
