@@ -1825,14 +1825,24 @@ class walletRPC
    *
    * Validate a wallet address
    *
-   * @param  address  The wallet address to verify
+   * @param  address - string; The address to validate. 
+   *         any_net_type - boolean (Optional); If true, consider addresses belonging to any of the three Monero networks (mainnet, stagenet, and testnet) valid. Otherwise, only consider an address valid if it belongs to the network on which the rpc-wallet's current daemon is running (Defaults to false). 
+   *         allow_openalias - boolean (Optional); If true, consider OpenAlias-formatted addresses valid (Defaults to false).
    *
-   * @return TODO
+   * @return valid - boolean; True if the input address is a valid Monero address. 
+   *         integrated - boolean; True if the given address is an integrated address. 
+   *         subaddress - boolean; True if the given address is a subaddress 
+   *         nettype - string; Specifies which of the three Monero networks (mainnet, stagenet, and testnet) the address belongs to. 
+   *         openalias_address - boolean; True if the address is OpenAlias-formatted.
    *
    */
-  public function validate_address($address)
+  public function validate_address($address, $strict_nettype = false, $allow_openalias = false)
   {
-    $params = array('address' => $address);
+    $params = array(
+      'address' => $address,
+      'any_net_type' => $strict_nettype,
+      'allow_openalias' => $allow_openalias
+    );
     return $this->_run('validate_address', $params);
   }
 
@@ -1882,6 +1892,21 @@ class walletRPC
       'multisig_info' => $multisig_info
     );
     return $this->_run('exchange_multisig_keys', $params);
+  }
+
+  /**
+   *
+   * Obtain information (destination, amount) about a transfer
+   *
+   * @param  txinfo txinfo
+   *
+   */
+  public function describe_transfer($txinfo)
+  {
+    $params = array(
+      'multisig_txset' => $txinfo,
+    );
+    return $this->_run('describe_transfer', $params);
   }
 
   /**
