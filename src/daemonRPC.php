@@ -45,7 +45,7 @@ class daemonRPC
 
   /**
    *
-   * Start a connection with the the Monero daemon (monerod)
+   * Start a connection with the Monero daemon (monerod)
    *
    * @param  string  $host      Monero daemon IP hostname            (optional)
    * @param  int     $port      Monero daemon port                   (optional)
