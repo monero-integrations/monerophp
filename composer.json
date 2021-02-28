@@ -4,7 +4,7 @@
     "keywords": ["Monero", "XMR", "monerod", "monero-wallet-rpc", "cryptonote", "JSONRPC", "JSON-RPC", "cryptocurrency"],
     "homepage": "https://github.com/monero-integrations/monerophp",
     "type": "library",
-    "version" : "1.0",
+    "version" : "1.0.1",
     "license": "MIT",
     "authors": [
         {
