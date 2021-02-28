@@ -97,7 +97,8 @@ class jsonRPCClient
             }
             $this->validate( !is_null($responseDecoded['error']), $errorMessage);
         }
-        return $responseDecoded['result'];
+        if(isset($responseDecoded['result']) return $responseDecoded['result'];
+        else return -1;
     }
 
     protected function & getResponse(&$pRequest, &$path)
