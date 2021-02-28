@@ -32,6 +32,7 @@
 
 namespace MoneroIntegrations\MoneroPhp;
 use RuntimeException;
+use Exception;
 
 class daemonRPC
 {
@@ -91,7 +92,7 @@ class daemonRPC
     $this->user = $user;
     $this->password = $password;
     $this->check_SSL = $SSL;
-    
+
     $this->url = $protocol.'://'.$host.':'.$port.'/';
     $this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
   }
@@ -106,9 +107,9 @@ class daemonRPC
    * @return string  Call result
    *
    */
-  protected function _run($method, $params = null)
+  protected function _run($method, $params = null, $path = null)
   {
-    return $this->client->_run($method, $params);
+    return $this->client->_run($method, $params, $path);
   }
 
   /**
@@ -165,7 +166,7 @@ class daemonRPC
   {
     $params = array('wallet_address' => $wallet_address, 'reserve_size' => $reserve_size);
 
-    return $this->client->_run('getblocktemplate', $params);
+    return $this->client->_run('getblocktemplate', $params, null);
   }
 
   /**
@@ -471,7 +472,7 @@ class daemonRPC
    */
   public function setbans($bans)
   {
-    return $this->set_bans($params);
+    return $this->set_bans($bans);
   }
 
   /**
@@ -525,6 +526,28 @@ class daemonRPC
     {
         return $this->flush_txpool($txids);    
     }
+
+    /**
+   *
+   * Get height
+   *
+   */
+   public function get_height()
+   {
+       return $this->_run(null, null, 'getheight');
+   }
+
+   /**
+    *
+    * Get transactions
+    *
+    */
+    public function get_transactions($txs_hashes = NULL)
+    {
+        $params = array('txs_hashes' => $txs_hashes, 'decode_as_json' => true);
+        return $this->_run(null, null, 'gettransactions');
+    }
+    
   
     public function get_alt_blocks_hashes()
     {

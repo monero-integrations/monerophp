@@ -106,9 +106,9 @@ class walletRPC
    * @return string  Call result
    *
    */
-  private function _run($method, $params = null)
+  private function _run($method, $params = null, $path = null)
   {
-    $result = $this->client->_run($method, $params);
+    $result = $this->client->_run($method, $params, $path);
     return $result;
   }
 

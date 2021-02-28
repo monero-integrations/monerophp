@@ -48,11 +48,6 @@ class jsonRPCClient
         $this->SSL = $check_SSL;
     }
 
-    private function getHttpErrorMessage($pErrorNumber)
-    {
-        return isset($this->httpErrors[$pErrorNumber]) ? $this->httpErrors[$pErrorNumber] : null;
-    }
-
     public function setDebug($pIsDebug)
     {
         $this->is_debug = !empty($pIsDebug);
@@ -92,7 +87,6 @@ class jsonRPCClient
         $this->validate( !is_null($jsonErrorMsg) && $jsonErrorMsg !== 'No error' , $jsonErrorMsg . ': ' . $responseMessage);
         // check if response is correct
         $this->validate(empty($responseDecoded['id']), 'Invalid response data structure: ' . $responseMessage);
-        $this->validate($responseDecoded['id'] != $requestId, 'Request id: ' . $requestId . ' is different from Response id: ' . $responseDecoded['id']);
         if (isset($responseDecoded['error']))
         {
             $errorMessage = 'Request have return error: ' . $responseDecoded['error']['message'] . '; ' . "\n" .
@@ -123,7 +117,7 @@ class jsonRPCClient
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-        if ($SSL)
+        if ($this->SSL)
         {
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '2');
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
