@@ -31,6 +31,7 @@
  */
 
 namespace MoneroIntegrations\MoneroPhp;
+use RuntimeException;
 
 class daemonRPC
 {
@@ -54,7 +55,7 @@ class daemonRPC
    * @param  string  $password  Monero daemon RPC passphrase         (optional)
    *
    */
-  function __construct($host = '127.0.0.1', $port = 18081, $protocol = 'http', $user = null, $password = null)
+   function __construct($host = '127.0.0.1', $port = 18081, $SSL = true, $user = null, $password = null)
   {
     if (is_array($host)) { // Parameters passed in as object/dictionary
       $params = $host;
@@ -77,15 +78,22 @@ class daemonRPC
         $password = $params['password'];
       }
     }
+      
+      if ($SSL) {
+          $protocol = 'https';
+      } else {
+          $protocol = 'http';
+      }
     
     $this->host = $host;
     $this->port = $port;
     $this->protocol = $protocol;
     $this->user = $user;
     $this->password = $password;
-
-    $this->url = $protocol.'://'.$host.':'.$port.'/json_rpc';
-    $this->client = new jsonRPCClient($this->url, $this->user, $this->password);
+    $this->check_SSL = $SSL;
+    
+    $this->url = $protocol.'://'.$host.':'.$port.'/';
+    $this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
   }
 
   /**
@@ -500,7 +508,7 @@ class daemonRPC
    *
    *Flush Transaction Pool
    *
-   * @param $txids 
+   * @param $txids - array
    * Optional, list of transactions IDs to flush from pool (all tx ids flushed if empty).
    *
    * @return status - string; General RPC error code. "OK" means everything looks good.
@@ -510,12 +518,137 @@ class daemonRPC
         return $this->_run('flush_txpool', $txids);    
     }
  
-/**
-*Alias of flush_txpool
-*/
-  public function flushtxpool()
+    /**
+    * Alias of flush_txpool
+    */
+    public function flushtxpool($txids)
     {
-        return $this->flush_txpool();    
+        return $this->flush_txpool($txids);    
     }
   
+    public function get_alt_blocks_hashes()
+    {
+        return $this->_run(null, null, 'get_alt_blocks_hashes');
+    }
+    
+    public function is_key_image_spent($key_images)
+    {
+        if (is_string($key_images)) {
+            $key_images = array($key_images);
+        }
+        if(!is_array($key_images)){
+            throw new Exception('Error: key images must be an array or a string');
+        }
+        $params = array('key_images' => $key_images);
+        return $this->_run(null, $params, 'is_key_image_spent');
+    }
+    
+    public function send_raw_transaction($tx_as_hex, $do_not_relay = false, $do_sanity_checks = true)
+    {
+        $params = array('tx_as_hex' => $tx_as_hex, 'do_not_relay' => $do_not_relay, 'do_sanity_checks' = $do_sanity_checks);
+        return $this->_run(null, $params, 'send_raw_transaction');
+    }
+    
+    public function start_mining($background_mining, $ignore_battery = false, $miner_address, $threads_count = 1)
+    {
+        if($threads_count < 0){
+            throw new Exception('Error: threads_count must be a positive integer');
+        }
+        $params = array('do_background_mining' => $background_mining, 'ignore_battery' => $ignore_battery, 'miner_address' => $miner_address, 'threads_count' => $threads_count);
+        return $this->_run(null, $params, 'start_mining');
+    }
+    
+    public function stop_mining()
+    {
+        return $this->_run(null, null, 'stop_mining');
+    }
+    
+    public function mining_status()
+    {
+        return $this->_run(null, null, 'mining_status');
+    }
+    
+    public function save_bc()
+    {
+        return $this->_run(null, null, 'save_bc');
+    }
+
+    public function get_peer_list($public_only = true)
+    {
+        $params = array('public_only' => $public_only);
+        return $this->_run(null, $params, 'get_peer_list');
+    }
+    
+    public function set_log_hash_rate($visible = true)
+    {
+        $params = array('visible' => $visible);
+        return $this->_run(null, $params, 'set_log_hash_rate');
+    }
+    
+    public function set_log_level($log_level = 0)
+    {
+        if(!is_int($log_level)){
+            throw new Exception('Error: log_level must be an integer');
+        }
+        $params = array('level' => $log_level);
+        return $this->_run(null, $params, 'set_log_level');
+    }
+    
+    public function set_log_categories($category)
+    {
+        $params = array('categories' => $category);
+        return $this->_run(null, $params, 'set_log_categories');
+    }
+    
+    public function get_transaction_pool()
+    {
+        return $this->_run(null, null, 'get_transaction_pool');   
+    }
+    
+    public function get_transaction_pool_stats(){
+        return $this->_run(null, null, 'get_transaction_pool_stats');
+    }
+    
+    public function stop_daemon()
+    {
+        return $this->_run(null, null, 'stop_daemon');
+    }
+    
+    public function get_limit()
+    {
+        return $this->_run(null, null, 'get_limit');
+    }
+    
+    public function set_limit($limit_down, $limit_up)
+    {
+        $params = array('limit_down' => $limit_down, 'limit_up' => $limit_up);
+        return $this->_run(null, $params, 'set_limit');
+    }
+    
+    public function out_peers()
+    {
+        return $this->_run(null, null, 'out_peers');
+    }
+    
+    public function in_peers()
+    {
+        return $this->_run(null, null, 'in_peers');
+    }
+    
+    public function start_save_graph()
+    {
+        return $this->_run(null, null, 'start_save_graph');
+    }
+    
+    public function stop_save_graph()
+    {
+        return $this->_run(null, null, 'stop_save_graph');
+    }
+    
+    public function get_outs($outputs)
+    {
+        $params = array('outputs' => $outputs);
+        return $this->_run(null, null, 'get_outs');
+    }
+
 }
