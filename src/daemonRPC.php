@@ -31,7 +31,6 @@
  */
 
 namespace MoneroIntegrations\MoneroPhp;
-use RuntimeException;
 use Exception;
 
 class daemonRPC
@@ -568,7 +567,7 @@ class daemonRPC
     
     public function send_raw_transaction($tx_as_hex, $do_not_relay = false, $do_sanity_checks = true)
     {
-        $params = array('tx_as_hex' => $tx_as_hex, 'do_not_relay' => $do_not_relay, 'do_sanity_checks' = $do_sanity_checks);
+        $params = array('tx_as_hex' => $tx_as_hex, 'do_not_relay' => $do_not_relay, 'do_sanity_checks' => $do_sanity_checks);
         return $this->_run(null, $params, 'send_raw_transaction');
     }
     

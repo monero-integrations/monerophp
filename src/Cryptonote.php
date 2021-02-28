@@ -174,7 +174,7 @@ namespace MoneroIntegrations\MoneroPhp;
             {
                 if($parsed[0] == 2 || $parsed[2] == 1)
                 {
-                    $offset = (($parsed[1] + 2) *2) + 2;
+                    //$offset = (($parsed[1] + 2) *2) + 2;
                     return substr($extra, (($parsed[1] + 2) *2) + 2, 64);
                 }
             }
