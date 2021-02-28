@@ -1321,7 +1321,7 @@ class walletRPC
         $params[$input_types] = true;
       }
     } else {
-      if (is_object($input_types)) { // Parameters passed in as object/dictionary
+      if (is_object($input_types) || is_array($input_types)) { // Parameters passed in as object/dictionary
         $params = $input_types;
 
         if (array_key_exists('input_types', $params)) {
