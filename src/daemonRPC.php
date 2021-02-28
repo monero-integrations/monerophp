@@ -496,4 +496,26 @@ class daemonRPC
     return $this->get_bans();
   }
 
+  /**
+   *
+   *Flush Transaction Pool
+   *
+   * @param $txids 
+   * Optional, list of transactions IDs to flush from pool (all tx ids flushed if empty).
+   *
+   * @return status - string; General RPC error code. "OK" means everything looks good.
+   */
+    public function flush_txpool($txids)
+    {
+        return $this->_run('flush_txpool', $txids);    
+    }
+ 
+/**
+*Alias of flush_txpool
+*/
+  public function flushtxpool()
+    {
+        return $this->flush_txpool();    
+    }
+  
 }
