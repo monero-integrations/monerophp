@@ -482,7 +482,7 @@ class walletRPC
    * }
    *
    */
-  public function transfer($amount, $address = '', $payment_id = '', $mixin = 10, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
+  public function transfer($amount, $address = '', $payment_id = '', $mixin = 10, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false, $ringsize = 11)
   {
     if (is_array($amount)) { // Parameters passed in as object/dictionary
       $params = $amount;
@@ -518,7 +518,7 @@ class walletRPC
         $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
       }
       if (array_key_exists('payment_id', $params)) {
-        $payment_id = $params['payment_id'];
+        throw new Exception('Error: Payment ids have been deprecated.');
       }
       if (array_key_exists('mixin', $params)) {
         $mixin = $params['mixin'];
@@ -542,7 +542,7 @@ class walletRPC
       $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
     }
 
-    $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'payment_id' => $payment_id, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay);
+    $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay, 'ringsize' => $ringsize);
     $transfer_method = $this->_run('transfer', $params);
 
     $save = $this->store(); // Save wallet state after transfer
