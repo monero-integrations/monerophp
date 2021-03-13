@@ -306,7 +306,7 @@ class base58
     for ($i = count($data) - 1; $i >= 0; $i--) {
       $digit = strpos(self::$alphabet, chr($data[$i]));
       if ($digit < 0) {
-        throw new Exception("base58->decode_block(): Invalid character ($digit \"{$digit}\" not found in base58::$alphabet)");
+        throw new Exception("base58->decode_block(): Invalid character ($digit \"{$digit}\" not found in base58::\$alphabet)");
       }
 
       $product = bcadd(bcmul($order, $digit), $res_num);
