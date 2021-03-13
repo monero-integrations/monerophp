@@ -102,11 +102,12 @@ class daemonRPC
    *
    * @param  string  $method  RPC method to call
    * @param  string  $params  Parameters to pass  (optional)
+   * @param  string  $path    Path of API (by default json_rpc)
    *
    * @return string  Call result
    *
    */
-  protected function _run($method, $params = null, $path = null)
+  protected function _run($method, $params = null, $path = 'json_rpc')
   {
     return $this->client->_run($method, $params, $path);
   }
