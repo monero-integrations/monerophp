@@ -879,7 +879,7 @@ class walletRPC
   public function get_bulk_payments($payment_ids, $min_block_height)
   {
     // $params = array('payment_ids' => $payment_ids, 'min_block_height' => $min_block_height); // does not work
-    $params = array('min_block_height' => $min_block_height); // does not work
+    //$params = array('min_block_height' => $min_block_height); // does not work
     $params = [];
     if (!is_array($payment_ids)) {
       throw new Exception('Error: Payment IDs must be array.');
@@ -887,7 +887,7 @@ class walletRPC
     if ($payment_ids) {
       $params['payment_ids'] = [];
       foreach ($payment_ids as $payment_id) {
-        array_push($params['payment_ids'], $payment_id);
+        $params['payment_ids'][] = $payment_id;
       }
     }
     return $this->_run('get_bulk_payments', $params);
@@ -1351,7 +1351,7 @@ class walletRPC
       }
 
       $params = array('account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height);
-      for ($i = 0; $i < count($input_types); $i++) {
+      for ($i = 0, $iMax = count($input_types); $i < $iMax; $i++) {
         $params[$input_types[$i]] = true;
       }
     }

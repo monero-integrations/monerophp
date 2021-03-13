@@ -78,7 +78,7 @@ class base58
     }
 
     $res = [];
-    for ($i = 0; $i < count($bin); $i++) {
+    for ($i = 0, $iMax = count($bin); $i < $iMax; $i++) {
       $res[] = substr('0'.dechex($bin[$i]), -2);
     }
     return join($res);
@@ -100,7 +100,7 @@ class base58
     }
 
     $res = array_fill(0, strlen($str), 0);
-    for ($i = 0; $i < strlen($str); $i++) {
+    for ($i = 0, $iMax = strlen($str); $i < $iMax; $i++) {
       $res[$i] = ord($str[$i]);
     }
     return $res;
@@ -122,7 +122,7 @@ class base58
     }
 
     $res = array_fill(0, count($bin), 0);
-    for ($i = 0; $i < count($bin); $i++) {
+    for ($i = 0, $iMax = count($bin); $i < $iMax; $i++) {
       $res[$i] = chr($bin[$i]);
     }
     return preg_replace('/[[:^print:]]/', '', join($res)); // preg_replace necessary to strip errant non-ASCII characters eg. ''
@@ -322,7 +322,7 @@ class base58
     }
   
     $tmp_buf = self::uint64_to_8_be($res_num, $res_size);
-    for ($i = 0; $i < count($tmp_buf); $i++) {
+    for ($i = 0, $iMax = count($tmp_buf); $i < $iMax; $i++) {
       $buf[$i + $index] = $tmp_buf[$i];
     }
     return $buf;
