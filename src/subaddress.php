@@ -28,12 +28,13 @@ class subaddress
 	{
 		$this->ed25519 = new ed25519();
 		$this->base58 = new base58();
+		$this->gmp = extension_loaded('gmp');
 	}
 	
 	private function sc_reduce($input)
 	{
 		$integer = $this->ed25519->decodeint(hex2bin($input));
-		if($this->ed25519->gmp)
+		if($this->gmp)
 			$modulo = gmp_mod($integer , $this->ed25519->l);
 		else
 			$modulo = bcmod($integer , $this->ed25519->l);
