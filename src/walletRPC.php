@@ -781,9 +781,6 @@ class walletRPC
       if (array_key_exists('unlock_time', $params)) {
         $unlock_time = $params['unlock_time'];
       }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
       if (array_key_exists('below_amount', $params)) {
         $below_amount = $params['below_amount'];
       }
