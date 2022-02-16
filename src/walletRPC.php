@@ -494,13 +494,13 @@ class walletRPC
           throw new Exception('Error: destinations must be an array');
         }
 
-        foreach ($destinations as $destination) {
-          if (array_key_exists('amount', $destinations[$destination])) {
-            $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
+        foreach ($destinations as $destination_index => $destination) {
+          if (array_key_exists('amount', $destination)) {
+            $destinations[$destination_index]['amount'] = $this->_transform($destination['amount']);
           } else {
             throw new Exception('Error: Amount required');
           }
-          if (!array_key_exists('address', $destinations[$destination])) {
+          if (!array_key_exists('address', $destination)) {
             throw new Exception('Error: Address required');
           }
         }
