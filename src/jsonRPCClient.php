@@ -36,7 +36,7 @@ class JsonRpcClient
         return $this;
     }
 
-    public function call(string $method, array $params = []): ?array
+    public function call(string $method, array $params = [], string $path = 'json_rpc'): ?array
     {
         $requestData = [
             'jsonrpc' => '2.0',
@@ -47,7 +47,7 @@ class JsonRpcClient
         $this->debug('Request: ' . json_encode($requestData));
 
         try {
-            $response = $this->client->post('/json_rpc', [
+            $response = $this->client->post('/' . $path, [
                 'json' => $requestData,
             ]);
 

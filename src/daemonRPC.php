@@ -107,7 +107,7 @@ class daemonRPC
    * @return string  Call result
    *
    */
-  protected function _run($method, $params = null, $path = 'json_rpc')
+  protected function _run($method, $params = [], $path = 'json_rpc')
   {
     return $this->client->call($method, $params, $path);
   }

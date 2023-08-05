@@ -106,7 +106,7 @@ class walletRPC
    * @return string  Call result
    *
    */
-  private function _run($method, $params = null, $path = 'json_rpc')
+  private function _run($method, $params = [], $path = 'json_rpc')
   {
     $result = $this->client->call($method, $params, $path);
     return $result;
