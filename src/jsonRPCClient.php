@@ -16,10 +16,12 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\ResponseInterface;
 
+use RuntimeException;
+
 class JsonRpcClient
 {
     protected $client;
-    protected $isDebug = true;
+    protected $isDebug = false;
 
     public function __construct(string $url, string $username, string $password, bool $checkSSL = true)
     {
@@ -56,24 +58,20 @@ class JsonRpcClient
 
             return $this->handleResponse($responseBody);
         } catch (GuzzleException $e) {
-            $this->debug('Error: ' . $e->getMessage());
-            return null;
+            throw new RuntimeException('Response HTTP Error - ' . $e->getMessage());
         }
     }
 
     protected function handleResponse(string $responseBody): ?array
     {
         $response = json_decode($responseBody, true);
-
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->debug('Error: Invalid JSON response');
-            return null;
+            throw new RuntimeException('Invalid JSON response');
         }
 
         if (!isset($response['result'])) {
             $error = $response['error']['message'] ?? 'Unknown error';
-            $this->debug('Error: ' . $error);
-            return null;
+            throw new RuntimeException($error);
         }
 
         return $response['result'];
