@@ -24,7 +24,8 @@
         "php": ">=7.2.0",
         "ext-bcmath": "*",
         "ext-curl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.7"
     },
     "suggest": {
         "ext-gmp": "Used to have a multiple math precision for generating address"
