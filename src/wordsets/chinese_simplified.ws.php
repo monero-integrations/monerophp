@@ -2,6 +2,8 @@
 
 namespace MoneroIntegrations\MoneroPhp\mnemonic;
 
+use MoneroIntegrations\MoneroPhp\wordset;
+
 class chinese_simplified implements wordset {
 
     /* Returns name of wordset in the wordset's native language.

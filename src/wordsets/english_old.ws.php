@@ -2,6 +2,8 @@
 
 namespace MoneroIntegrations\MoneroPhp\mnemonic;
 
+use MoneroIntegrations\MoneroPhp\wordset;
+
 /*!
  * Older version of English word list and map.
  */

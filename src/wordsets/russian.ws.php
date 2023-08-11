@@ -2,6 +2,8 @@
 
 namespace MoneroIntegrations\MoneroPhp\mnemonic;
 
+use MoneroIntegrations\MoneroPhp\wordset;
+
 class russian implements wordset {
 
     /* Returns name of wordset in the wordset's native language.

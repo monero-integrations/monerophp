@@ -2,6 +2,8 @@
 
 namespace MoneroIntegrations\MoneroPhp\mnemonic;
 
+use MoneroIntegrations\MoneroPhp\wordset;
+
 class portuguese implements wordset {
 
     /* Returns name of wordset in the wordset's native language.
