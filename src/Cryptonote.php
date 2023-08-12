@@ -20,9 +20,11 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 */
-
 namespace MoneroIntegrations\MoneroPhp;
 
+require 'vendor/autoload.php';
+
+use kornrunner\Keccak as keccak;
     use Exception;
 
     class Cryptonote
@@ -42,9 +44,10 @@ namespace MoneroIntegrations\MoneroPhp;
          */
         public function keccak_256($message)
         {
-            $keccak256 = SHA3::init (SHA3::KECCAK_256);
-            $keccak256->absorb (hex2bin($message));
-            return bin2hex ($keccak256->squeeze (32)) ;
+            $message_bin = hex2bin($message);
+            $hash = keccak::hash($message_bin, 256);
+
+            return $hash;
         }
 
         /*
