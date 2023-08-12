@@ -1,38 +1,63 @@
 <?php
-
+/**
+ * Monero PHP Library - Russian Wordset for Mnemonic Generation
+ *
+ * This file contains the implementation of the Russian wordset
+ * for generating mnemonics in the Monero PHP library.
+ *
+ * @package MoneroIntegrations\MoneroPhp\mnemonic
+ */
 namespace MoneroIntegrations\MoneroPhp\mnemonic;
 
+/**
+ * Russian Wordset Class
+ *
+ * This class defines the Russian wordset for generating mnemonics
+ * in the Monero PHP library.
+ *
+ * @package MoneroIntegrations\MoneroPhp\mnemonic
+ */
 class russian implements wordset {
-
-    /* Returns name of wordset in the wordset's native language.
+    /**
+     * Returns name of wordset in the wordset's native language.
+     * 
      * This is a human-readable string, and should be capitalized
      * if the language supports it.
+     * 
+     * @return string
      */
     static public function name() : string {
         return "русский язык";
         
     }
 
-    /* Returns name of wordset in english.    
-     * This is a human-readable string, and should be capitalized
+    /**
+     * Returns name of wordset in English.
+     * 
+     * This is a human-readable string, and should be capitalized.
+     * 
+     * @return string
      */
     static public function english_name() : string {
         return "Russian";
     }
 
-    /* Returns integer indicating length of unique prefix,
+     /**
+     * Returns integer indicating length of unique prefix,
      * such that each prefix of this length is unique across
      * the entire set of words.
      *
-     * A value of 0 indicates that there is no unique prefix
-     * and the entire word must be used instead.
-     */    
+     * @return int
+     */
     static public function prefix_length() : int {
         return 3;  // first 3 letters of each word in wordset is unique.
     }
     
-    /* Returns an array of all words in the wordset.
-     */    
+    /**
+     * Returns the array of all words in the wordset.
+     *
+     * @return array
+     */ 
     static public function words() : array {
         return [
             "абажур",

@@ -30,14 +30,25 @@
 namespace MoneroIntegrations\MoneroPhp;
 
 /**
- * A standalone class to encode, decode, and validate monero mnemonics
- * All access to this class is via static methods, so it never needs to
- * be instantiated.
+ * A standalone class to encode, decode, and validate Monero mnemonics.
+ *
+ * This class provides static methods for encoding, decoding, and validating Monero mnemonics.
+ * It is designed to be used without instantiation as the methods are all static.
+ *
+ * @package MoneroIntegrations\MoneroPhp\mnemonic
  */
 class mnemonic {
 
     /**
-     * Given a mnemonic seed word list, return a string of the seed checksum.
+     * Calculate the checksum of a mnemonic seed word list.
+     *
+     * Given a mnemonic seed word list, this function calculates and returns
+     * a string representing the seed checksum.
+     *
+     * @param array $words The array of mnemonic seed words.
+     * @param int $prefix_len The length of the prefix used for each word.
+     * 
+     * @return string The seed checksum.
      */
     static function checksum($words, $prefix_len) {
         $plen = $prefix_len;
@@ -54,16 +65,29 @@ class mnemonic {
     }
     
     /**
-     * Given a mnemonic seed word list, check if checksum word is valid.
-     * Returns boolean value.
+     * Validate the checksum of a mnemonic seed word list.
+     *
+     * Given a mnemonic seed word list and a prefix length, this function checks
+     * if the checksum word is valid.
+     *
+     * @param array $words The array of mnemonic seed words.
+     * @param int $prefix_len The length of the prefix used for each word.
+     * 
+     * @return bool Returns true if the checksum is valid, otherwise false.
      */
     static function validate_checksum($words, $prefix_len) {
         return (self::checksum($words, $prefix_len) == $words[count($words)-1]) ? true : false;
     }
 
     /**
-     * Given an 8 byte word (or shorter),
-     * pads to 8 bytes (adds 0 at left) and reverses endian byte order.
+     * Swap endian byte order and pad a hexadecimal word.
+     *
+     * Given an 8-byte or shorter hexadecimal word, this function pads it to
+     * 8 bytes (adding leading zeros) and reverses the byte order.
+     *
+     * @param string $word The input hexadecimal word.
+     * 
+     * @return string The processed hexadecimal word.
      */
     static function swap_endian($word) {
         $word = str_pad ( $word, 8, 0, STR_PAD_LEFT);
@@ -71,12 +95,16 @@ class mnemonic {
     }
     
     /**
-     * Given a hexadecimal key string (seed),
-     * return it's mnemonic representation.
+     * Encode a hexadecimal key as a mnemonic representation.
      *
-     * @todo if anyone can make this work reliably with
-     * pure PHP math (no gmp or bcmath), please submit a
-     * pull request.
+     * Given a hexadecimal key (seed), this function encodes it into a mnemonic representation.
+     *
+     * @param string $seed The hexadecimal key to encode.
+     * @param string|null $wordset_name The name of the wordset to use.
+     * 
+     * @return array An array of mnemonic words.
+     * 
+     * @todo Consider supporting pure PHP math for gmp functions.
      */
     static function encode($seed, $wordset_name = null) {
         assert(mb_strlen($seed) % 8 == 0);
@@ -100,9 +128,15 @@ class mnemonic {
     }
 
     /**
-     * Given a hexadecimal key string (seed),
-     * return it's mnemonic representation plus an
-     * extra checksum word.
+     * Encode a hexadecimal key as a mnemonic representation with an extra checksum word.
+     *
+     * Given a hexadecimal key (seed), this function encodes it into a mnemonic representation
+     * and appends an extra checksum word.
+     *
+     * @param string $message The hexadecimal key to encode.
+     * @param string|null $wordset_name The name of the wordset to use.
+     * 
+     * @return array An array of mnemonic words including the checksum word.
      */
     static function encode_with_checksum($message, $wordset_name = null) {
         $list = self::encode($message, $wordset_name);
@@ -113,11 +147,17 @@ class mnemonic {
     }
     
     /**
-     * Given a mnemonic word list, return a hexadecimal encoded string (seed).
+     * Decode a mnemonic word list into a hexadecimal encoded string (seed).
      *
-     * @todo if anyone can make this work reliably with
-     * pure PHP math (no gmp or bcmath), please submit a
-     * pull request.
+     * Given a mnemonic word list and an optional wordset name, this function decodes
+     * the mnemonic and returns a hexadecimal encoded string (seed).
+     *
+     * @param array $wlist The array of mnemonic words.
+     * @param string|null $wordset_name The name of the wordset to use.
+     * 
+     * @return string The hexadecimal encoded seed.
+     * 
+     * @todo Consider supporting pure PHP math for gmp functions.
      */
     static function decode($wlist, $wordset_name = null) {
         $wordset = self::get_wordset_by_name( $wordset_name );
@@ -159,7 +199,13 @@ class mnemonic {
     }
     
     /**
-     * Given a wordset identifier, returns the full wordset
+     * Get the full wordset by its identifier.
+     *
+     * Given a wordset identifier, this function returns the full wordset array.
+     *
+     * @param string|null $name The name of the wordset.
+     * 
+     * @return array The wordset information.
      */
     static public function get_wordset_by_name($name = null) {
         $name = $name ?: 'english';
@@ -210,16 +256,23 @@ class mnemonic {
     
     
     /**
-     * returns list of available wordsets
+     * Get a list of available wordsets.
+     *
+     * This function returns an array containing the names of all available wordsets.
+     *
+     * @return array The list of available wordset names.
      */
     static public function get_wordset_list() {
         return array_keys( self::get_wordsets() );
     }
     
     /**
-     * This function returns all available wordsets.
+     * Get all available wordsets.
      *
-     * Each wordset is in a separate file in wordsets/*.ws.php
+     * This function returns an array containing information about all available wordsets.
+     * Each wordset includes name, English name, prefix length, and the list of words.
+     *
+     * @return array An array of available wordsets.
      */
     static public function get_wordsets() {
         
@@ -268,30 +321,41 @@ class mnemonic {
     
 }
 
-
+/**
+ * Interface wordset
+ *
+ * This interface defines methods to retrieve information about a wordset, which is used in mnemonic encoding and decoding.
+ */
 interface wordset {
-
-    /* Returns name of wordset in the wordset's native language.
+    /**
+     * Returns name of wordset in the wordset's native language.
      * This is a human-readable string, and should be capitalized
      * if the language supports it.
+     * 
+     * @return string
      */
     static public function name() : string;
 
-    /* Returns name of wordset in english.    
-     * This is a human-readable string, and should be capitalized
+    /**
+     * Returns name of wordset in English. This is a human-readable string, and should be capitalized.
+     * 
+     * @return string
      */
     static public function english_name() : string;
     
-    /* Returns integer indicating length of unique prefix,
+    /**
+     * Returns integer indicating length of unique prefix,
      * such that each prefix of this length is unique across
      * the entire set of words.
      *
-     * A value of 0 indicates that there is no unique prefix
-     * and the entire word must be used instead.
+     * @return int
      */
     static public function prefix_length() : int;
     
-    /* Returns an array of all words in the wordset.
+    /**
+     * Returns the array of all words in the wordset.
+     *
+     * @return array
      */
     static public function words() : array;    
 };
