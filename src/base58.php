@@ -30,21 +30,54 @@
 namespace MoneroIntegrations\MoneroPhp;
 use Exception;
 
+/**
+ * Base58 Codec Class
+ *
+ * This class provides methods for encoding and decoding data using the base58 encoding scheme.
+ *
+ * @package MoneroIntegrations\MoneroPhp\base58
+ */
 class base58
 {
+  /**
+   * Base58 alphabet.
+   *
+   * @var string
+   * 
+   */
   static $alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+  /**
+   * Encoded block sizes for each block of bytes.
+   *
+   * @var array
+   * 
+   */
   static $encoded_block_sizes = [0, 2, 3, 5, 6, 7, 9, 10, 11];
+
+  /**
+   * Size of a block in bytes.
+   *
+   * @var int
+   * 
+   */
   static $full_block_size = 8;
+
+  /**
+   * Size of a fully-encoded block in bytes.
+   *
+   * @var int
+   * 
+   */
   static $full_encoded_block_size = 11;
 
   /**
+   * Convert a hexadecimal string to a binary array.
    *
-   * Convert a hexadecimal string to a binary array
-   *
-   * @param    string  $hex  A hexadecimal string to convert to a binary array
-   *
-   * @return   array
-   *
+   * @param string $hex A hexadecimal string to convert to a binary array.
+   * 
+   * @return array An array of binary values.
+   * 
    */
   private function hex_to_bin($hex)
   {
@@ -63,13 +96,12 @@ class base58
   }
 
   /**
+   * Convert a binary array to a hexadecimal string.
    *
-   * Convert a binary array to a hexadecimal string
-   *
-   * @param    array   $bin  A binary array to convert to a hexadecimal string
-   *
-   * @return   string
-   *
+   * @param array $bin A binary array to convert to a hexadecimal string.
+   * 
+   * @return string The resulting hexadecimal string.
+   * 
    */
   private function bin_to_hex($bin)
   {
@@ -85,13 +117,12 @@ class base58
   }
 
   /**
+   * Convert a string to a binary array.
    *
-   * Convert a string to a binary array
-   *
-   * @param    string   $str  A string to convert to a binary array
-   *
-   * @return   array
-   *
+   * @param string $str A string to convert to a binary array.
+   * 
+   * @return array An array of binary values.
+   * 
    */
   private function str_to_bin($str)
   {
@@ -107,13 +138,12 @@ class base58
   }
 
   /**
+   * Convert a binary array to a string.
    *
-   * Convert a binary array to a string
-   *
-   * @param    array   $bin  A binary array to convert to a string
-   *
-   * @return   string
-   *
+   * @param array $bin A binary array to convert to a string.
+   * 
+   * @return string The resulting string.
+   * 
    */
   private function bin_to_str($bin)
   {
@@ -129,13 +159,12 @@ class base58
   }
 
   /**
+   * Convert a UInt8BE (one unsigned big endian byte) array to UInt64.
    *
-   * Convert a UInt8BE (one unsigned big endian byte) array to UInt64
-   *
-   * @param    array   $data  A UInt8BE array to convert to UInt64
-   *
-   * @return   number
-   *
+   * @param array $data A UInt8BE array to convert to UInt64.
+   * 
+   * @return int The resulting UInt64 value.
+   * 
    */
   private function uint8_be_to_64($data)
   {
@@ -170,13 +199,12 @@ class base58
   }
 
   /**
+   * Convert a UInt64 (unsigned 64 bit integer) to a UInt8BE array.
    *
-   * Convert a UInt64 (unsigned 64 bit integer) to a UInt8BE array
+   * @param int $num A UInt64 number to convert to a UInt8BE array.
+   * @param int $size Size of array to return (1 <= $size <= 8).
    *
-   * @param    number   $num   A UInt64 number to convert to a UInt8BE array
-   * @param    integer  $size  Size of array to return
-   *
-   * @return   array
+   * @return int[] The UInt8BE array.
    *
    */
   private function uint64_to_8_be($num, $size)
@@ -200,14 +228,13 @@ class base58
   }
 
   /**
+   * Encode a hexadecimal array to a base58 string.
+   * 
+   * @param int[] $data The hexadecimal array to encode.
+   * @param int[] $buf The buffer to store the encoded data.
+   * @param int|float $index The starting index in the buffer.
    *
-   * Convert a hexadecimal (Base16) array to a Base58 string
-   *
-   * @param    array   $data
-   * @param    array   $buf
-   * @param    number  $index
-   *
-   * @return   array
+   * @return int[] The updated buffer after encoding.
    *
    */
   private function encode_block($data, $buf, $index)
@@ -237,13 +264,12 @@ class base58
   }
 
   /**
-   *
-   * Encode a hexadecimal (Base16) string to Base58
-   *
-   * @param    string  $hex  A hexadecimal (Base16) string to convert to Base58
-   *
-   * @return   string
-   *
+   * Encode a hexadecimal string to base58.
+   * 
+   * @param string $hex The hexadecimal string to encode.
+   * 
+   * @return string The base58 encoded string.
+   * 
    */
   public function encode($hex)
   {
@@ -274,14 +300,13 @@ class base58
   }
 
   /**
+   * Decode a base58 block to a hexadecimal array.
    *
-   * Convert a Base58 input to hexadecimal (Base16)
+   * @param int[] $data The base58 block to decode.
+   * @param int[] $buf The buffer to store the decoded data.
+   * @param int|float $index The starting index in the buffer.
    *
-   * @param    array    $data
-   * @param    array    $buf
-   * @param    integer  $index
-   *
-   * @return   array
+   * @return int[] The updated buffer after decoding.
    *
    */
   private function decode_block($data, $buf, $index)
@@ -329,12 +354,11 @@ class base58
   }
 
   /**
+   * Decode a base58 input to hexadecimal.
    *
-   * Decode a Base58 string to hexadecimal (Base16)
+   * @param string $enc The base58 string to decode.
    *
-   * @param    string  $hex  A Base58 string to convert to hexadecimal (Base16)
-   *
-   * @return   string
+   * @return string The decoded hexadecimal string.
    *
    */
   public function decode($enc)
@@ -370,14 +394,14 @@ class base58
   }
 
   /**
-   *
-   * Search an array for a value
+   * Search an array for a value.
+   * 
    * Source: https://stackoverflow.com/a/30994678
    *
-   * @param    array   $haystack  An array to search
-   * @param    string  $needle    A string to search for
-   *)
-   * @return   number             The index of the element found (or -1 for no match)
+   * @param int[] $haystack The array to search.
+   * @param mixed $needle The value to search for.
+   *
+   * @return int The index of the element found, or -1 for no match.
    *
    */
   private function index_of($haystack, $needle)
