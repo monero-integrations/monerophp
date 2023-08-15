@@ -22,8 +22,23 @@
 */
 namespace MoneroIntegrations\MoneroPhp;
 
-    class Varint
-    {
+
+/**
+ * Varint class
+ *
+ * Provides methods for encoding, decoding, and manipulating variable-length integers.
+ *
+ * @package MoneroIntegrations\MoneroPhp\Varint
+ */
+class Varint
+{
+        /**
+         * Encodes an integer as a varint.
+         *
+         * @param int $data The integer to be encoded.
+         * 
+         * @return string Hex-encoded representation of the varint.
+         */
         public function encode_varint($data)
         {
             $orig = $data;
@@ -45,7 +60,15 @@ namespace MoneroIntegrations\MoneroPhp;
             return bin2hex($bytes);
         }
         
-        // https://github.com/monero-project/research-lab/blob/master/source-code/StringCT-java/src/how/monero/hodl/util/VarInt.java
+        /**
+         * Decodes a varint into an integer.
+         * 
+         * Source: https://github.com/monero-project/research-lab/blob/master/source-code/StringCT-java/src/how/monero/hodl/util/VarInt.java
+         *
+         * @param string $data The hex-encoded varint.
+         * 
+         * @return int The decoded integer.
+         */
         public function decode_varint($data)
         {
             $result = 0;
@@ -71,6 +94,13 @@ namespace MoneroIntegrations\MoneroPhp;
             return $result;
         }
         
+        /**
+         * Pops the varint from the beginning of the data and returns the remaining data.
+         *
+         * @param string[] $data The hex-encoded data containing a varint.
+         * 
+         * @return string[] Hex-encoded data with the varint removed.
+         */
         public function pop_varint($data)
         {
             $result = 0;
