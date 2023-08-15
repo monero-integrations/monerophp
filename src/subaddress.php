@@ -15,7 +15,7 @@
  *
  * This class provides methods for generating subaddresses and related keys.
  *
- * @package monerophp
+ * @package MoneroIntegrations\MoneroPhp\subaddress
  *
  */
 class subaddress
