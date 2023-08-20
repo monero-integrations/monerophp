@@ -54,6 +54,8 @@
         }
     },
     "scripts": {
+        "post-install-cmd": "cghooks add --ignore-lock",
+        "post-update-cmd": "cghooks update",
         "lint": [
             "phpcbf || true",
             "phpcs || true",
