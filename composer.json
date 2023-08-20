@@ -35,7 +35,8 @@
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "phpstan/extension-installer": "*",
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "brainmaestro/composer-git-hooks": "^2.8"
     },
     "suggest": {
         "ext-gmp": "Used to have a multiple math precision for generating address"
@@ -43,6 +44,13 @@
     "autoload": {
         "psr-4": {
             "MoneroIntegrations\\MoneroPhp\\": "src/"
+        }
+    },
+    "extra": {
+        "hooks": {
+            "pre-commit": [
+                "phpcbf"
+            ]
         }
     },
     "scripts": {
