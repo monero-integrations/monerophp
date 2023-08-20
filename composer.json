@@ -57,7 +57,7 @@
         "lint": [
             "phpcbf || true",
             "phpcs || true",
-            "phpstan"
+            "phpstan analyse --memory-limit 1G"
         ]
     }
 }
