@@ -20,11 +20,22 @@
             "email": "sneurlax@gmail.com"
         }
     ],
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        }
+    },
     "require": {
         "php": ">=7.2.0",
         "ext-bcmath": "*",
         "ext-curl": "*",
         "ext-json": "*"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "*",
+        "phpstan/extension-installer": "*",
+        "squizlabs/php_codesniffer": "*"
     },
     "suggest": {
         "ext-gmp": "Used to have a multiple math precision for generating address"
@@ -33,5 +44,12 @@
         "psr-4": {
             "MoneroIntegrations\\MoneroPhp\\": "src/"
         }
+    },
+    "scripts": {
+        "lint": [
+            "phpcbf || true",
+            "phpcs || true",
+            "phpstan"
+        ]
     }
 }

@@ -1,0 +1,62 @@
+name: Run PHPStan
+
+# Run PHPStan to annotate the code
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [ '8.0' ]
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer, cs2pr
+          extensions: zip
+
+      - name: Run composer install
+        continue-on-error: true
+        run: composer install
+
+      - name: Run PHPStan to add annotations to the code
+        id: run-phpstan
+        continue-on-error: true
+        run: |
+          vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G --no-progress --error-format=checkstyle | cs2pr
+
+      - name: Get PhpStan level
+        id: phpstan-level
+        run: |
+          LEVEL=$(cat phpstan.neon | grep level | sed "s/[^0-9]*//")
+          echo "level=$LEVEL" >> "$GITHUB_OUTPUT" 
+
+      - name: Check success
+        if: steps.run-phpstan.outcome == 'success'
+        run: curl -o .github/phpstan.svg https://img.shields.io/badge/PHPStan-Level%20${{ steps.phpstan-level.outputs.level}}-2a5ea7.svg
+
+      - name: Check failures
+        if: steps.run-phpstan.outcome != 'success'
+        run: curl -o .github/phpstan.svg https://img.shields.io/badge/PHPStan-Level%20${{ steps.phpstan-level.outputs.level}}❌-lightgrey.svg
+
+      - name: Commit README badge changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: ".github/phpstan.svg"
+          commit_message: "🤖 PhpStan"

@@ -1,3 +1,5 @@
+[![PHPCS PSR-12](https://img.shields.io/badge/PHPCS-PSR–12-226146.svg)](https://www.php-fig.org/psr/psr-12/) [![PHPStan ](.github/phpstan.svg)](https://phpstan.org/)
+
 # Monero Library
 A Monero library written in PHP by the [Monero Integrations](https://monerointegrations.com) [team](https://github.com/monero-integrations/monerophp/graphs/contributors).
 
