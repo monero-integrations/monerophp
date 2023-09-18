@@ -50,7 +50,7 @@ class SHA3 {
 	const SHAKE128 = 5;
 	const SHAKE256 = 6;
 
-		const KECCAK_256 = 7;
+	const KECCAK_256 = 7;
 
 
 	public static function init ($type = null) {
@@ -184,8 +184,7 @@ class SHA3 {
 
 		// Padding
 		$rateInBytes = $this->rateInBytes;
-		$this->state[$this->blockSize] = $this->state[$this->blockSize]
-			^ chr ($this->suffix);
+		$this->state[$this->blockSize] = $this->state[$this->blockSize] ^ chr ($this->suffix);
 		if (($this->suffix & 0x80) != 0
 			&& $this->blockSize == ($rateInBytes - 1)) {
 			$this->state = self::keccakF1600Permute ($this->state);

@@ -23,202 +23,202 @@
 
 namespace MoneroIntegrations\MoneroPhp;
 
-	use Exception;
+use Exception;
 
-	class Cryptonote
+class Cryptonote
+{
+	protected $ed25519;
+	public function __construct()
 	{
-		protected $ed25519;
-		public function __construct()
+		$this->ed25519 = new ed25519();
+		$this->base58 = new base58();
+		$this->varint = new Varint();
+	}
+
+	/*
+	 * @param string Hex encoded string of the data to hash
+	 * @return string Hex encoded string of the hashed data
+	 *
+	 */
+	public function keccak_256($message)
+	{
+		$keccak256 = SHA3::init (SHA3::KECCAK_256);
+		$keccak256->absorb (hex2bin($message));
+		return bin2hex ($keccak256->squeeze (32)) ;
+	}
+
+	/*
+	 * @return string A hex encoded string of 32 random bytes
+	 *
+	 */
+	public function gen_new_hex_seed()
+	{
+		$bytes = random_bytes(32);
+		return bin2hex($bytes);
+	}
+
+	public function sc_reduce($input)
+	{
+		$integer = $this->ed25519->decodeint(hex2bin($input));
+
+		$modulo = bcmod($integer , $this->ed25519->l);
+
+		$result = bin2hex($this->ed25519->encodeint($modulo));
+		return $result;
+	}
+
+	/*
+	 * Hs in the cryptonote white paper
+	 *
+	 * @param string Hex encoded data to hash
+	 *
+	 * @return string A 32 byte encoded integer
+	 */
+	public function hash_to_scalar($data)
+	{
+		$hash = $this->keccak_256($data);
+		$scalar = $this->sc_reduce($hash);
+		return $scalar;
+	}
+
+	/*
+	 * Derive a deterministic private view key from a private spend key
+	 * @param string A private spend key represented as a 32 byte hex string
+	 *
+	 * @return string A deterministic private view key represented as a 32 byte hex string
+	 */
+	public function derive_viewKey($spendKey)
+	{
+		return $this->hash_to_scalar($spendKey);
+	}
+
+	/*
+	 * Generate a pair of random private keys
+	 *
+	 * @param string A hex string to be used as a seed (this should be random)
+	 *
+	 * @return array An array containing a private spend key and a deterministic view key
+	 */
+	public function gen_private_keys($seed)
+	{
+		$spendKey = $this->sc_reduce($seed);
+		$viewKey = $this->derive_viewKey($spendKey);
+		$result = array("spendKey" => $spendKey,
+						"viewKey" => $viewKey);
+
+		return $result;
+	}
+
+	/*
+	 * Get a public key from a private key on the ed25519 curve
+	 *
+	 * @param string a 32 byte hex encoded private key
+	 *
+	 * @return string a 32 byte hex encoding of a point on the curve to be used as a public key
+	 */
+	public function pk_from_sk($privKey)
+	{
+	$keyInt = $this->ed25519->decodeint(hex2bin($privKey));
+	$aG = $this->ed25519->scalarmult_base($keyInt);
+		return bin2hex($this->ed25519->encodepoint($aG));
+	}
+
+	/*
+	 * Generate key derivation
+	 *
+	 * @param string a 32 byte hex encoding of a point on the ed25519 curve used as a public key
+	 * @param string a 32 byte hex encoded private key
+	 *
+	 * @return string The hex encoded key derivation
+	 */
+	public function gen_key_derivation($public, $private)
+	{
+		$point = $this->ed25519->scalarmult($this->ed25519->decodepoint(hex2bin($public)), $this->ed25519->decodeint(hex2bin($private)));
+		$res = $this->ed25519->scalarmult($point, 8);
+		return bin2hex($this->ed25519->encodepoint($res));
+	}
+
+	public function derivation_to_scalar($der, $index)
+	{
+		$encoded = $this->varint->encode_varint($index);
+		$data = $der . $encoded;
+		return $this->hash_to_scalar($data);
+	}
+
+	// this is a one way function used for both encrypting and decrypting 8 byte payment IDs
+	public function stealth_payment_id($payment_id, $tx_pub_key, $viewkey)
+	{
+		if(strlen($payment_id) != 16)
 		{
-			$this->ed25519 = new ed25519();
-			$this->base58 = new base58();
-			$this->varint = new Varint();
+		   throw new Exception("Error: Incorrect payment ID size. Should be 8 bytes");
+		}
+		$der = $this->gen_key_derivation($tx_pub_key, $viewkey);
+		$data = $der . '8d';
+		$hash = $this->keccak_256($data);
+		$key = substr($hash, 0, 16);
+		$result = bin2hex(pack('H*',$payment_id) ^ pack('H*',$key));
+		return $result;
+	}
+
+	// takes transaction extra field as hex string and returns transaction public key 'R' as hex string
+	public function txpub_from_extra($extra)
+	{
+		$parsed = array_map("hexdec", str_split($extra, 2));
+
+		if($parsed[0] == 1)
+		{
+			return substr($extra, 2, 64);
 		}
 
-		/*
-		 * @param string Hex encoded string of the data to hash
-		 * @return string Hex encoded string of the hashed data
-		 *
-		 */
-		public function keccak_256($message)
+		if($parsed[0] == 2)
 		{
-			$keccak256 = SHA3::init (SHA3::KECCAK_256);
-			$keccak256->absorb (hex2bin($message));
-			return bin2hex ($keccak256->squeeze (32)) ;
-		}
-
-		/*
-		 * @return string A hex encoded string of 32 random bytes
-		 *
-		 */
-		public function gen_new_hex_seed()
-		{
-			$bytes = random_bytes(32);
-			return bin2hex($bytes);
-		}
-
-		public function sc_reduce($input)
-		{
-			$integer = $this->ed25519->decodeint(hex2bin($input));
-
-			$modulo = bcmod($integer , $this->ed25519->l);
-
-			$result = bin2hex($this->ed25519->encodeint($modulo));
-			return $result;
-		}
-
-		/*
-		 * Hs in the cryptonote white paper
-		 *
-		 * @param string Hex encoded data to hash
-		 *
-		 * @return string A 32 byte encoded integer
-		 */
-		public function hash_to_scalar($data)
-		{
-			$hash = $this->keccak_256($data);
-			$scalar = $this->sc_reduce($hash);
-			return $scalar;
-		}
-
-		/*
-		 * Derive a deterministic private view key from a private spend key
-		 * @param string A private spend key represented as a 32 byte hex string
-		 *
-		 * @return string A deterministic private view key represented as a 32 byte hex string
-		 */
-		public function derive_viewKey($spendKey)
-		{
-			return $this->hash_to_scalar($spendKey);
-		}
-
-		/*
-		 * Generate a pair of random private keys
-		 *
-		 * @param string A hex string to be used as a seed (this should be random)
-		 *
-		 * @return array An array containing a private spend key and a deterministic view key
-		 */
-		public function gen_private_keys($seed)
-		{
-			$spendKey = $this->sc_reduce($seed);
-			$viewKey = $this->derive_viewKey($spendKey);
-			$result = array("spendKey" => $spendKey,
-							"viewKey" => $viewKey);
-
-			return $result;
-		}
-
-		/*
-		 * Get a public key from a private key on the ed25519 curve
-		 *
-		 * @param string a 32 byte hex encoded private key
-		 *
-		 * @return string a 32 byte hex encoding of a point on the curve to be used as a public key
-		 */
-		public function pk_from_sk($privKey)
-		{
-		$keyInt = $this->ed25519->decodeint(hex2bin($privKey));
-		$aG = $this->ed25519->scalarmult_base($keyInt);
-			return bin2hex($this->ed25519->encodepoint($aG));
-		}
-
-		/*
-		 * Generate key derivation
-		 *
-		 * @param string a 32 byte hex encoding of a point on the ed25519 curve used as a public key
-		 * @param string a 32 byte hex encoded private key
-		 *
-		 * @return string The hex encoded key derivation
-		 */
-		public function gen_key_derivation($public, $private)
-		{
-			$point = $this->ed25519->scalarmult($this->ed25519->decodepoint(hex2bin($public)), $this->ed25519->decodeint(hex2bin($private)));
-			$res = $this->ed25519->scalarmult($point, 8);
-			return bin2hex($this->ed25519->encodepoint($res));
-		}
-
-		public function derivation_to_scalar($der, $index)
-		{
-			$encoded = $this->varint->encode_varint($index);
-			$data = $der . $encoded;
-			return $this->hash_to_scalar($data);
-		}
-
-		// this is a one way function used for both encrypting and decrypting 8 byte payment IDs
-		public function stealth_payment_id($payment_id, $tx_pub_key, $viewkey)
-		{
-			if(strlen($payment_id) != 16)
+			if($parsed[0] == 2 || $parsed[2] == 1)
 			{
-			   throw new Exception("Error: Incorrect payment ID size. Should be 8 bytes");
-			}
-			$der = $this->gen_key_derivation($tx_pub_key, $viewkey);
-			$data = $der . '8d';
-			$hash = $this->keccak_256($data);
-			$key = substr($hash, 0, 16);
-			$result = bin2hex(pack('H*',$payment_id) ^ pack('H*',$key));
-			return $result;
-		}
-
-		// takes transaction extra field as hex string and returns transaction public key 'R' as hex string
-		public function txpub_from_extra($extra)
-		{
-			$parsed = array_map("hexdec", str_split($extra, 2));
-
-			if($parsed[0] == 1)
-			{
-				return substr($extra, 2, 64);
-			}
-
-			if($parsed[0] == 2)
-			{
-				if($parsed[0] == 2 || $parsed[2] == 1)
-				{
-					//$offset = (($parsed[1] + 2) *2) + 2;
-					return substr($extra, (($parsed[1] + 2) *2) + 2, 64);
-				}
+				//$offset = (($parsed[1] + 2) *2) + 2;
+				return substr($extra, (($parsed[1] + 2) *2) + 2, 64);
 			}
 		}
+	}
 
-		public function derive_public_key($der, $index, $pub)
+	public function derive_public_key($der, $index, $pub)
+	{
+		$scalar = $this->derivation_to_scalar($der, $index);
+		$sG = $this->ed25519->scalarmult_base($this->ed25519->decodeint(hex2bin($scalar)));
+		$pubPoint = $this->ed25519->decodepoint(hex2bin($pub));
+		$key = $this->ed25519->encodepoint($this->ed25519->edwards($pubPoint, $sG));
+		return bin2hex($key);
+	}
+
+	/*
+	 * Perform the calculation P = P' as described in the cryptonote whitepaper
+	 *
+	 * @param string 32 byte transaction public key R
+	 * @param string 32 byte receiver private view key a
+	 * @param string 32 byte receiver public spend key B
+	 * @param int output index
+	 * @param string output you want to check against P
+	 */
+	public function is_output_mine($txPublic, $privViewkey, $publicSpendkey, $index, $P)
+	{
+		$derivation = $this->gen_key_derivation($txPublic, $privViewkey);
+		$Pprime = $this->derive_public_key($derivation, $index, $publicSpendkey);
+
+		if($P == $Pprime)
 		{
-			$scalar = $this->derivation_to_scalar($der, $index);
-			$sG = $this->ed25519->scalarmult_base($this->ed25519->decodeint(hex2bin($scalar)));
-			$pubPoint = $this->ed25519->decodepoint(hex2bin($pub));
-			$key = $this->ed25519->encodepoint($this->ed25519->edwards($pubPoint, $sG));
-			return bin2hex($key);
+		   return true;
 		}
+		else
+		  return false;
+	}
 
-		/*
-		 * Perform the calculation P = P' as described in the cryptonote whitepaper
-		 *
-		 * @param string 32 byte transaction public key R
-		 * @param string 32 byte receiver private view key a
-		 * @param string 32 byte receiver public spend key B
-		 * @param int output index
-		 * @param string output you want to check against P
-		 */
-		public function is_output_mine($txPublic, $privViewkey, $publicSpendkey, $index, $P)
-		{
-			$derivation = $this->gen_key_derivation($txPublic, $privViewkey);
-			$Pprime = $this->derive_public_key($derivation, $index, $publicSpendkey);
-
-			if($P == $Pprime)
-			{
-			   return true;
-			}
-			else
-			  return false;
-		}
-
-		/*
-		 * Create a valid base58 encoded Monero address from public keys
-		 *
-		 * @param string Public spend key
-		 * @param string Public view key
-		 *
-		 * @return string Base58 encoded Monero address
-		 */
+	/*
+	 * Create a valid base58 encoded Monero address from public keys
+	 *
+	 * @param string Public spend key
+	 * @param string Public view key
+	 *
+	 * @return string Base58 encoded Monero address
+	 */
 	public function encode_address($pSpendKey, $pViewKey)
 	{
 		// mainnet network byte is 18 (0x12)
@@ -337,4 +337,4 @@ namespace MoneroIntegrations\MoneroPhp;
 		return $encoded;
 	}
 	  
-	}
+}
