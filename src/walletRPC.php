@@ -58,11 +58,10 @@ class walletRPC
 		private readonly ?string $user = null,
 		private readonly ?string $password = null
 	) {
-		$protocol = $SSL ? 'https' : 'http';
+		$this->protocol = $SSL ? 'https' : 'http';
 		
-		$this->protocol = $protocol;
+		$this->url = "$this->protocol://$host:$port/";
 		
-		$this->url = "$protocol://$host:$port/";
 		$this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
 	}
 

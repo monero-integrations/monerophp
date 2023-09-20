@@ -58,11 +58,10 @@ class daemonRPC
 		private readonly ?string $user = null,
 		private readonly ?string $password = null
 	) {
-		$protocol = $SSL ? 'https' : 'http';
+		$this->protocol = $SSL ? 'https' : 'http';
 		
-		$this->protocol = $protocol;
-		
-		$this->url = "$protocol://$host:$port/";
+		$this->url = "$this->protocol://$host:$port/";
+
 		$this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
 	}
 
@@ -77,7 +76,7 @@ class daemonRPC
 	 * @return	string	Call result
 	 *
 	 */
-	protected function _run(string $method, array $params = null, string$path = 'json_rpc')
+	protected function _run(string $method, array $params = null, string $path = 'json_rpc')
 	{
 		return $this->client->_run($method, $params, $path);
 	}
@@ -507,11 +506,11 @@ class daemonRPC
 		return $this->_run(null, null, 'getheight');
 	}
 
-	 /**
-	*
-	* Get transactions
-	*
-	*/
+	/**
+	 *
+	 * Get transactions
+	 *
+	 */
 	public function get_transactions($txs_hashes = NULL)
 	{
 		$params = ['txs_hashes' => $txs_hashes, 'decode_as_json' => true];
