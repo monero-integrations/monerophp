@@ -58,7 +58,7 @@ class jsonRPCClient
 		return $this;
 	}
 
-	public function _run(string $pMethod, array $pParams, string $path) : array
+	public function _run(?string $pMethod, ?array $pParams, string $path) : array
 	{
 		// send params as an object or an array
 		// Request (method invocation)
