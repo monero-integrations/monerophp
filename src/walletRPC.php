@@ -418,7 +418,7 @@ class walletRPC
 	 * Parameters can be passed in individually (as listed below) or as an object/dictionary (as listed at bottom)
 	 * To send to multiple recipients, use the object/dictionary (bottom) format and pass an array of recipient addresses and amount arrays in the destinations field (as in "destinations = [['amount' => 1, 'address' => ...], ['amount' => 2, 'address' => ...]]")
 	 *
-	 * @param	string		$amount				Amount of monero to send
+	 * @param	integer		$amount				Amount of monero to send
 	 * @param	string		$address			Address to receive funds
 	 * @param	string		$payment_id			Payment ID													(optional)
 	 * @param	number		$mixin				Mixin number (ringsize - 1)									(optional)
@@ -1255,7 +1255,7 @@ class walletRPC
 	 * Create a payment URI using the official URI specification
 	 *
 	 * @param	string	$address		Address to receive funds
-	 * @param	string	$amount			Amount of monero to request
+	 * @param	integer	$amount			Amount of monero to request
 	 * @param	string	$payment_id		Payment ID						(Optional)
 	 * @param	string	$recipient_name	Name of recipient				(Optional)
 	 * @param	string	$tx_description	Payment description				(Optional)
@@ -1267,7 +1267,7 @@ class walletRPC
 	 */
 	public function make_uri(string $address, int $amount, string $payment_id = null, string $recipient_name = null, string $tx_description = null)
 	{
-		$params = ['address' => $address, 'amount' => $this->$amount, 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description];
+		$params = ['address' => $address, 'amount' => $amount, 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description];
 		return $this->_run('make_uri', $params);
 	}
 
