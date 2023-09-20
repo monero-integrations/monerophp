@@ -18,8 +18,8 @@ class jsonRPCClient
 	protected bool $is_debug = false;
 
 	protected $curl_options = [
-		CURLOPT_CONNECTTIMEOUT => 8,
-		CURLOPT_TIMEOUT => 8
+		CURLOPT_CONNECTTIMEOUT => 90,
+		CURLOPT_TIMEOUT => 90
 	];
 
 	private $httpErrors = [
