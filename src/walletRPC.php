@@ -54,7 +54,7 @@ class walletRPC
 	function __construct(
 		private readonly string $host = '127.0.0.1',
 		private readonly int $port = 18081,
-		private readonly bool $check_SSL = true,
+		private readonly bool $check_SSL = false,
 		private readonly ?string $user = null,
 		private readonly ?string $password = null
 	) {
@@ -75,7 +75,7 @@ class walletRPC
 	 * @return	string	Call result
 	 *
 	 */
-	private function _run(string $method, array $params = null, string $path = 'json_rpc') : string
+	private function _run(string $method, array $params = null, string $path = 'json_rpc') : array
 	{
 		$result = $this->client->_run($method, $params, $path);
 		return $result;
