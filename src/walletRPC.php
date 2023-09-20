@@ -58,7 +58,7 @@ class walletRPC
 		private readonly ?string $user = null,
 		private readonly ?string $password = null
 	) {
-		$this->protocol = $SSL ? 'https' : 'http';
+		$this->protocol = $check_SSL ? 'https' : 'http';
 		
 		$this->url = "$this->protocol://$host:$port/";
 		
