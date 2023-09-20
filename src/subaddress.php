@@ -63,26 +63,28 @@ class subaddress
 		return bin2hex($this->ed25519->encodepoint($res));
 	}
 	
-	/*
-	 * @param string Hex encoded string of the data to hash
-	 * @return string Hex encoded string of the hashed data
+	/**
+	 * 
+	 * @param	string	Hex encoded string of the data to hash
+	 * @return	string	Hex encoded string of the hashed data
 	 *
 	 */
-	private function keccak_256($message)
+	private function keccak_256(string $message) : string
 	{
 		$keccak256 = SHA3::init(SHA3::KECCAK_256);
 		$keccak256->absorb(hex2bin($message));
 		return bin2hex($keccak256->squeeze(32)) ;
 	}
 
-	/*
+	/**
+	 * 
 	 * Hs in the cryptonote white paper
 	 *
-	 * @param string Hex encoded data to hash
+	 * @param	string	Hex encoded data to hash
 	 *
-	 * @return string A 32 byte encoded integer
+	 * @return	string	A 32 byte encoded integer
 	 */
-	private function hash_to_scalar($data)
+	private function hash_to_scalar(string $data) : string
 	{
 		$hash = $this->keccak_256($data);
 		$scalar = $this->sc_reduce($hash);

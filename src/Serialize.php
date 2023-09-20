@@ -48,10 +48,12 @@ class Serialize
 		$nonce = $this->varint->decode_varint($data);
 		$data = $this->varint->pop_varint($data);
 		
-		return array("major_version" => $major_version,
-					 "minor_version" => $minor_version,
-					 "timestamp" => $timestamp,
-					 "nonce" => $nonce);
+		return [
+			"major_version" => $major_version,
+			"minor_version" => $minor_version,
+			"timestamp" => $timestamp,
+			"nonce" => $nonce
+		];
 	}
 
 }

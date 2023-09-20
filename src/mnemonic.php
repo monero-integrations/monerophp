@@ -57,28 +57,28 @@ class mnemonic {
 	 * Given a mnemonic seed word list, check if checksum word is valid.
 	 * Returns boolean value.
 	 */
-	static function validate_checksum($words, $prefix_len) {
-		return (self::checksum($words, $prefix_len) == $words[count($words)-1]) ? true : false;
+	static function validate_checksum($words, $prefix_len) : bool {
+		return self::checksum($words, $prefix_len) == $words[count($words)-1];
 	}
 
 	/**
 	 * Given an 8 byte word (or shorter),
 	 * pads to 8 bytes (adds 0 at left) and reverses endian byte order.
 	 */
-	static function swap_endian($word) {
+	static function swap_endian(string $word) : string {
 		$word = str_pad ( $word, 8, 0, STR_PAD_LEFT);
 		return implode('', array_reverse(str_split($word, 2)));
 	}
 	
 	/**
 	 * Given a hexadecimal key string (seed),
-	 * return it's mnemonic representation.
+	 * return its mnemonic representation.
 	 *
 	 * @todo if anyone can make this work reliably with
 	 * pure PHP math (no gmp or bcmath), please submit a
 	 * pull request.
 	 */
-	static function encode($seed, $wordset_name = null) {
+	static function encode($seed, $wordset_name = null) : array {
 		assert(mb_strlen($seed) % 8 == 0);
 		$out = [];
 		
@@ -101,15 +101,15 @@ class mnemonic {
 
 	/**
 	 * Given a hexadecimal key string (seed),
-	 * return it's mnemonic representation plus an
+	 * return its mnemonic representation plus an
 	 * extra checksum word.
 	 */
-	static function encode_with_checksum($message, $wordset_name = null) {
+	static function encode_with_checksum($message, $wordset_name = null) : array {
 		$list = self::encode($message, $wordset_name);
 		
 		$wordset = self::get_wordset_by_name($wordset_name);
 		$list[] = self::checksum($list, $wordset['prefix_len']);
-		return $list ;
+		return $list;
 	}
 	
 	/**
@@ -119,7 +119,7 @@ class mnemonic {
 	 * pure PHP math (no gmp or bcmath), please submit a
 	 * pull request.
 	 */
-	static function decode($wlist, $wordset_name = null) {
+	static function decode($wlist, $wordset_name = null) : string {
 		$wordset = self::get_wordset_by_name( $wordset_name );
 		
 		$plen = $wordset['prefix_len'];
@@ -221,7 +221,7 @@ class mnemonic {
 	 *
 	 * Each wordset is in a separate file in wordsets/*.ws.php
 	 */
-	static public function get_wordsets() {
+	static public function get_wordsets() : array {
 		
 		static $wordsets = null;
 		if( $wordsets ) {

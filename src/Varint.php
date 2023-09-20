@@ -41,7 +41,7 @@ class Varint
 		}
 
 		$encodedBytes[count($encodedBytes)-1] &= 0x7f;
-		$bytes = call_user_func_array('pack', array_merge(array('C*'), $encodedBytes));
+		$bytes = call_user_func_array('pack', array_merge(['C*'], $encodedBytes));
 		return bin2hex($bytes);
 	}
 	

@@ -63,10 +63,10 @@ class ed25519
 		$this->I = "19681161376707505956807079304988542015446066515923890162744021073123829784752"; //$this->expmod(2,	bcdiv((bcsub($this->q,1)),4),$this->q);
 		$this->By = "46316835694926478169428394003475163141307993866256225615783033603165251855960"; //bcmul(4,$this->inv(5));
 		$this->Bx = "15112221349535400772501151409588531511454012693041857206046113283949847762202"; //$this->xrecover($this->By);
-		$this->B = array(
+		$this->B = [
 			"15112221349535400772501151409588531511454012693041857206046113283949847762202",
 			"46316835694926478169428394003475163141307993866256225615783033603165251855960"
-		); //array(bcmod($this->Bx,$this->q),bcmod($this->By,$this->q));
+		]; //array(bcmod($this->Bx,$this->q),bcmod($this->By,$this->q));
 
 		$this->gmp = extension_loaded('gmp');
 	}
@@ -148,7 +148,7 @@ class ed25519
 		return $x;
 	}
 
-	public function edwards($P, $Q)
+	public function edwards($P, $Q) : array
 	{
 		if ($this->gmp) {
 			list($x1, $y1) = $P;
@@ -159,7 +159,7 @@ class ed25519
 			$x3 = gmp_mul(gmp_add(gmp_mul($x1, $y2), gmp_mul($x2, $y1)), $this->inv(gmp_add(1, $com)));
 			$y3 = gmp_mul(gmp_add($ymul, $xmul), $this->inv(gmp_sub(1, $com)));
 
-			return array($this->pymod($x3, $this->q), $this->pymod($y3, $this->q));
+			return [$this->pymod($x3, $this->q), $this->pymod($y3, $this->q)];
 		} else {
 			list($x1, $y1) = $P;
 			list($x2, $y2) = $Q;
@@ -169,15 +169,15 @@ class ed25519
 			$x3 = bcmul(bcadd(bcmul($x1, $y2), bcmul($x2, $y1)), $this->inv(bcadd(1, $com)));
 			$y3 = bcmul(bcadd($ymul, $xmul), $this->inv(bcsub(1, $com)));
 
-			return array($this->pymod($x3, $this->q), $this->pymod($y3, $this->q));
+			return [$this->pymod($x3, $this->q), $this->pymod($y3, $this->q)];
 		}
 	}
 
-	public function scalarmult($P, $e)
+	public function scalarmult($P, $e) : array
 	{
 		if ($this->gmp) {
 			if ($e == 0) {
-				return array(0, 1);
+				return [0, 1];
 			}
 			$Q = $this->scalarmult($P, gmp_div($e, 2, 0));
 			$Q = $this->edwards($Q, $Q);
@@ -186,7 +186,7 @@ class ed25519
 			}
 		} else {
 			if ($e == 0) {
-				return array(0, 1);
+				return [0, 1];
 			}
 			$Q = $this->scalarmult($P, bcdiv($e, 2, 0));
 			$Q = $this->edwards($Q, $Q);
@@ -198,19 +198,19 @@ class ed25519
 		return $Q;
 	}
 
-	public function scalarloop($P, $e)
+	public function scalarloop($P, $e) : array
 	{
 		if ($this->gmp) {
-			$temp = array();
+			$temp = [];
 			$loopE = $e;
 			while ($loopE > 0) {
 				array_unshift($temp, $loopE);
 				$loopE = gmp_div($loopE, 2, 0);
 			}
-			$Q = array();
+			$Q = [];
 			foreach ($temp as $e) {
 				if ($e == 1) {
-					$Q = $this->edwards(array(0, 1), $P);
+					$Q = $this->edwards([0, 1], $P);
 				} elseif (substr($e, -1)%2 == 1) {
 					$Q = $this->edwards($this->edwards($Q, $Q), $P);
 				} else {
@@ -218,16 +218,16 @@ class ed25519
 				}
 			}
 		} else {
-			$temp = array();
+			$temp = [];
 			$loopE = $e;
 			while ($loopE > 0) {
 				array_unshift($temp, $loopE);
 				$loopE = bcdiv($loopE, 2, 0);
 			}
-			$Q = array();
+			$Q = [];
 			foreach ($temp as $e) {
 				if ($e == 1) {
-					$Q = $this->edwards(array(0, 1), $P);
+					$Q = $this->edwards([0, 1], $P);
 				} elseif (substr($e, -1)%2 == 1) {
 					$Q = $this->edwards($this->edwards($Q, $Q), $P);
 				} else {
@@ -431,7 +431,7 @@ class ed25519
 			if (substr($x, -1)%2 != $this->bit($s, $this->b-1)) {
 				$x = gmp_sub($this->q, $x);
 			}
-			$P = array($x, $y);
+			$P = [$x, $y];
 			if (!$this->isoncurve($P)) {
 				throw new Exception("Decoding point that is not on curve");
 			}
@@ -444,7 +444,7 @@ class ed25519
 			if (substr($x, -1)%2 != $this->bit($s, $this->b-1)) {
 				$x = bcsub($this->q, $x);
 			}
-			$P = array($x, $y);
+			$P = [$x, $y];
 			if (!$this->isoncurve($P)) {
 				throw new Exception("Decoding point that is not on curve");
 			}
@@ -453,7 +453,7 @@ class ed25519
 		return $P;
 	}
 
-	public function checkvalid($s, $m, $pk)
+	public function checkvalid($s, $m, $pk) : bool
 	{
 		if (strlen($s) != $this->b/4) {
 			throw new Exception('Signature length is wrong');
@@ -475,11 +475,11 @@ class ed25519
 
 	// The code below is by the Monero-Integrations team
 
-	public function scalarmult_base($e)
+	public function scalarmult_base($e) : array
 	{
 		if ($this->gmp) {
 			if ($e == 0) {
-				return array(0, 1);
+				return [0, 1];
 			}
 			$Q = $this->scalarmult($this->B, gmp_div($e, 2, 0));
 			$Q = $this->edwards($Q, $Q);
@@ -488,7 +488,7 @@ class ed25519
 			}
 		} else {
 			if ($e == 0) {
-				return array(0, 1);
+				return [0, 1];
 			}
 			$Q = $this->scalarmult($this->B, bcdiv($e, 2, 0));
 			$Q = $this->edwards($Q, $Q);

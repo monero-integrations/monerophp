@@ -41,16 +41,13 @@ class base58
 	 *
 	 * Convert a hexadecimal string to a binary array
 	 *
-	 * @param		 string	 $hex	 A hexadecimal string to convert to a binary array
+	 * @param	string	$hex	A hexadecimal string to convert to a binary array
 	 *
-	 * @return	 array
+	 * @return	array
 	 *
 	 */
-	private function hex_to_bin($hex)
+	private function hex_to_bin(string $hex) : array
 	{
-		if (!is_string($hex)) {
-			throw new Exception('base58->hex_to_bin(): Invalid input type (must be a string)');
-		}
 		if (strlen($hex) % 2 != 0) {
 			throw new Exception('base58->hex_to_bin(): Invalid input length (must be even)');
 		}
@@ -66,17 +63,13 @@ class base58
 	 *
 	 * Convert a binary array to a hexadecimal string
 	 *
-	 * @param		 array	 $bin	 A binary array to convert to a hexadecimal string
+	 * @param	array	$bin	A binary array to convert to a hexadecimal string
 	 *
-	 * @return	 string
+	 * @return	string
 	 *
 	 */
-	private function bin_to_hex($bin)
+	private function bin_to_hex(array $bin) : string
 	{
-		if (!is_array($bin)) {
-			throw new Exception('base58->bin_to_hex(): Invalid input type (must be an array)');
-		}
-
 		$res = [];
 		for ($i = 0, $iMax = count($bin); $i < $iMax; $i++) {
 			$res[] = substr('0'.dechex($bin[$i]), -2);
@@ -88,17 +81,13 @@ class base58
 	 *
 	 * Convert a string to a binary array
 	 *
-	 * @param		 string		$str	A string to convert to a binary array
+	 * @param	string	$str	A string to convert to a binary array
 	 *
-	 * @return	 array
+	 * @return	array
 	 *
 	 */
-	private function str_to_bin($str)
+	private function str_to_bin(string $str) : array
 	{
-		if (!is_string($str)) {
-			throw new Exception('base58->str_to_bin(): Invalid input type (must be a string)');
-		}
-
 		$res = array_fill(0, strlen($str), 0);
 		for ($i = 0, $iMax = strlen($str); $i < $iMax; $i++) {
 			$res[$i] = ord($str[$i]);
@@ -110,17 +99,13 @@ class base58
 	 *
 	 * Convert a binary array to a string
 	 *
-	 * @param		 array	 $bin	 A binary array to convert to a string
+	 * @param	 array	$bin	A binary array to convert to a string
 	 *
-	 * @return	 string
+	 * @return	string
 	 *
 	 */
-	private function bin_to_str($bin)
+	private function bin_to_str(array $bin) : string
 	{
-		if (!is_array($bin)) {
-			throw new Exception('base58->bin_to_str(): Invalid input type (must be an array)');
-		}
-
 		$res = array_fill(0, count($bin), 0);
 		for ($i = 0, $iMax = count($bin); $i < $iMax; $i++) {
 			$res[$i] = chr($bin[$i]);
@@ -132,17 +117,13 @@ class base58
 	 *
 	 * Convert a UInt8BE (one unsigned big endian byte) array to UInt64
 	 *
-	 * @param		 array	 $data	A UInt8BE array to convert to UInt64
+	 * @param	array	$data	A UInt8BE array to convert to UInt64
 	 *
-	 * @return	 number
+	 * @return	number
 	 *
 	 */
-	private function uint8_be_to_64($data)
+	private function uint8_be_to_64(array $data) : int
 	{
-		if (!is_array($data)) {
-			throw new Exception ('base58->uint8_be_to_64(): Invalid input type (must be an array)');
-		}
-
 		$res = 0;
 		$i = 0;
 		switch (9 - count($data)) {
@@ -165,7 +146,7 @@ class base58
 				break;
 			default:
 				throw new Exception('base58->uint8_be_to_64: Invalid input length (1 <= count($data) <= 8)');
-			}
+		}
 		return $res;
 	}
 
@@ -173,20 +154,14 @@ class base58
 	 *
 	 * Convert a UInt64 (unsigned 64 bit integer) to a UInt8BE array
 	 *
-	 * @param		 number		$num	 A UInt64 number to convert to a UInt8BE array
-	 * @param		 integer	$size	 Size of array to return
+	 * @param	number	$num	A UInt64 number to convert to a UInt8BE array
+	 * @param	integer	$size	Size of array to return
 	 *
-	 * @return	 array
+	 * @return	array
 	 *
 	 */
-	private function uint64_to_8_be($num, $size)
+	private function uint64_to_8_be(float $num, int $size) : array
 	{
-		if (!is_numeric($num)) {
-			throw new Exception ('base58->uint64_to_8_be(): Invalid input type ($num must be a number)');
-		}
-		if (!is_int($size)) {
-			throw new Exception ('base58->uint64_to_8_be(): Invalid input type ($size must be an integer)');
-		}
 		if ($size < 1 || $size > 8) {
 			throw new Exception ('base58->uint64_to_8_be(): Invalid size (1 <= $size <= 8)');
 		}
@@ -203,24 +178,15 @@ class base58
 	 *
 	 * Convert a hexadecimal (Base16) array to a Base58 string
 	 *
-	 * @param		 array	 $data
-	 * @param		 array	 $buf
-	 * @param		 number	 $index
+	 * @param	array	$data
+	 * @param	array	$buf
+	 * @param	number	$index
 	 *
-	 * @return	 array
+	 * @return	array
 	 *
 	 */
-	private function encode_block($data, $buf, $index)
+	private function encode_block(array $data, array $buf, float|int $index) : array
 	{
-		if (!is_array($data)) {
-			throw new Exception('base58->encode_block(): Invalid input type ($data must be an array)');
-		}
-		if (!is_array($buf)) {
-			throw new Exception('base58->encode_block(): Invalid input type ($buf must be an array)');
-		}
-		if (!is_int($index) && !is_float($index)) {
-			throw new Exception('base58->encode_block(): Invalid input type ($index must be a number)');
-		}
 		if (count($data) < 1 or count($data) > self::$full_encoded_block_size) {
 			throw new Exception('base58->encode_block(): Invalid input length (1 <= count($data) <= 8)');
 		}
@@ -240,17 +206,13 @@ class base58
 	 *
 	 * Encode a hexadecimal (Base16) string to Base58
 	 *
-	 * @param		 string	 $hex	 A hexadecimal (Base16) string to convert to Base58
+	 * @param	string	$hex	A hexadecimal (Base16) string to convert to Base58
 	 *
-	 * @return	 string
+	 * @return	string
 	 *
 	 */
-	public function encode($hex)
+	public function encode(string $hex) : string
 	{
-		if (!is_string($hex)) {
-			throw new Exception ('base58->encode(): Invalid input type (must be a string)');
-		}
-
 		$data = self::hex_to_bin($hex);
 		if (count($data) == 0) {
 			return '';
@@ -277,25 +239,15 @@ class base58
 	 *
 	 * Convert a Base58 input to hexadecimal (Base16)
 	 *
-	 * @param		 array		$data
-	 * @param		 array		$buf
-	 * @param		 integer	$index
+	 * @param	array	$data
+	 * @param	array	$buf
+	 * @param	integer	$index
 	 *
-	 * @return	 array
+	 * @return	array
 	 *
 	 */
-	private function decode_block($data, $buf, $index)
+	private function decode_block(array $data, array $buf, int|float $index) : array
 	{
-		if (!is_array($data)) {
-			throw new Exception('base58->decode_block(): Invalid input type ($data must be an array)');
-		}
-		if (!is_array($buf)) {
-			throw new Exception('base58->decode_block(): Invalid input type ($buf must be an array)');
-		}
-		if (!is_int($index) && !is_float($index)) {
-			throw new Exception('base58->decode_block(): Invalid input type ($index must be a number)');
-		}
-
 		$res_size = self::index_of(self::$encoded_block_sizes, count($data));
 		if ($res_size <= 0) {
 			throw new Exception('base58->decode_block(): Invalid input length ($data must be a value from base58::$encoded_block_sizes)');
@@ -332,17 +284,13 @@ class base58
 	 *
 	 * Decode a Base58 string to hexadecimal (Base16)
 	 *
-	 * @param		 string	 $hex	 A Base58 string to convert to hexadecimal (Base16)
+	 * @param	string	$hex	A Base58 string to convert to hexadecimal (Base16)
 	 *
-	 * @return	 string
+	 * @return	string
 	 *
 	 */
-	public function decode($enc)
+	public function decode(string $enc) : string
 	{
-		if (!is_string($enc)) {
-			throw new Exception ('base58->decode(): Invalid input type (must be a string)');
-		}
-
 		$enc = self::str_to_bin($enc);
 		if (count($enc) == 0) {
 			return '';
@@ -374,21 +322,14 @@ class base58
 	 * Search an array for a value
 	 * Source: https://stackoverflow.com/a/30994678
 	 *
-	 * @param		 array	 $haystack	An array to search
-	 * @param		 string	 $needle		A string to search for
-	 *)
-	 * @return	 number							The index of the element found (or -1 for no match)
+	 * @param	array	$haystack	An array to search
+	 * @param	string	$needle		A string to search for
+	 * 
+	 * @return	integer				The index of the element found (or -1 for no match)
 	 *
 	 */
-	private function index_of($haystack, $needle)
+	private function index_of(array $haystack, string $needle) : int
 	{
-		if (!is_array($haystack)) {
-			throw new Exception ('base58->decode(): Invalid input type ($haystack must be an array)');
-		}
-		// if (gettype($needle) != 'string') {
-		//	 throw new Exception ('base58->decode(): Invalid input type ($needle must be a string)');
-		// }
-
 		foreach ($haystack as $key => $value) if ($value === $needle) return $key;
 		return -1;
 	}

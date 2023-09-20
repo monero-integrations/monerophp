@@ -15,16 +15,14 @@ use RuntimeException;
 
 class jsonRPCClient
 {
-	protected $url = null, $is_debug = false, $parameters_structure = 'array';
-	private $username;
-	private $password;
-	protected $curl_options = array(
+	protected bool $is_debug = false;
+
+	protected $curl_options = [
 		CURLOPT_CONNECTTIMEOUT => 8,
 		CURLOPT_TIMEOUT => 8
-	);
+	];
 
-
-	private $httpErrors = array(
+	private $httpErrors = [
 		400 => '400 Bad Request',
 		401 => '401 Unauthorized',
 		403 => '403 Forbidden',
@@ -35,17 +33,16 @@ class jsonRPCClient
 		500 => '500 Internal Server Error',
 		502 => '502 Bad Gateway',
 		503 => '503 Service Unavailable'
-	);
+	];
 
-	public function __construct($pUrl, $pUser, $pPass, $check_SSL)
-	{
-		$this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded to use this class!');
-		$this->validate(false === extension_loaded('json'), 'The json extension must be loaded to use this class!');
-
-		$this->url = $pUrl;
-		$this->username = $pUser;
-		$this->password = $pPass;
-		$this->SSL = $check_SSL;
+	public function __construct(
+		protected readonly ?string $url,
+		private readonly ?string $username,
+		private readonly ?string $password,
+		private readonly bool $SSL
+	) {
+		$this->validate(!extension_loaded('curl'), 'The curl extension must be loaded to use this class!');
+		$this->validate(!extension_loaded('json'), 'The json extension must be loaded to use this class!');
 	}
 
 	public function setDebug($pIsDebug)
@@ -54,37 +51,34 @@ class jsonRPCClient
 		return $this;
 	}
 
-	public function setCurlOptions($pOptionsArray)
+	public function setCurlOptions(array $pOptionsArray)
 	{
-		if (is_array($pOptionsArray))
-		{
-			$this->curl_options = $pOptionsArray + $this->curl_options;
-		}
-		else
-		{
-			throw new InvalidArgumentException('Invalid options type.');
-		}
+		$this->curl_options = $pOptionsArray + $this->curl_options;
+		
 		return $this;
 	}
 
-	public function _run($pMethod, $pParams, $path)
+	public function _run(string $pMethod, array $pParams, string $path) : string
 	{
-		// check if given params are correct
-		$this->validate(false === is_scalar($pMethod), 'Method name has no scalar value');
 		// send params as an object or an array
 		// Request (method invocation)
-		$request = json_encode(array('jsonrpc' => '2.0', 'method' => $pMethod, 'params' => $pParams));
+		$request = json_encode(['jsonrpc' => '2.0', 'method' => $pMethod, 'params' => $pParams]);
+
 		// if is_debug mode is true then add url and request to is_debug
 		$this->debug('Url: ' . $this->url . "\r\n", false);
 		$this->debug('Request: ' . $request . "\r\n", false);
 		$responseMessage = $this->getResponse($request, $path);
+
 		// if is_debug mode is true then add response to is_debug and display it
 		$this->debug('Response: ' . $responseMessage . "\r\n", true);
+
 		// decode and create array ( can be object, just set to false )
 		$responseDecoded = json_decode($responseMessage, true);
+
 		// check if decoding json generated any errors
 		$jsonErrorMsg = json_last_error_msg();
 		$this->validate( !is_null($jsonErrorMsg) && $jsonErrorMsg !== 'No error' , $jsonErrorMsg . ': ' . $responseMessage);
+
 		if (isset($responseDecoded['error']))
 		{
 			$errorMessage = 'Request have return error: ' . $responseDecoded['error']['message'] . '; ' . "\n" .
@@ -98,7 +92,7 @@ class jsonRPCClient
 		return $responseDecoded['result'] ?? -1;
 	}
 
-	protected function & getResponse(&$pRequest, &$path)
+	protected function & getResponse(string &$pRequest, string &$path) : string
 	{
 		// do the actual connection
 		$ch = curl_init();
@@ -107,11 +101,15 @@ class jsonRPCClient
 			throw new RuntimeException('Could\'t initialize a cURL session');
 		}
 		curl_setopt($ch, CURLOPT_URL, $this->url.$path);
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
-		curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
+
+		if(!is_null($this->username) & is_null($this->password)) {
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
+			curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
+		}
+
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $pRequest);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-type: application/json']);
 		curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
@@ -119,40 +117,45 @@ class jsonRPCClient
 		{
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, '2');
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-		}else{
+		} else {
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		}
+
 		if (!curl_setopt_array($ch, $this->curl_options))
 		{
 			throw new RuntimeException('Error while setting curl options');
 		}
+
 		// send the request
 		$response = curl_exec($ch);
+
 		// check http status code
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		if (isset($this->httpErrors[$httpCode]))
 		{
 			throw new RuntimeException('Response Http Error - ' . $this->httpErrors[$httpCode]);
 		}
+
 		// check for curl error
 		if (0 < curl_errno($ch))
 		{
 			throw new RuntimeException('Unable to connect to '.$this->url . ' Error: ' . curl_error($ch));
 		}
+		
 		// close the connection
 		curl_close($ch);
 		return $response;
 	}
 
-	public function validate($pFailed, $pErrMsg)
+	public function validate(bool $failed, $errorMessage)
 	{
-		if ($pFailed)
+		if ($failed)
 		{
-			throw new RuntimeException($pErrMsg);
+			throw new RuntimeException($errorMessage);
 		}
 	}
 
-	protected function debug($pAdd, $pShow = false)
+	protected function debug($pAdd, $pShow = false) : void
 	{
 		static $debug, $startTime;
 		// is_debug off return

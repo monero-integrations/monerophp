@@ -1,24 +1,24 @@
 <?php
 /*
-  Copyright (c) 2018, Monero Integrations
+	Copyright (c) 2018, Monero Integrations
 
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
 
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
 
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
 */
 
 namespace MoneroIntegrations\MoneroPhp;
@@ -28,6 +28,9 @@ use Exception;
 class Cryptonote
 {
 	protected $ed25519;
+	protected $base58;
+	protected $varint;
+
 	public function __construct()
 	{
 		$this->ed25519 = new ed25519();
@@ -35,29 +38,31 @@ class Cryptonote
 		$this->varint = new Varint();
 	}
 
-	/*
-	 * @param string Hex encoded string of the data to hash
-	 * @return string Hex encoded string of the hashed data
+	/**
+	 * 
+	 * @param	string Hex encoded string of the data to hash
+	 * @return	string Hex encoded string of the hashed data
 	 *
 	 */
-	public function keccak_256($message)
+	public function keccak_256(string $message) : string
 	{
 		$keccak256 = SHA3::init (SHA3::KECCAK_256);
 		$keccak256->absorb (hex2bin($message));
 		return bin2hex ($keccak256->squeeze (32)) ;
 	}
 
-	/*
-	 * @return string A hex encoded string of 32 random bytes
+	/**
+	 * 
+	 * @return	string A hex encoded string of 32 random bytes
 	 *
 	 */
-	public function gen_new_hex_seed()
+	public function gen_new_hex_seed() : string
 	{
 		$bytes = random_bytes(32);
 		return bin2hex($bytes);
 	}
 
-	public function sc_reduce($input)
+	public function sc_reduce(string $input) : string
 	{
 		$integer = $this->ed25519->decodeint(hex2bin($input));
 
@@ -67,78 +72,81 @@ class Cryptonote
 		return $result;
 	}
 
-	/*
+	/**
+	 * 
 	 * Hs in the cryptonote white paper
 	 *
-	 * @param string Hex encoded data to hash
+	 * @param	string Hex encoded data to hash
 	 *
-	 * @return string A 32 byte encoded integer
+	 * @return	string A 32 byte encoded integer
 	 */
-	public function hash_to_scalar($data)
+	public function hash_to_scalar(string $data) : string
 	{
 		$hash = $this->keccak_256($data);
 		$scalar = $this->sc_reduce($hash);
 		return $scalar;
 	}
 
-	/*
+	/**
 	 * Derive a deterministic private view key from a private spend key
-	 * @param string A private spend key represented as a 32 byte hex string
+	 * @param	string A private spend key represented as a 32 byte hex string
 	 *
-	 * @return string A deterministic private view key represented as a 32 byte hex string
+	 * @return	string A deterministic private view key represented as a 32 byte hex string
 	 */
-	public function derive_viewKey($spendKey)
+	public function derive_viewKey(string $spendKey) : string
 	{
 		return $this->hash_to_scalar($spendKey);
 	}
 
-	/*
+	/**
 	 * Generate a pair of random private keys
 	 *
-	 * @param string A hex string to be used as a seed (this should be random)
+	 * @param	string A hex string to be used as a seed (this should be random)
 	 *
-	 * @return array An array containing a private spend key and a deterministic view key
+	 * @return	array An array containing a private spend key and a deterministic view key
 	 */
-	public function gen_private_keys($seed)
+	public function gen_private_keys(string $seed) : array
 	{
 		$spendKey = $this->sc_reduce($seed);
 		$viewKey = $this->derive_viewKey($spendKey);
-		$result = array("spendKey" => $spendKey,
-						"viewKey" => $viewKey);
+		$result = [
+			"spendKey" => $spendKey,
+			"viewKey" => $viewKey
+		];
 
 		return $result;
 	}
 
-	/*
+	/**
 	 * Get a public key from a private key on the ed25519 curve
 	 *
 	 * @param string a 32 byte hex encoded private key
 	 *
 	 * @return string a 32 byte hex encoding of a point on the curve to be used as a public key
 	 */
-	public function pk_from_sk($privKey)
+	public function pk_from_sk(string $privKey) : string
 	{
-	$keyInt = $this->ed25519->decodeint(hex2bin($privKey));
-	$aG = $this->ed25519->scalarmult_base($keyInt);
+		$keyInt = $this->ed25519->decodeint(hex2bin($privKey));
+		$aG = $this->ed25519->scalarmult_base($keyInt);
 		return bin2hex($this->ed25519->encodepoint($aG));
 	}
 
-	/*
+	/**
 	 * Generate key derivation
 	 *
-	 * @param string a 32 byte hex encoding of a point on the ed25519 curve used as a public key
-	 * @param string a 32 byte hex encoded private key
+	 * @param	string a 32 byte hex encoding of a point on the ed25519 curve used as a public key
+	 * @param	string a 32 byte hex encoded private key
 	 *
-	 * @return string The hex encoded key derivation
+	 * @return	string The hex encoded key derivation
 	 */
-	public function gen_key_derivation($public, $private)
+	public function gen_key_derivation(string $public, string $private) : string
 	{
 		$point = $this->ed25519->scalarmult($this->ed25519->decodepoint(hex2bin($public)), $this->ed25519->decodeint(hex2bin($private)));
 		$res = $this->ed25519->scalarmult($point, 8);
 		return bin2hex($this->ed25519->encodepoint($res));
 	}
 
-	public function derivation_to_scalar($der, $index)
+	public function derivation_to_scalar(string $der, $index) : string
 	{
 		$encoded = $this->varint->encode_varint($index);
 		$data = $der . $encoded;
@@ -150,7 +158,7 @@ class Cryptonote
 	{
 		if(strlen($payment_id) != 16)
 		{
-		   throw new Exception("Error: Incorrect payment ID size. Should be 8 bytes");
+			 throw new Exception("Error: Incorrect payment ID size. Should be 8 bytes");
 		}
 		$der = $this->gen_key_derivation($tx_pub_key, $viewkey);
 		$data = $der . '8d';
@@ -189,37 +197,33 @@ class Cryptonote
 		return bin2hex($key);
 	}
 
-	/*
+	/**
 	 * Perform the calculation P = P' as described in the cryptonote whitepaper
 	 *
-	 * @param string 32 byte transaction public key R
-	 * @param string 32 byte receiver private view key a
-	 * @param string 32 byte receiver public spend key B
-	 * @param int output index
-	 * @param string output you want to check against P
+	 * @param	string 32 byte transaction public key R
+	 * @param	string 32 byte receiver private view key a
+	 * @param	string 32 byte receiver public spend key B
+	 * @param	int output index
+	 * @param	string output you want to check against P
 	 */
 	public function is_output_mine($txPublic, $privViewkey, $publicSpendkey, $index, $P)
 	{
 		$derivation = $this->gen_key_derivation($txPublic, $privViewkey);
 		$Pprime = $this->derive_public_key($derivation, $index, $publicSpendkey);
 
-		if($P == $Pprime)
-		{
-		   return true;
-		}
-		else
-		  return false;
+
+		return $P == $Pprime;
 	}
 
-	/*
+	/**
 	 * Create a valid base58 encoded Monero address from public keys
 	 *
-	 * @param string Public spend key
-	 * @param string Public view key
+	 * @param	string Public spend key
+	 * @param	string Public view key
 	 *
-	 * @return string Base58 encoded Monero address
+	 * @return	string Base58 encoded Monero address
 	 */
-	public function encode_address($pSpendKey, $pViewKey)
+	public function encode_address(string $pSpendKey, string $pViewKey) : string
 	{
 		// mainnet network byte is 18 (0x12)
 		$data = "12" . $pSpendKey . $pViewKey;
@@ -229,68 +233,67 @@ class Cryptonote
 		return $encoded;
 	}
 
-	public function verify_checksum($address)
+	public function verify_checksum(string $address) : bool
 	{
 		$decoded = $this->base58->decode($address);
 		$checksum = substr($decoded, -8);
 		$checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
 		$calculated = substr($checksum_hash, 0, 8);
-		if($checksum == $calculated){
-			return true;
-		}
-		else
-		return false;
+		
+		return $checksum == $calculated;
 	}
 
-	/*
-		 * Decode a base58 encoded Monero address
-		 *
-		 * @param string A base58 encoded Monero address
-		 *
-		 * @return array An array containing the Address network byte, public spend key, and public view key
-		 */
-	public function decode_address($address)
-		{
-			$decoded = $this->base58->decode($address);
+	/**
+	 * Decode a base58 encoded Monero address
+	 *
+	 * @param	string A base58 encoded Monero address
+	 *
+	 * @return	array An array containing the Address network byte, public spend key, and public view key
+	 */
+	public function decode_address(string $address) : array
+	{
+		$decoded = $this->base58->decode($address);
 
 		if(!$this->verify_checksum($address)){
-		throw new Exception("Error: invalid checksum");
+			throw new Exception("Error: invalid checksum");
 		}
 
 		$network_byte = substr($decoded, 0, 2);
 		$public_spendKey = substr($decoded, 2, 64);
 		$public_viewKey = substr($decoded, 66, 64);
 
-		$result = array("networkByte" => $network_byte,
-				"spendKey" => $public_spendKey,
-				"viewKey" => $public_viewKey);
-			return $result;
-		}
+		$result = [
+			"networkByte" => $network_byte,
+			"spendKey" => $public_spendKey,
+			"viewKey" => $public_viewKey
+		];
+		return $result;
+	}
 
-		/*
-		 * Get an integrated address from public keys and a payment id
-		 *
-		 * @param string A 32 byte hex encoded public spend key
-		 * @param string A 32 byte hex encoded public view key
-		 * @param string An 8 byte hex string to use as a payment id
-		 */
-		public function integrated_addr_from_keys($public_spendkey, $public_viewkey, $payment_id)
-		{
-			// 0x13 is the mainnet network byte for integrated addresses
-			$data = "13".$public_spendkey.$public_viewkey.$payment_id;
-			$checksum = substr($this->keccak_256($data), 0, 8);
-			$result = $this->base58->encode($data.$checksum);
-			return $result;
-		}
+	/**
+	 * Get an integrated address from public keys and a payment id
+	 *
+	 * @param	string A 32 byte hex encoded public spend key
+	 * @param	string A 32 byte hex encoded public view key
+	 * @param	string An 8 byte hex string to use as a payment id
+	 */
+	public function integrated_addr_from_keys(string $public_spendkey, string $public_viewkey, string $payment_id) : string
+	{
+		// 0x13 is the mainnet network byte for integrated addresses
+		$data = "13".$public_spendkey.$public_viewkey.$payment_id;
+		$checksum = substr($this->keccak_256($data), 0, 8);
+		$result = $this->base58->encode($data.$checksum);
+		return $result;
+	}
 
-		/*
-		 * Generate a Monero address from seed
-		 *
-		 * @param string Hex string to use as seed
-		 *
-		 * @return string A base58 encoded Monero address
-		 */
-	public function address_from_seed($hex_seed)
+	/**
+	 * Generate a Monero address from seed
+	 *
+	 * @param	string Hex string to use as seed
+	 *
+	 * @return	string A base58 encoded Monero address
+	 */
+	public function address_from_seed(string $hex_seed) : string
 	{
 		$private_keys = $this->gen_private_keys($hex_seed);
 		$private_viewKey = $private_keys["viewKey"];
@@ -302,21 +305,21 @@ class Cryptonote
 		$address = $this->encode_address($public_spendKey, $public_viewKey);
 		return $address;
 	}
-	  
+		
 	// m = Hs(a || i)
 	public function generate_subaddr_secret_key($major_index, $minor_index, $sec_key)
 	{
-	$prefix = "5375624164647200";
-	$index = pack("II", $major_index, $minor_index);
-	return $this->hash_to_scalar($prefix . $sec_key . bin2hex($index));
+		$prefix = "5375624164647200";
+		$index = pack("II", $major_index, $minor_index);
+		return $this->hash_to_scalar($prefix . $sec_key . bin2hex($index));
 	}
 	
 	public function generate_subaddress_spend_public_key($spend_public_key, $subaddr_secret_key)
 	{
-	$mInt = $this->ed25519->decodeint(hex2bin($subaddr_secret_key));
-	$mG = $this->ed25519->scalarmult_base($mInt);
-	$D = $this->ed25519->edwards($this->ed25519->decodepoint(hex2bin($spend_public_key)), $mG);
-	return bin2hex($this->ed25519->encodepoint($D));
+		$mInt = $this->ed25519->decodeint(hex2bin($subaddr_secret_key));
+		$mG = $this->ed25519->scalarmult_base($mInt);
+		$D = $this->ed25519->edwards($this->ed25519->decodepoint(hex2bin($spend_public_key)), $mG);
+		return bin2hex($this->ed25519->encodepoint($D));
 	}
 	
 	public function generate_subaddr_view_public_key($subaddr_spend_public_key, $view_secret_key)
@@ -336,5 +339,5 @@ class Cryptonote
 		$encoded = $this->base58->encode($data . substr($checksum, 0, 8));
 		return $encoded;
 	}
-	  
+		
 }

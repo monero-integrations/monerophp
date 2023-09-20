@@ -117,9 +117,10 @@ class SHA3 {
 		}
 
 		$blockLength = $this->rateInBytes;
-		list ($output, $this->outputBuffer) = array (
-			substr ($this->outputBuffer, 0, $length)
-			, substr ($this->outputBuffer, $length));
+		list ($output, $this->outputBuffer) = [
+			substr ($this->outputBuffer, 0, $length),
+			substr ($this->outputBuffer, $length)
+		];
 		$neededLength = $length - strlen ($output);
 		$diff = $neededLength % $blockLength;
 		if ($diff) {
@@ -131,6 +132,7 @@ class SHA3 {
 
 		$read = $this->getOutputBytes ($readLength);
 		$this->outputBuffer .= substr ($read, $neededLength);
+		
 		return $output . substr ($read, 0, $neededLength);
 	}
 
@@ -143,6 +145,7 @@ class SHA3 {
 
 	private $phase = self::PHASE_INIT;
 	private $state; // byte array (string)
+	private $blockSize;
 	private $rateInBytes; // positive integer
 	private $suffix; // 8-bit unsigned integer
 	private $inputBuffer = ''; // byte array (string): max length = rateInBytes
@@ -313,16 +316,17 @@ class SHA3 {
 		64-bit bitwise left rotation (Little endian)
 	*/
 	protected static function rotL64One ($n) {
-		list ($n[0], $n[1], $n[2], $n[3], $n[4], $n[5], $n[6], $n[7])
-			= array (
-				chr (((ord ($n[0]) << 1) & 0xff) ^ (ord ($n[7]) >> 7))
-				,chr (((ord ($n[1]) << 1) & 0xff) ^ (ord ($n[0]) >> 7))
-				,chr (((ord ($n[2]) << 1) & 0xff) ^ (ord ($n[1]) >> 7))
-				,chr (((ord ($n[3]) << 1) & 0xff) ^ (ord ($n[2]) >> 7))
-				,chr (((ord ($n[4]) << 1) & 0xff) ^ (ord ($n[3]) >> 7))
-				,chr (((ord ($n[5]) << 1) & 0xff) ^ (ord ($n[4]) >> 7))
-				,chr (((ord ($n[6]) << 1) & 0xff) ^ (ord ($n[5]) >> 7))
-				,chr (((ord ($n[7]) << 1) & 0xff) ^ (ord ($n[6]) >> 7)));
+		list ($n[0], $n[1], $n[2], $n[3], $n[4], $n[5], $n[6], $n[7]) = [
+			chr (((ord ($n[0]) << 1) & 0xff) ^ (ord ($n[7]) >> 7)),
+			chr (((ord ($n[1]) << 1) & 0xff) ^ (ord ($n[0]) >> 7)),
+			chr (((ord ($n[2]) << 1) & 0xff) ^ (ord ($n[1]) >> 7)),
+			chr (((ord ($n[3]) << 1) & 0xff) ^ (ord ($n[2]) >> 7)),
+			chr (((ord ($n[4]) << 1) & 0xff) ^ (ord ($n[3]) >> 7)),
+			chr (((ord ($n[5]) << 1) & 0xff) ^ (ord ($n[4]) >> 7)),
+			chr (((ord ($n[6]) << 1) & 0xff) ^ (ord ($n[5]) >> 7)),
+			chr (((ord ($n[7]) << 1) & 0xff) ^ (ord ($n[6]) >> 7))
+		];
+
 		return $n;
 	}
 }
