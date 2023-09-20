@@ -97,20 +97,6 @@ class walletRPC
 
 	/**
 	 *
-	 * Convert from moneroj to tacoshi (piconero)
-	 *
-	 * @param	number	 $amount	Amount (in monero) to transform to tacoshi (piconero)	 (optional)
-	 *
-	 * @return	number
-	 *
-	 */
-	public function _transform($amount = 0)
-	{
-		return intval(bcmul($amount, 1000000000000));
-	}
-
-	/**
-	 *
 	 * Look up an account's balance
 	 *
 	 * @param	number	$account_index	Index of account to look up	(optional)
@@ -453,16 +439,18 @@ class walletRPC
 	 */
 	public function transfer(int $amount, string $address, string $payment_id = '', int $mixin = 15, int $account_index = 0, string $subaddr_indices = '', int $priority = 2, int $unlock_time = 0, bool $do_not_relay = false, int $ringsize = 11)
 	{
-		$destinations = [['amount' => $this->_transform($amount), 'address' => $address]];
+		$destinations = [['amount' => $amount, 'address' => $address]];
 
-		$params = ['destinations' => $destinations,
-							 'mixin' => $mixin,
-							 'get_tx_key' => true,
-							 'account_index' => $account_index, 
-							 'subaddr_indices' => $subaddr_indices,
-							 'priority' => $priority,
-							 'do_not_relay' => $do_not_relay, 
-							 'ringsize' => $ringsize];
+		$params = [
+			'destinations' => $destinations,
+			'mixin' => $mixin,
+			'get_tx_key' => true,
+			'account_index' => $account_index, 
+			'subaddr_indices' => $subaddr_indices,
+			'priority' => $priority,
+			'do_not_relay' => $do_not_relay, 
+			'ringsize' => $ringsize
+		];
 
 		$transfer_method = $this->_run('transfer', $params);
 
@@ -478,7 +466,7 @@ class walletRPC
 	 */
 	public function transfer_split(int $amount, string $address, string $payment_id = '', int $mixin = 15, int $account_index = 0, string $subaddr_indices = '', int $priority = 2, int $unlock_time = 0, bool $do_not_relay = false)
 	{
-		$destinations = [['amount' => $this->_transform($amount), 'address' => $address]];
+		$destinations = [['amount' => $amount, 'address' => $address]];
 
 		$params = ['destinations' => $destinations,
 							 'mixin' => $mixin,
@@ -567,7 +555,7 @@ class walletRPC
 			'account_index' => $account_index,
 			'payment_id' => $payment_id,
 			'priority' => $priority,
-			'below_amount' => $this->_transform($below_amount),
+			'below_amount' => $below_amount,
 			'unlock_time' => $unlock_time,
 			'do_not_relay' => $do_not_relay
 		];
@@ -609,7 +597,7 @@ class walletRPC
 			'account_index' => $account_index,
 			'payment_id' => $payment_id,
 			'priority' => $priority,
-			'below_amount' => $this->_transform($below_amount),
+			'below_amount' => $below_amount,
 			'unlock_time' => $unlock_time,
 			'do_not_relay' => $do_not_relay
 		];
@@ -1279,7 +1267,7 @@ class walletRPC
 	 */
 	public function make_uri(string $address, int $amount, string $payment_id = null, string $recipient_name = null, string $tx_description = null)
 	{
-		$params = ['address' => $address, 'amount' => $this->_transform($amount), 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description];
+		$params = ['address' => $address, 'amount' => $this->$amount, 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description];
 		return $this->_run('make_uri', $params);
 	}
 
