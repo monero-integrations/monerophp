@@ -456,13 +456,13 @@ class walletRPC
 		$destinations = [['amount' => $this->_transform($amount), 'address' => $address]];
 
 		$params = ['destinations' => $destinations,
-		           'mixin' => $mixin,
-		           'get_tx_key' => true,
-		           'account_index' => $account_index, 
-		           'subaddr_indices' => $subaddr_indices,
-		           'priority' => $priority,
-		           'do_not_relay' => $do_not_relay, 
-		           'ringsize' => $ringsize];
+							 'mixin' => $mixin,
+							 'get_tx_key' => true,
+							 'account_index' => $account_index, 
+							 'subaddr_indices' => $subaddr_indices,
+							 'priority' => $priority,
+							 'do_not_relay' => $do_not_relay, 
+							 'ringsize' => $ringsize];
 
 		$transfer_method = $this->_run('transfer', $params);
 
@@ -481,14 +481,14 @@ class walletRPC
 		$destinations = [['amount' => $this->_transform($amount), 'address' => $address]];
 
 		$params = ['destinations' => $destinations,
-		           'mixin' => $mixin,
-		           'get_tx_key' => true,
-		           'account_index' => $account_index,
-		           'subaddr_indices' => $subaddr_indices,
-		           'payment_id' => $payment_id,
-		           'priority' => $priority,
-		           'unlock_time' => $unlock_time,
-		           'do_not_relay' => $do_not_relay];
+							 'mixin' => $mixin,
+							 'get_tx_key' => true,
+							 'account_index' => $account_index,
+							 'subaddr_indices' => $subaddr_indices,
+							 'payment_id' => $payment_id,
+							 'priority' => $priority,
+							 'unlock_time' => $unlock_time,
+							 'do_not_relay' => $do_not_relay];
 
 		$transfer_method = $this->_run('transfer_split', $params);
 
@@ -1114,11 +1114,23 @@ class walletRPC
 	 * }
 	 *
 	 */
-	public function get_transfers(array $input_types = ['all'], int $account_index = 0, string $subaddr_indices = '', int $min_height = 0, int $max_height = 4206931337)
+	public function get_transfers(string|array $input_types = ['all'], int|bool $account_index = 0, string $subaddr_indices = '', int $min_height = 0, int $max_height = 4206931337)
 	{
-		$params = ['account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height];
-		for ($i = 0, $iMax = count($input_types); $i < $iMax; $i++) {
-			$params[$input_types[$i]] = true;
+		if (is_string($input_types)) { // If user is using old method
+			$params = ['subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height];
+			if (is_bool($account_index)) { // If user passed eg. get_transfers('in', true)
+				$params['account_index'] = 0;
+				$params[$input_types] = $account_index;
+			} else { // If user passed eg. get_transfers('in')
+				$params['account_index'] = $account_index;
+				$params[$input_types] = true;
+			}
+		} else {
+			$params = ['account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height];
+
+			for ($i = 0, $iMax = count($input_types); $i < $iMax; $i++) {
+				$params[$input_types[$i]] = true;
+			}
 		}
 
 		if (array_key_exists('all', $params)) {
