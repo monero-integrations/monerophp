@@ -1,22 +1,22 @@
 <?php 
 
 /*
-  Copyright (c) 2018-2019, Monero Integrations
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
+	Copyright (c) 2018-2019, Monero Integrations
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
 */
 
 class subaddress
@@ -63,26 +63,28 @@ class subaddress
 		return bin2hex($this->ed25519->encodepoint($res));
 	}
 	
-	/*
-	 * @param string Hex encoded string of the data to hash
-	 * @return string Hex encoded string of the hashed data
+	/**
+	 * 
+	 * @param	string	Hex encoded string of the data to hash
+	 * @return	string	Hex encoded string of the hashed data
 	 *
 	 */
-	private function keccak_256($message)
+	private function keccak_256(string $message) : string
 	{
 		$keccak256 = SHA3::init(SHA3::KECCAK_256);
 		$keccak256->absorb(hex2bin($message));
 		return bin2hex($keccak256->squeeze(32)) ;
 	}
 
-	/*
+	/**
+	 * 
 	 * Hs in the cryptonote white paper
 	 *
-	 * @param string Hex encoded data to hash
+	 * @param	string	Hex encoded data to hash
 	 *
-	 * @return string A 32 byte encoded integer
+	 * @return	string	A 32 byte encoded integer
 	 */
-	private function hash_to_scalar($data)
+	private function hash_to_scalar(string $data) : string
 	{
 		$hash = $this->keccak_256($data);
 		$scalar = $this->sc_reduce($hash);
