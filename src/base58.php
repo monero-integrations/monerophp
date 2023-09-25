@@ -122,7 +122,7 @@ class base58
 	 * @return	number
 	 *
 	 */
-	private function uint8_be_to_64(array $data) : int
+	private function uint8_be_to_64(array $data) : string
 	{
 		$res = 0;
 		$i = 0;
@@ -160,7 +160,7 @@ class base58
 	 * @return	array
 	 *
 	 */
-	private function uint64_to_8_be(float $num, int $size) : array
+	private function uint64_to_8_be(string $num, int $size) : array
 	{
 		if ($size < 1 || $size > 8) {
 			throw new Exception ('base58->uint64_to_8_be(): Invalid size (1 <= $size <= 8)');
@@ -174,6 +174,7 @@ class base58
 		return $res;
 	}
 
+
 	/**
 	 *
 	 * Convert a hexadecimal (Base16) array to a Base58 string
@@ -185,7 +186,7 @@ class base58
 	 * @return	array
 	 *
 	 */
-	private function encode_block(array $data, array $buf, float|int $index) : array
+	private function encode_block(array $data, array $buf, int $index) : array
 	{
 		if (count($data) < 1 or count($data) > self::$full_encoded_block_size) {
 			throw new Exception('base58->encode_block(): Invalid input length (1 <= count($data) <= 8)');
@@ -328,7 +329,8 @@ class base58
 	 * @return	integer				The index of the element found (or -1 for no match)
 	 *
 	 */
-	private function index_of(array $haystack, string $needle) : int
+
+	private function index_of($haystack, $needle) : int
 	{
 		foreach ($haystack as $key => $value) if ($value === $needle) return $key;
 		return -1;
