@@ -44,19 +44,21 @@ class walletRPC
 	 *
 	 * Start a connection with the Monero wallet RPC interface (monero-wallet-rpc)
 	 *
-	 * @param	string	$host		monero-wallet-rpc hostname					(optional)
-	 * @param	int		$port		monero-wallet-rpc port						(optional)
-	 * @param	string	$protocol	monero-wallet-rpc protocol (eg. 'http')		(optional)
-	 * @param	string	$user		monero-wallet-rpc username					(optional)
-	 * @param	string	$password	monero-wallet-rpc passphrase				(optional)
+	 * @param	string	$host			hostname																(optional)
+	 * @param	int		$port			port																	(optional)
+	 * @param	string	$protocol		protocol (eg. 'http')													(optional)
+	 * @param	string	$user			username																(optional)
+	 * @param	string	$password		passphrase																(optional)
+	 * @param	string	$piconeroParams	whether amounts of monero are to be interpreted as piconero or monero	(optional)
 	 *
 	 */
 	function __construct(
-		private readonly string $host = '127.0.0.1',
-		private readonly int $port = 18081,
-		private readonly bool $check_SSL = false,
-		private readonly ?string $user = null,
-		private readonly ?string $password = null
+		public readonly string $host = '127.0.0.1',
+		public readonly int $port = 18081,
+		public readonly bool $check_SSL = false,
+		public readonly ?string $user = null,
+		private readonly ?string $password = null,
+		public readonly bool $piconeroParams = false
 	) {
 		$this->protocol = $check_SSL ? 'https' : 'http';
 		
@@ -93,6 +95,23 @@ class walletRPC
 	public function _print($json)
 	{
 		echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	}
+
+	/**
+	 *
+	 * Convert from moneroj to tacoshi (piconero)
+	 *
+	 * @param	number	 $amount	Amount (in monero) to transform to tacoshi (piconero)	 (optional)
+	 *
+	 * @return	number
+	 *
+	 */
+	public function _transform(int|float $amount = 0) : int
+	{
+		if($this->piconeroParams)
+			return intval($amount);
+		else
+			return intval(bcmul($amount, 1000000000000));
 	}
 
 	/**
@@ -437,9 +456,9 @@ class walletRPC
 	 * }
 	 *
 	 */
-	public function transfer(int $amount, string $address, string $payment_id = '', int $mixin = 15, int $account_index = 0, string $subaddr_indices = '', int $priority = 2, int $unlock_time = 0, bool $do_not_relay = false, int $ringsize = 11)
+	public function transfer(int|float $amount, string $address, string $payment_id = '', int $mixin = 15, int $account_index = 0, string $subaddr_indices = '', int $priority = 2, int $unlock_time = 0, bool $do_not_relay = false, int $ringsize = 11)
 	{
-		$destinations = [['amount' => $amount, 'address' => $address]];
+		$destinations = [['amount' => $this->_transform($amount), 'address' => $address]];
 
 		$params = [
 			'destinations' => $destinations,
@@ -464,19 +483,21 @@ class walletRPC
 	 * Same as transfer, but splits transfer into more than one transaction if necessary
 	 *
 	 */
-	public function transfer_split(int $amount, string $address, string $payment_id = '', int $mixin = 15, int $account_index = 0, string $subaddr_indices = '', int $priority = 2, int $unlock_time = 0, bool $do_not_relay = false)
+	public function transfer_split(int|float $amount, string $address, string $payment_id = '', int $mixin = 15, int $account_index = 0, string $subaddr_indices = '', int $priority = 2, int $unlock_time = 0, bool $do_not_relay = false)
 	{
-		$destinations = [['amount' => $amount, 'address' => $address]];
+		$destinations = [['amount' => $this->_transform($amount), 'address' => $address]];
 
-		$params = ['destinations' => $destinations,
-							 'mixin' => $mixin,
-							 'get_tx_key' => true,
-							 'account_index' => $account_index,
-							 'subaddr_indices' => $subaddr_indices,
-							 'payment_id' => $payment_id,
-							 'priority' => $priority,
-							 'unlock_time' => $unlock_time,
-							 'do_not_relay' => $do_not_relay];
+		$params = [
+			'destinations' => $destinations,
+			'mixin' => $mixin,
+			'get_tx_key' => true,
+			'account_index' => $account_index,
+			'subaddr_indices' => $subaddr_indices,
+			'payment_id' => $payment_id,
+			'priority' => $priority,
+			'unlock_time' => $unlock_time,
+			'do_not_relay' => $do_not_relay
+		];
 
 		$transfer_method = $this->_run('transfer_split', $params);
 
@@ -544,7 +565,7 @@ class walletRPC
 	 * }
 	 *
 	 */
-	public function sweep_all(string $address, string $subaddr_indices = '', int $account_index = 0, string $payment_id = '', int $mixin = 15, int $priority = 2, int $below_amount = 0, int $unlock_time = 0, bool $do_not_relay = false)
+	public function sweep_all(string $address, string $subaddr_indices = '', int $account_index = 0, string $payment_id = '', int $mixin = 15, int $priority = 2, int|float $below_amount = 0, int $unlock_time = 0, bool $do_not_relay = false)
 	{
 
 		$params = [
@@ -555,7 +576,7 @@ class walletRPC
 			'account_index' => $account_index,
 			'payment_id' => $payment_id,
 			'priority' => $priority,
-			'below_amount' => $below_amount,
+			'below_amount' => $this->_transform($below_amount),
 			'unlock_time' => $unlock_time,
 			'do_not_relay' => $do_not_relay
 		];
@@ -588,7 +609,7 @@ class walletRPC
 	 * }
 	 *
 	 */
-	public function sweep_single(string $key_image, string $address, string $payment_id = '', int $mixin = 15, int $priority = 2, int $below_amount = 0, int $unlock_time = 0, int $do_not_relay = 0)
+	public function sweep_single(string $key_image, string $address, string $payment_id = '', int $mixin = 15, int $priority = 2, int|float $below_amount = 0, int $unlock_time = 0, int $do_not_relay = 0)
 	{
 		$params = [
 			'address' => $address,
@@ -597,7 +618,7 @@ class walletRPC
 			'account_index' => $account_index,
 			'payment_id' => $payment_id,
 			'priority' => $priority,
-			'below_amount' => $below_amount,
+			'below_amount' => $this->_transform($below_amount),
 			'unlock_time' => $unlock_time,
 			'do_not_relay' => $do_not_relay
 		];
@@ -1265,9 +1286,9 @@ class walletRPC
 	 * }
 	 *
 	 */
-	public function make_uri(string $address, int $amount, string $payment_id = null, string $recipient_name = null, string $tx_description = null)
+	public function make_uri(string $address, int|float $amount, string $payment_id = null, string $recipient_name = null, string $tx_description = null)
 	{
-		$params = ['address' => $address, 'amount' => $amount, 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description];
+		$params = ['address' => $address, 'amount' => $this->_transform($amount), 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description];
 		return $this->_run('make_uri', $params);
 	}
 
