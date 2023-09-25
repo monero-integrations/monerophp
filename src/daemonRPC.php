@@ -35,10 +35,10 @@ use Exception;
 
 class daemonRPC
 {
-	private $client;
+	private jsonRPCClient $client;
 
-	private $protocol;
-	private $url;
+	private string $protocol;
+	private string $url;
 
 	/**
 	 *

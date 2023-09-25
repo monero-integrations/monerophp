@@ -35,10 +35,10 @@ use Exception;
 
 class walletRPC
 {
-	private $client;
+	private jsonRPCClient $client;
 
-	private $protocol;
-	private $url;
+	private string $protocol;
+	private string $url;
 
 	/**
 	 *
@@ -99,7 +99,7 @@ class walletRPC
 
 	/**
 	 *
-	 * Convert from moneroj to tacoshi (piconero)
+	 * Convert from moneroj to piconero (if piconero params is disabled)
 	 *
 	 * @param	number	 $amount	Amount (in monero) to transform to tacoshi (piconero)	 (optional)
 	 *
