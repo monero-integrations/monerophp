@@ -49,7 +49,7 @@
     "extra": {
         "hooks": {
             "pre-commit": [
-                "phpcbf"
+                "vendor/bin/phpcbf"
             ]
         }
     },
