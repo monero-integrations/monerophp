@@ -77,7 +77,7 @@ class subaddress
 	private function keccak_256($message)
 	{
 		$message_bin = hex2bin($message);
-        $hash = keccak::hash($message_bin, 256);
+		$hash = keccak::hash($message_bin, 256);
 		return $hash;
 	}
 
