@@ -30,6 +30,9 @@ use kornrunner\Keccak as keccak;
     class Cryptonote
     {
         protected $ed25519;
+        protected $base58;
+        protected $varint;
+
         public function __construct()
         {
             $this->ed25519 = new ed25519();

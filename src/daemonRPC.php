@@ -43,6 +43,7 @@ class daemonRPC
   private $url;
   private $user;
   private $password;
+  private $check_SSL;
 
   /**
    *

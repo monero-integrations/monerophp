@@ -43,6 +43,7 @@ class walletRPC
   private $url;
   private $user;
   private $password;
+  private $check_SSL;
 
   /**
    *

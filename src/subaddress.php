@@ -29,7 +29,8 @@ class subaddress
 {
 	protected $ed25519;
 	protected $base58;
-	
+	protected $gmp;
+
 	public function __construct()
 	{
 		$this->ed25519 = new ed25519();
