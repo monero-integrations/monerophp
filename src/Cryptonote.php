@@ -22,8 +22,6 @@
 */
 namespace MoneroIntegrations\MoneroPhp;
 
-require 'vendor/autoload.php';
-
 use kornrunner\Keccak as keccak;
     use Exception;
 
