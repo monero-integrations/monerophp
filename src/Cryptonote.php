@@ -239,13 +239,9 @@ use kornrunner\Keccak as keccak;
     {
         $decoded = $this->base58->decode($address);
         $checksum = substr($decoded, -8);
-        $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
+        $checksum_hash = $this->keccak_256(substr($decoded, 0, -8));
         $calculated = substr($checksum_hash, 0, 8);
-        if($checksum == $calculated){
-            return true;
-        }
-        else
-        return false;
+        return $checksum === $calculated;
     }
 
     /*
