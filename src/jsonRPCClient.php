@@ -18,6 +18,7 @@ class jsonRPCClient
     protected $url = null, $is_debug = false, $parameters_structure = 'array';
     private $username;
     private $password;
+    private $SSL;
     protected $curl_options = array(
         CURLOPT_CONNECTTIMEOUT => 8,
         CURLOPT_TIMEOUT => 8

@@ -19,11 +19,16 @@
   SOFTWARE.
 */
 
+namespace MoneroIntegrations\MoneroPhp;
+
+use kornrunner\Keccak as keccak;
+
 class subaddress
 {
 	protected $ed25519;
 	protected $base58;
-	
+	protected $gmp;
+
 	public function __construct()
 	{
 		$this->ed25519 = new ed25519();
@@ -70,9 +75,9 @@ class subaddress
 	 */
 	private function keccak_256($message)
 	{
-		$keccak256 = SHA3::init(SHA3::KECCAK_256);
-		$keccak256->absorb(hex2bin($message));
-		return bin2hex($keccak256->squeeze(32)) ;
+		$message_bin = hex2bin($message);
+		$hash = keccak::hash($message_bin, 256);
+		return $hash;
 	}
 
 	/*

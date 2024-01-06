@@ -20,9 +20,9 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 */
-
 namespace MoneroIntegrations\MoneroPhp;
 
+use kornrunner\Keccak as keccak;
     use Exception;
 
     class Cryptonote
@@ -30,7 +30,10 @@ namespace MoneroIntegrations\MoneroPhp;
         // https://github.com/monero-project/monero/blob/master/src/cryptonote_config.h#L222
         private $network_prefixes;
         protected $ed25519;
-        public function __construct($network = "mainnet")
+        protected $base58;
+        protected $varint;
+
+        public function __construct()
         {
             $networks_prefixes = [
                 "mainnet" => [
@@ -67,9 +70,10 @@ namespace MoneroIntegrations\MoneroPhp;
          */
         public function keccak_256($message)
         {
-            $keccak256 = SHA3::init (SHA3::KECCAK_256);
-            $keccak256->absorb (hex2bin($message));
-            return bin2hex ($keccak256->squeeze (32)) ;
+            $message_bin = hex2bin($message);
+            $hash = keccak::hash($message_bin, 256);
+
+            return $hash;
         }
 
         /*
@@ -257,13 +261,9 @@ namespace MoneroIntegrations\MoneroPhp;
     {
         $decoded = $this->base58->decode($address);
         $checksum = substr($decoded, -8);
-        $checksum_hash = $this->keccak_256(substr($decoded, 0, 130));
+        $checksum_hash = $this->keccak_256(substr($decoded, 0, -8));
         $calculated = substr($checksum_hash, 0, 8);
-        if($checksum == $calculated){
-            return true;
-        }
-        else
-        return false;
+        return $checksum === $calculated;
     }
 
     /*
@@ -358,5 +358,27 @@ namespace MoneroIntegrations\MoneroPhp;
         $encoded = $this->base58->encode($data . substr($checksum, 0, 8));
 		return $encoded;
 	}
+
+    public function deserialize_block_header($block)
+    {
+      $data = str_split($block, 2);
+      
+      $major_version = $this->varint->decode_varint($data);
+      $data = $this->varint->pop_varint($data);
+      
+      $minor_version = $this->varint->decode_varint($data);
+      $data = $this->varint->pop_varint($data);
+      
+      $timestamp = $this->varint->decode_varint($data);
+      $data = $this->varint->pop_varint($data);
+      
+      $nonce = $this->varint->decode_varint($data);
+      $data = $this->varint->pop_varint($data);
+      
+      return array("major_version" => $major_version,
+                   "minor_version" => $minor_version,
+                   "timestamp" => $timestamp,
+                   "nonce" => $nonce);
+    }
       
     }
