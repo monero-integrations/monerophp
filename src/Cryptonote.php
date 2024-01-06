@@ -27,12 +27,37 @@ use kornrunner\Keccak as keccak;
 
     class Cryptonote
     {
+        // https://github.com/monero-project/monero/blob/master/src/cryptonote_config.h#L222
+        private $network_prefixes;
         protected $ed25519;
         protected $base58;
         protected $varint;
 
         public function __construct()
         {
+            $networks_prefixes = [
+                "mainnet" => [
+                    "STANDARD" => dechex(18),
+                    "INTEGRATED" => dechex(19),
+                    "SUBADDRESS" => dechex(42),
+                ],
+                "stagenet" => [
+                    "STANDARD" => dechex(24),
+                    "INTEGRATED" => dechex(25),
+                    "SUBADDRESS" => dechex(36),
+                ],
+                "testnet" => [
+                    "STANDARD" => dechex(53),
+                    "INTEGRATED" => dechex(54),
+                    "SUBADDRESS" => dechex(63),
+                ]
+            ];
+            if (array_key_exists($network, $networks_prefixes)) {
+                $this->network_prefixes = $networks_prefixes[$network];
+            } else {
+               throw new Exception("Error: Invalid Network, should be one of " . join(", ", array_keys($networks_prefixes)));
+            }
+
             $this->ed25519 = new ed25519();
             $this->base58 = new base58();
             $this->varint = new Varint();
@@ -225,8 +250,7 @@ use kornrunner\Keccak as keccak;
          */
     public function encode_address($pSpendKey, $pViewKey)
     {
-        // mainnet network byte is 18 (0x12)
-        $data = "12" . $pSpendKey . $pViewKey;
+        $data = $this->network_prefixes["STANDARD"] . $pSpendKey . $pViewKey;
         $checksum = $this->keccak_256($data);
         $encoded  = $this->base58->encode($data . substr($checksum, 0, 8));
 	    
@@ -276,8 +300,7 @@ use kornrunner\Keccak as keccak;
          */
         public function integrated_addr_from_keys($public_spendkey, $public_viewkey, $payment_id)
         {
-            // 0x13 is the mainnet network byte for integrated addresses
-            $data = "13".$public_spendkey.$public_viewkey.$payment_id;
+            $data = $this->network_prefixes["INTEGRATED"].$public_spendkey.$public_viewkey.$payment_id;
             $checksum = substr($this->keccak_256($data), 0, 8);
             $result = $this->base58->encode($data.$checksum);
             return $result;
@@ -330,8 +353,7 @@ use kornrunner\Keccak as keccak;
 		$subaddr_secret_key = $this->generate_subaddr_secret_key($major_index, $minor_index, $view_secret_key);
 		$subaddr_public_spend_key = $this->generate_subaddress_spend_public_key($spend_public_key, $subaddr_secret_key);
 		$subaddr_public_view_key = $this->generate_subaddr_view_public_key($subaddr_public_spend_key, $view_secret_key);
-		// mainnet subaddress network byte is 42 (0x2a)
-        $data = "2a" . $subaddr_public_spend_key . $subaddr_public_view_key;
+        $data = $this->network_prefixes["SUBADDRESS"] . $subaddr_public_spend_key . $subaddr_public_view_key;
         $checksum = $this->keccak_256($data);
         $encoded = $this->base58->encode($data . substr($checksum, 0, 8));
 		return $encoded;
