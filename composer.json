@@ -27,7 +27,7 @@
         }
     },
     "require": {
-        "php": ">=7.2.0",
+        "php": ">=7.3",
         "ext-bcmath": "*",
         "ext-curl": "*",
         "ext-json": "*",
@@ -36,8 +36,8 @@
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "phpstan/extension-installer": "*",
-        "squizlabs/php_codesniffer": "*",
-        "brainmaestro/composer-git-hooks": "^2.8"
+        "brainmaestro/composer-git-hooks": "^2.8",
+        "squizlabs/php_codesniffer": "*"
     },
     "suggest": {
         "ext-gmp": "Used to have a multiple math precision for generating address"
