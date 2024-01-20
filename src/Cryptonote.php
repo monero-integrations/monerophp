@@ -33,7 +33,7 @@ use kornrunner\Keccak as keccak;
         protected $base58;
         protected $varint;
 
-        public function __construct()
+        public function __construct($network = "mainnet")
         {
             $networks_prefixes = [
                 "mainnet" => [
