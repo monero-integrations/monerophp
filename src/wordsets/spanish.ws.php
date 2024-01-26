@@ -2,21 +2,22 @@
 
 namespace MoneroIntegrations\MoneroPhp\mnemonic;
 
-class spanish implements wordset {
-
+class spanish implements wordset
+{
     /* Returns name of wordset in the wordset's native language.
      * This is a human-readable string, and should be capitalized
      * if the language supports it.
      */
-    static public function name() : string {
+    public static function name(): string
+    {
         return "Español";
-        
     }
 
-    /* Returns name of wordset in english.    
+    /* Returns name of wordset in english.
      * This is a human-readable string, and should be capitalized
      */
-    static public function english_name() : string {
+    public static function english_name(): string
+    {
         return "Spanish";
     }
 
@@ -27,14 +28,16 @@ class spanish implements wordset {
      *
      * A value of 0 indicates that there is no unique prefix
      * and the entire word must be used instead.
-     */    
-    static public function prefix_length() : int {
+     */
+    public static function prefix_length(): int
+    {
         return 4;  // first 4 letters of each word in wordset is unique.
     }
-    
+
     /* Returns an array of all words in the wordset.
-     */    
-    static public function words() : array {
+     */
+    public static function words(): array
+    {
         return [
             "ábaco",
             "abdomen",
@@ -1661,7 +1664,7 @@ class spanish implements wordset {
             "riqueza",
             "risa",
             "ritmo",
-            "rito"            
+            "rito"
         ];
     }
 }
