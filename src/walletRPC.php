@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * monerophp/walletRPC
@@ -35,15 +36,15 @@ use Exception;
 
 class walletRPC
 {
-  private $client;
+    private $client;
 
-  private $protocol;
-  private $host;
-  private $port;
-  private $url;
-  private $user;
-  private $password;
-  private $check_SSL;
+    private $protocol;
+    private $host;
+    private $port;
+    private $url;
+    private $user;
+    private $password;
+    private $check_SSL;
 
   /**
    *
@@ -56,46 +57,46 @@ class walletRPC
    * @param  string  $password  monero-wallet-rpc passphrase             (optional)
    *
    */
-  function __construct($host = '127.0.0.1', $port = 18081, $SSL = true, $user = null, $password = null)
-  {
-    if (is_array($host)) { // Parameters passed in as object/dictionary
-      $params = $host;
+    public function __construct($host = '127.0.0.1', $port = 18081, $SSL = true, $user = null, $password = null)
+    {
+        if (is_array($host)) { // Parameters passed in as object/dictionary
+            $params = $host;
 
-      if (array_key_exists('host', $params)) {
-        $host = $params['host'];
-      } else {
-        $host = '127.0.0.1';
-      }
-      if (array_key_exists('port', $params)) {
-        $port = $params['port'];
-      }
-      if (array_key_exists('protocol', $params)) {
-        $protocol = $params['protocol'];
-      }
-      if (array_key_exists('user', $params)) {
-        $user = $params['user'];
-      }
-      if (array_key_exists('password', $params)) {
-        $password = $params['password'];
-      }
+            if (array_key_exists('host', $params)) {
+                $host = $params['host'];
+            } else {
+                $host = '127.0.0.1';
+            }
+            if (array_key_exists('port', $params)) {
+                $port = $params['port'];
+            }
+            if (array_key_exists('protocol', $params)) {
+                $protocol = $params['protocol'];
+            }
+            if (array_key_exists('user', $params)) {
+                $user = $params['user'];
+            }
+            if (array_key_exists('password', $params)) {
+                $password = $params['password'];
+            }
+        }
+
+        if ($SSL) {
+            $protocol = 'https';
+        } else {
+            $protocol = 'http';
+        }
+
+        $this->host = $host;
+        $this->port = $port;
+        $this->protocol = $protocol;
+        $this->user = $user;
+        $this->password = $password;
+        $this->check_SSL = $SSL;
+
+        $this->url = $protocol . '://' . $host . ':' . $port . '/';
+        $this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
     }
-      
-      if ($SSL) {
-          $protocol = 'https';
-      } else {
-          $protocol = 'http';
-      }
-    
-    $this->host = $host;
-    $this->port = $port;
-    $this->protocol = $protocol;
-    $this->user = $user;
-    $this->password = $password;
-    $this->check_SSL = $SSL;
-    
-    $this->url = $protocol.'://'.$host.':'.$port.'/';
-    $this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
-  }
 
   /**
    *
@@ -107,11 +108,11 @@ class walletRPC
    * @return string  Call result
    *
    */
-  private function _run($method, $params = null, $path = 'json_rpc')
-  {
-    $result = $this->client->_run($method, $params, $path);
-    return $result;
-  }
+    private function _run($method, $params = null, $path = 'json_rpc')
+    {
+        $result = $this->client->_run($method, $params, $path);
+        return $result;
+    }
 
   /**
    *
@@ -122,10 +123,10 @@ class walletRPC
    * @return none
    *
    */
-  public function _print($json)
-  {
-    echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-  }
+    public function _print($json)
+    {
+        echo json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
 
   /**
    *
@@ -136,10 +137,10 @@ class walletRPC
    * @return number
    *
    */
-  public function _transform($amount = 0)
-  {
-    return intval(bcmul($amount, 1000000000000));
-  }
+    public function _transform($amount = 0)
+    {
+        return intval(bcmul($amount, 1000000000000));
+    }
 
   /**
    *
@@ -153,21 +154,21 @@ class walletRPC
    * }
    *
    */
-  public function get_balance($account_index = 0)
-  {
-    $params = array('account_index' => $account_index);
-    return $this->_run('get_balance', $params);
-  }
+    public function get_balance($account_index = 0)
+    {
+        $params = array('account_index' => $account_index);
+        return $this->_run('get_balance', $params);
+    }
 
   /**
    *
    * Alias of get_balance()
    *
    */
-  public function getbalance($account_index = 0)
-  {
-    return $this->get_balance($account_index);
-  }
+    public function getbalance($account_index = 0)
+    {
+        return $this->get_balance($account_index);
+    }
 
   /**
    *
@@ -194,11 +195,11 @@ class walletRPC
    * }
    *
    */
-  public function get_address($account_index = 0, $address_index = 0)
-  {
-    $params = array('account_index' => $account_index, 'address_index' => $address_index);
-    return $this->_run('get_address', $params);
-  }
+    public function get_address($account_index = 0, $address_index = 0)
+    {
+        $params = array('account_index' => $account_index, 'address_index' => $address_index);
+        return $this->_run('get_address', $params);
+    }
 
     /**
      * @param string $address Monero address
@@ -209,10 +210,11 @@ class walletRPC
     * }
     * }
      */
-  public function get_address_index($address){
-      $params = array('address' => $address);
-      return $this->_run('get_address_index', $params);
-  }
+    public function get_address_index($address)
+    {
+        $params = array('address' => $address);
+        return $this->_run('get_address_index', $params);
+    }
 
   /**
    *
@@ -226,10 +228,10 @@ class walletRPC
    * }
    *
    */
-  public function getaddress($account_index = 0, $address_index = 0)
-  {
-    return $this->get_address($account_index = 0, $address_index = 0);
-  }
+    public function getaddress($account_index = 0, $address_index = 0)
+    {
+        return $this->get_address($account_index = 0, $address_index = 0);
+    }
 
   /**
    *
@@ -244,15 +246,15 @@ class walletRPC
    * }
    *
    */
-  public function create_address($account_index = 0, $label = '')
-  {
-    $params = array('account_index' => $account_index, 'label' => $label);
-    $create_address_method = $this->_run('create_address', $params);
+    public function create_address($account_index = 0, $label = '')
+    {
+        $params = array('account_index' => $account_index, 'label' => $label);
+        $create_address_method = $this->_run('create_address', $params);
 
-    $save = $this->store(); // Save wallet state after subaddress creation
+        $save = $this->store(); // Save wallet state after subaddress creation
 
-    return $create_address_method;
-  }
+        return $create_address_method;
+    }
 
   /**
    *
@@ -264,11 +266,11 @@ class walletRPC
    * @return none
    *
    */
-  public function label_address($index, $label)
-  {
-    $params = array('index' => $index ,'label' => $label);
-    return $this->_run('label_address', $params);
-  }
+    public function label_address($index, $label)
+    {
+        $params = array('index' => $index ,'label' => $label);
+        return $this->_run('label_address', $params);
+    }
 
   /**
    *
@@ -299,10 +301,10 @@ class walletRPC
    * }
    *
    */
-  public function get_accounts($tag = null)
-  {
-    return (is_null($tag)) ? $this->_run('get_accounts') : $this->_run('get_accounts', array('tag' => $tag));
-  }
+    public function get_accounts($tag = null)
+    {
+        return (is_null($tag)) ? $this->_run('get_accounts') : $this->_run('get_accounts', array('tag' => $tag));
+    }
 
   /**
    *
@@ -313,15 +315,15 @@ class walletRPC
    * @return none
    *
    */
-  public function create_account($label = '')
-  {
-    $params = array('label' => $label);
-    $create_account_method = $this->_run('create_account', $params);
+    public function create_account($label = '')
+    {
+        $params = array('label' => $label);
+        $create_account_method = $this->_run('create_account', $params);
 
-    $save = $this->store(); // Save wallet state after account creation
+        $save = $this->store(); // Save wallet state after account creation
 
-    return $create_account_method;
-  }
+        return $create_account_method;
+    }
 
   /**
    *
@@ -333,15 +335,15 @@ class walletRPC
    * @return none
    *
    */
-  public function label_account($account_index, $label)
-  {
-    $params = array('account_index' => $account_index, 'label' => $label);
-    $label_account_method = $this->_run('label_account', $params);
+    public function label_account($account_index, $label)
+    {
+        $params = array('account_index' => $account_index, 'label' => $label);
+        $label_account_method = $this->_run('label_account', $params);
 
-    $save = $this->store(); // Save wallet state after account label
+        $save = $this->store(); // Save wallet state after account label
 
-    return $label_account_method;
-  }
+        return $label_account_method;
+    }
 
   /**
    *
@@ -363,10 +365,10 @@ class walletRPC
    * }
    *
    */
-  public function get_account_tags()
-  {
-    return $this->_run('get_account_tags');
-  }
+    public function get_account_tags()
+    {
+        return $this->_run('get_account_tags');
+    }
 
   /**
    *
@@ -378,15 +380,15 @@ class walletRPC
    * @return none
    *
    */
-  public function tag_accounts($accounts, $tag)
-  {
-    $params = array('accounts' => $accounts, 'tag' => $tag);
-    $tag_accounts_method = $this->_run('tag_accounts', $params);
+    public function tag_accounts($accounts, $tag)
+    {
+        $params = array('accounts' => $accounts, 'tag' => $tag);
+        $tag_accounts_method = $this->_run('tag_accounts', $params);
 
-    $save = $this->store(); // Save wallet state after account tagging
+        $save = $this->store(); // Save wallet state after account tagging
 
-    return $tag_accounts_method;
-  }
+        return $tag_accounts_method;
+    }
 
   /**
    *
@@ -397,15 +399,15 @@ class walletRPC
    * @return none
    *
    */
-  public function untag_accounts($accounts)
-  {
-    $params = array('accounts' => $accounts);
-    $untag_accounts_method = $this->_run('untag_accounts', $params);
+    public function untag_accounts($accounts)
+    {
+        $params = array('accounts' => $accounts);
+        $untag_accounts_method = $this->_run('untag_accounts', $params);
 
-    $save = $this->store(); // Save wallet state after untagging accounts
+        $save = $this->store(); // Save wallet state after untagging accounts
 
-    return $untag_accounts_method;
-  }
+        return $untag_accounts_method;
+    }
 
   /**
    *
@@ -419,15 +421,15 @@ class walletRPC
    * }
    *
    */
-  public function set_account_tag_description($tag, $description)
-  {
-    $params = array('tag' => $tag, 'description' => $description);
-    $set_account_tag_description_method = $this->_run('set_account_tag_description', $params);
+    public function set_account_tag_description($tag, $description)
+    {
+        $params = array('tag' => $tag, 'description' => $description);
+        $set_account_tag_description_method = $this->_run('set_account_tag_description', $params);
 
-    $save = $this->store(); // Save wallet state after describing tag
+        $save = $this->store(); // Save wallet state after describing tag
 
-    return $set_account_tag_description_method;
-  }
+        return $set_account_tag_description_method;
+    }
 
   /**
    *
@@ -440,20 +442,20 @@ class walletRPC
    * }
    *
    */
-  public function get_height()
-  {
-    return $this->_run('get_height');
-  }
+    public function get_height()
+    {
+        return $this->_run('get_height');
+    }
 
   /**
    *
    * Alias of get_height()
    *
    */
-  public function getheight()
-  {
-    return $this->get_height();
-  }
+    public function getheight()
+    {
+        return $this->get_height();
+    }
 
   /**
    *
@@ -483,146 +485,146 @@ class walletRPC
    * }
    *
    */
-  public function transfer($amount, $address = '', $payment_id = '', $mixin = 15, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false, $ringsize = 11)
-  {
-    if (is_array($amount)) { // Parameters passed in as object/dictionary
-      $params = $amount;
+    public function transfer($amount, $address = '', $payment_id = '', $mixin = 15, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false, $ringsize = 11)
+    {
+        if (is_array($amount)) { // Parameters passed in as object/dictionary
+            $params = $amount;
 
-      if (array_key_exists('destinations', $params)) {
-        $destinations = $params['destinations'];
+            if (array_key_exists('destinations', $params)) {
+                $destinations = $params['destinations'];
 
-        if (!is_array($destinations)) {
-          throw new Exception('Error: destinations must be an array');
+                if (!is_array($destinations)) {
+                    throw new Exception('Error: destinations must be an array');
+                }
+
+                foreach ($destinations as $destination_index => $destination) {
+                    if (array_key_exists('amount', $destination)) {
+                        $destinations[$destination_index]['amount'] = $this->_transform($destination['amount']);
+                    } else {
+                        throw new Exception('Error: Amount required');
+                    }
+                    if (!array_key_exists('address', $destination)) {
+                        throw new Exception('Error: Address required');
+                    }
+                }
+            } else {
+                if (array_key_exists('amount', $params)) {
+                    $amount = $params['amount'];
+                } else {
+                    throw new Exception('Error: Amount required');
+                }
+                if (array_key_exists('address', $params)) {
+                    $address = $params['address'];
+                } else {
+                    throw new Exception('Error: Address required');
+                }
+                $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+            }
+            if (array_key_exists('payment_id', $params)) {
+                throw new Exception('Error: Payment ids have been deprecated.');
+            }
+            if (array_key_exists('mixin', $params)) {
+                $mixin = $params['mixin'];
+            }
+            if (array_key_exists('account_index', $params)) {
+                $account_index = $params['account_index'];
+            }
+            if (array_key_exists('subaddr_indices', $params)) {
+                $subaddr_indices = $params['subaddr_indices'];
+            }
+            if (array_key_exists('priority', $params)) {
+                $priority = $params['priority'];
+            }
+            if (array_key_exists('unlock_time', $params)) {
+                $unlock_time = $params['unlock_time'];
+            }
+            if (array_key_exists('do_not_relay', $params)) {
+                $do_not_relay = $params['do_not_relay'];
+            }
+        } else { // Legacy parameters used
+            $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
         }
 
-        foreach ($destinations as $destination_index => $destination) {
-          if (array_key_exists('amount', $destination)) {
-            $destinations[$destination_index]['amount'] = $this->_transform($destination['amount']);
-          } else {
-            throw new Exception('Error: Amount required');
-          }
-          if (!array_key_exists('address', $destination)) {
-            throw new Exception('Error: Address required');
-          }
-        }
-      } else {
-        if (array_key_exists('amount', $params)) {
-          $amount = $params['amount'];
-        } else {
-          throw new Exception('Error: Amount required');
-        }
-        if (array_key_exists('address', $params)) {
-          $address = $params['address'];
-        } else {
-          throw new Exception('Error: Address required');
-        }
-        $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
-      }
-      if (array_key_exists('payment_id', $params)) {
-        throw new Exception('Error: Payment ids have been deprecated.');
-      }
-      if (array_key_exists('mixin', $params)) {
-        $mixin = $params['mixin'];
-      }
-      if (array_key_exists('account_index', $params)) {
-        $account_index = $params['account_index'];
-      }
-      if (array_key_exists('subaddr_indices', $params)) {
-        $subaddr_indices = $params['subaddr_indices'];
-      }
-      if (array_key_exists('priority', $params)) {
-        $priority = $params['priority'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
-      if (array_key_exists('do_not_relay', $params)) {
-        $do_not_relay = $params['do_not_relay'];
-      }
-    } else { // Legacy parameters used
-      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+        $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay, 'ringsize' => $ringsize);
+        $transfer_method = $this->_run('transfer', $params);
+
+        $save = $this->store(); // Save wallet state after transfer
+
+        return $transfer_method;
     }
-
-    $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'priority' => $priority, 'do_not_relay' => $do_not_relay, 'ringsize' => $ringsize);
-    $transfer_method = $this->_run('transfer', $params);
-
-    $save = $this->store(); // Save wallet state after transfer
-
-    return $transfer_method;
-  }
 
   /**
    *
    * Same as transfer, but splits transfer into more than one transaction if necessary
    *
    */
-  public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 15, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
-  {
-    if (is_array($amount)) { // Parameters passed in as object/dictionary
-      $params = $amount;
+    public function transfer_split($amount, $address = '', $payment_id = '', $mixin = 15, $account_index = 0, $subaddr_indices = '', $priority = 2, $unlock_time = 0, $do_not_relay = false)
+    {
+        if (is_array($amount)) { // Parameters passed in as object/dictionary
+            $params = $amount;
 
-      if (array_key_exists('destinations', $params)) {
-        $destinations = $params['destinations'];
+            if (array_key_exists('destinations', $params)) {
+                $destinations = $params['destinations'];
 
-        if (!is_array($destinations)) {
-          throw new Exception('Error: destinations must be an array');
+                if (!is_array($destinations)) {
+                    throw new Exception('Error: destinations must be an array');
+                }
+
+                foreach ($destinations as $destination) {
+                    if (array_key_exists('amount', $destinations[$destination])) {
+                        $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
+                    } else {
+                        throw new Exception('Error: Amount required');
+                    }
+                    if (!array_key_exists('address', $destinations[$destination])) {
+                        throw new Exception('Error: Address required');
+                    }
+                }
+            } else {
+                if (array_key_exists('amount', $params)) {
+                    $amount = $params['amount'];
+                } else {
+                    throw new Exception('Error: Amount required');
+                }
+                if (array_key_exists('address', $params)) {
+                    $address = $params['address'];
+                } else {
+                    throw new Exception('Error: Address required');
+                }
+                $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+            }
+            if (array_key_exists('mixin', $params)) {
+                $mixin = $params['mixin'];
+            }
+            if (array_key_exists('payment_id', $params)) {
+                $payment_id = $params['payment_id'];
+            }
+            if (array_key_exists('account_index', $params)) {
+                $account_index = $params['account_index'];
+            }
+            if (array_key_exists('subaddr_indices', $params)) {
+                $subaddr_indices = $params['subaddr_indices'];
+            }
+            if (array_key_exists('priority', $params)) {
+                $priority = $params['priority'];
+            }
+            if (array_key_exists('unlock_time', $params)) {
+                $unlock_time = $params['unlock_time'];
+            }
+            if (array_key_exists('do_not_relay', $params)) {
+                $do_not_relay = $params['do_not_relay'];
+            }
+        } else { // Legacy parameters used
+            $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
         }
 
-        foreach ($destinations as $destination) {
-          if (array_key_exists('amount', $destinations[$destination])) {
-            $destinations[$destination]['amount'] = $this->_transform($destinations[$destination]['amount']);
-          } else {
-            throw new Exception('Error: Amount required');
-          }
-          if (!array_key_exists('address', $destinations[$destination])) {
-            throw new Exception('Error: Address required');
-          }
-        }
-      } else {
-        if (array_key_exists('amount', $params)) {
-          $amount = $params['amount'];
-        } else {
-          throw new Exception('Error: Amount required');
-        }
-        if (array_key_exists('address', $params)) {
-          $address = $params['address'];
-        } else {
-          throw new Exception('Error: Address required');
-        }
-        $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
-      }
-      if (array_key_exists('mixin', $params)) {
-        $mixin = $params['mixin'];
-      }
-      if (array_key_exists('payment_id', $params)) {
-        $payment_id = $params['payment_id'];
-      }
-      if (array_key_exists('account_index', $params)) {
-        $account_index = $params['account_index'];
-      }
-      if (array_key_exists('subaddr_indices', $params)) {
-        $subaddr_indices = $params['subaddr_indices'];
-      }
-      if (array_key_exists('priority', $params)) {
-        $priority = $params['priority'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
-      if (array_key_exists('do_not_relay', $params)) {
-        $do_not_relay = $params['do_not_relay'];
-      }
-    } else { // Legacy parameters used
-      $destinations = array(array('amount' => $this->_transform($amount), 'address' => $address));
+        $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+        $transfer_method = $this->_run('transfer_split', $params);
+
+        $save = $this->store(); // Save wallet state after transfer
+
+        return $transfer_method;
     }
-
-    $params = array('destinations' => $destinations, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'payment_id' => $payment_id, 'priority' => $priority, 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
-    $transfer_method = $this->_run('transfer_split', $params);
-
-    $save = $this->store(); // Save wallet state after transfer
-
-    return $transfer_method;
-  }
 
   /**
    *
@@ -635,10 +637,10 @@ class walletRPC
    * }
    *
    */
-  public function sweep_dust()
-  {
-    return $this->_run('sweep_dust');
-  }
+    public function sweep_dust()
+    {
+        return $this->_run('sweep_dust');
+    }
 
   /**
    *
@@ -651,10 +653,10 @@ class walletRPC
    * }
    *
    */
-  public function sweep_unmixable()
-  {
-    return $this->_run('sweep_unmixable');
-  }
+    public function sweep_unmixable()
+    {
+        return $this->_run('sweep_unmixable');
+    }
 
   /**
    *
@@ -682,49 +684,49 @@ class walletRPC
    * }
    *
    */
-  public function sweep_all($address, $subaddr_indices = '', $account_index = 0, $payment_id = '', $mixin = 15, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = false)
-  {
-    if (is_array($address)) { // Parameters passed in as object/dictionary
-      $params = $address;
+    public function sweep_all($address, $subaddr_indices = '', $account_index = 0, $payment_id = '', $mixin = 15, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = false)
+    {
+        if (is_array($address)) { // Parameters passed in as object/dictionary
+            $params = $address;
 
-      if (array_key_exists('address', $params)) {
-        $address = $params['address'];
-      } else {
-        throw new Exception('Error: Address required');
-      }
-      if (array_key_exists('subaddr_indices', $params)) {
-        $subaddr_indices = $params['subaddr_indices'];
-      }
-      if (array_key_exists('account_index', $params)) {
-        $account_index = $params['account_index'];
-      }
-      if (array_key_exists('payment_id', $params)) {
-        $payment_id = $params['payment_id'];
-      }
-      if (array_key_exists('mixin', $params)) {
-        $mixin = $params['mixin'];
-      }
-      if (array_key_exists('priority', $params)) {
-        $priority = $params['priority'];
-      }
-      if (array_key_exists('below_amount', $params)) {
-        $below_amount = $params['below_amount'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
-      if (array_key_exists('do_not_relay', $params)) {
-        $do_not_relay = $params['do_not_relay'];
-      }
+            if (array_key_exists('address', $params)) {
+                $address = $params['address'];
+            } else {
+                throw new Exception('Error: Address required');
+            }
+            if (array_key_exists('subaddr_indices', $params)) {
+                $subaddr_indices = $params['subaddr_indices'];
+            }
+            if (array_key_exists('account_index', $params)) {
+                $account_index = $params['account_index'];
+            }
+            if (array_key_exists('payment_id', $params)) {
+                $payment_id = $params['payment_id'];
+            }
+            if (array_key_exists('mixin', $params)) {
+                $mixin = $params['mixin'];
+            }
+            if (array_key_exists('priority', $params)) {
+                $priority = $params['priority'];
+            }
+            if (array_key_exists('below_amount', $params)) {
+                $below_amount = $params['below_amount'];
+            }
+            if (array_key_exists('unlock_time', $params)) {
+                $unlock_time = $params['unlock_time'];
+            }
+            if (array_key_exists('do_not_relay', $params)) {
+                $do_not_relay = $params['do_not_relay'];
+            }
+        }
+
+        $params = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'subaddr_indices' => $subaddr_indices, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+        $sweep_all_method = $this->_run('sweep_all', $params);
+
+        $save = $this->store(); // Save wallet state after transfer
+
+        return $sweep_all_method;
     }
-
-    $params = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'subaddr_indices' => $subaddr_indices, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
-    $sweep_all_method = $this->_run('sweep_all', $params);
-
-    $save = $this->store(); // Save wallet state after transfer
-
-    return $sweep_all_method;
-  }
 
   /**
    *
@@ -751,52 +753,52 @@ class walletRPC
    * }
    *
    */
-  public function sweep_single($key_image, $address, $payment_id = '', $mixin = 15, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = 0)
-  {
-    if (is_array($key_image)) { // Parameters passed in as object/dictionary
-      $params = $key_image;
+    public function sweep_single($key_image, $address, $payment_id = '', $mixin = 15, $priority = 2, $below_amount = 0, $unlock_time = 0, $do_not_relay = 0)
+    {
+        if (is_array($key_image)) { // Parameters passed in as object/dictionary
+            $params = $key_image;
 
-      if (array_key_exists('key_image', $params)) {
-        $key_image = $params['key_image'];
-      } else {
-        throw new Exception('Error: Key image required');
-      }
-      if (array_key_exists('address', $params)) {
-        $address = $params['address'];
-      } else {
-        throw new Exception('Error: Address required');
-      }
+            if (array_key_exists('key_image', $params)) {
+                $key_image = $params['key_image'];
+            } else {
+                throw new Exception('Error: Key image required');
+            }
+            if (array_key_exists('address', $params)) {
+                $address = $params['address'];
+            } else {
+                throw new Exception('Error: Address required');
+            }
 
-      if (array_key_exists('payment_id', $params)) {
-        $payment_id = $params['payment_id'];
-      }
-      if (array_key_exists('mixin', $params)) {
-        $mixin = $params['mixin'];
-      }
-      if (array_key_exists('account_index', $params)) {
-        $account_index = $params['account_index'];
-      }
-      if (array_key_exists('priority', $params)) {
-        $priority = $params['priority'];
-      }
-      if (array_key_exists('unlock_time', $params)) {
-        $unlock_time = $params['unlock_time'];
-      }
-      if (array_key_exists('below_amount', $params)) {
-        $below_amount = $params['below_amount'];
-      }
-      if (array_key_exists('do_not_relay', $params)) {
-        $do_not_relay = $params['do_not_relay'];
-      }
+            if (array_key_exists('payment_id', $params)) {
+                $payment_id = $params['payment_id'];
+            }
+            if (array_key_exists('mixin', $params)) {
+                $mixin = $params['mixin'];
+            }
+            if (array_key_exists('account_index', $params)) {
+                $account_index = $params['account_index'];
+            }
+            if (array_key_exists('priority', $params)) {
+                $priority = $params['priority'];
+            }
+            if (array_key_exists('unlock_time', $params)) {
+                $unlock_time = $params['unlock_time'];
+            }
+            if (array_key_exists('below_amount', $params)) {
+                $below_amount = $params['below_amount'];
+            }
+            if (array_key_exists('do_not_relay', $params)) {
+                $do_not_relay = $params['do_not_relay'];
+            }
+        }
+
+        $params = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
+        $sweep_single_method = $this->_run('sweep_single', $params);
+
+        $save = $this->store(); // Save wallet state after transfer
+
+        return $sweep_single_method;
     }
-
-    $params = array('address' => $address, 'mixin' => $mixin, 'get_tx_key' => true, 'account_index' => $account_index, 'payment_id' => $payment_id, 'priority' => $priority, 'below_amount' => $this->_transform($below_amount), 'unlock_time' => $unlock_time, 'do_not_relay' => $do_not_relay);
-    $sweep_single_method = $this->_run('sweep_single', $params);
-
-    $save = $this->store(); // Save wallet state after transfer
-
-    return $sweep_single_method;
-  }
 
   /**
    *
@@ -807,15 +809,15 @@ class walletRPC
    * @return object  // TODO example
    *
    */
-  public function relay_tx($hex)
-  {
-    $params = array('hex' => $hex);
-    $relay_tx_method = $this->_run('relay_tx_method', $params);
+    public function relay_tx($hex)
+    {
+        $params = array('hex' => $hex);
+        $relay_tx_method = $this->_run('relay_tx_method', $params);
 
-    $save = $this->store(); // Save wallet state after transaction relay
+        $save = $this->store(); // Save wallet state after transaction relay
 
-    return $this->_run('relay_tx');
-  }
+        return $this->_run('relay_tx');
+    }
 
   /**
    *
@@ -826,10 +828,10 @@ class walletRPC
    * @return object  Example:
    *
    */
-  public function store()
-  {
-    return $this->_run('store');
-  }
+    public function store()
+    {
+        return $this->_run('store');
+    }
 
   /**
    *
@@ -848,13 +850,13 @@ class walletRPC
    * }
    *
    */
-  public function get_payments($payment_id)
-  {
-    // $params = array('payment_id' => $payment_id); // does not work
-    $params = [];
-    $params['payment_id'] = $payment_id;
-    return $this->_run('get_payments', $params);
-  }
+    public function get_payments($payment_id)
+    {
+      // $params = array('payment_id' => $payment_id); // does not work
+        $params = [];
+        $params['payment_id'] = $payment_id;
+        return $this->_run('get_payments', $params);
+    }
 
   /**
    *
@@ -874,22 +876,22 @@ class walletRPC
    * }
    *
    */
-  public function get_bulk_payments($payment_ids, $min_block_height)
-  {
-    // $params = array('payment_ids' => $payment_ids, 'min_block_height' => $min_block_height); // does not work
-    //$params = array('min_block_height' => $min_block_height); // does not work
-    $params = [];
-    if (!is_array($payment_ids)) {
-      throw new Exception('Error: Payment IDs must be array.');
+    public function get_bulk_payments($payment_ids, $min_block_height)
+    {
+      // $params = array('payment_ids' => $payment_ids, 'min_block_height' => $min_block_height); // does not work
+      //$params = array('min_block_height' => $min_block_height); // does not work
+        $params = [];
+        if (!is_array($payment_ids)) {
+            throw new Exception('Error: Payment IDs must be array.');
+        }
+        if ($payment_ids) {
+            $params['payment_ids'] = [];
+            foreach ($payment_ids as $payment_id) {
+                $params['payment_ids'][] = $payment_id;
+            }
+        }
+        return $this->_run('get_bulk_payments', $params);
     }
-    if ($payment_ids) {
-      $params['payment_ids'] = [];
-      foreach ($payment_ids as $payment_id) {
-        $params['payment_ids'][] = $payment_id;
-      }
-    }
-    return $this->_run('get_bulk_payments', $params);
-  }
 
   /**
    *
@@ -921,11 +923,11 @@ class walletRPC
    *   }]
    * }
    */
-  public function incoming_transfers($type = 'all', $account_index = 0, $subaddr_indices = '')
-  {
-    $params = array('transfer_type' => $type, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices);
-    return $this->_run('incoming_transfers', $params);
-  }
+    public function incoming_transfers($type = 'all', $account_index = 0, $subaddr_indices = '')
+    {
+        $params = array('transfer_type' => $type, 'account_index' => $account_index, 'subaddr_indices' => $subaddr_indices);
+        return $this->_run('incoming_transfers', $params);
+    }
 
   /**
    *
@@ -938,11 +940,11 @@ class walletRPC
    * }
    *
    */
-  public function query_key($key_type)
-  {
-    $params = array('key_type' => $key_type);
-    return $this->_run('query_key', $params);
-  }
+    public function query_key($key_type)
+    {
+        $params = array('key_type' => $key_type);
+        return $this->_run('query_key', $params);
+    }
 
   /**
    *
@@ -955,11 +957,11 @@ class walletRPC
    * }
    *
    */
-  public function view_key()
-  {
-    $params = array('key_type' => 'view_key');
-    return $this->_run('query_key', $params);
-  }
+    public function view_key()
+    {
+        $params = array('key_type' => 'view_key');
+        return $this->_run('query_key', $params);
+    }
 
   /**
    *
@@ -972,11 +974,11 @@ class walletRPC
    * }
    *
    */
-  public function spend_key()
-  {
-    $params = array('key_type' => 'spend_key');
-    return $this->_run('query_key', $params);
-  }
+    public function spend_key()
+    {
+        $params = array('key_type' => 'spend_key');
+        return $this->_run('query_key', $params);
+    }
 
   /**
    *
@@ -989,11 +991,11 @@ class walletRPC
    * }
    *
    */
-  public function mnemonic()
-  {
-    $params = array('key_type' => 'mnemonic');
-    return $this->_run('query_key', $params);
-  }
+    public function mnemonic()
+    {
+        $params = array('key_type' => 'mnemonic');
+        return $this->_run('query_key', $params);
+    }
 
   /**
    *
@@ -1006,11 +1008,11 @@ class walletRPC
    * }
    *
    */
-  public function make_integrated_address($payment_id = null)
-  {
-    $params = array('payment_id' => $payment_id);
-    return $this->_run('make_integrated_address', $params);
-  }
+    public function make_integrated_address($payment_id = null)
+    {
+        $params = array('payment_id' => $payment_id);
+        return $this->_run('make_integrated_address', $params);
+    }
 
   /**
    *
@@ -1024,11 +1026,11 @@ class walletRPC
    * }
    *
    */
-  public function split_integrated_address($integrated_address)
-  {
-    $params = array('integrated_address' => $integrated_address);
-    return $this->_run('split_integrated_address', $params);
-  }
+    public function split_integrated_address($integrated_address)
+    {
+        $params = array('integrated_address' => $integrated_address);
+        return $this->_run('split_integrated_address', $params);
+    }
 
   /**
    *
@@ -1039,10 +1041,10 @@ class walletRPC
    * @return none
    *
    */
-  public function stop_wallet()
-  {
-    return $this->_run('stop_wallet');
-  }
+    public function stop_wallet()
+    {
+        return $this->_run('stop_wallet');
+    }
 
   /*
    *
@@ -1054,10 +1056,10 @@ class walletRPC
    *
   */
 
-  public function rescan_blockchain()
-  {
-    return $this->_run('rescan_blockchain');
-  }
+    public function rescan_blockchain()
+    {
+        return $this->_run('rescan_blockchain');
+    }
 
   /**
    *
@@ -1069,11 +1071,11 @@ class walletRPC
    * @return none
    *
    */
-  public function set_tx_notes($txids, $notes)
-  {
-    $params = array('txids' => $txids, 'notes' => $notes);
-    return $this->_run('set_tx_notes', $params);
-  }
+    public function set_tx_notes($txids, $notes)
+    {
+        $params = array('txids' => $txids, 'notes' => $notes);
+        return $this->_run('set_tx_notes', $params);
+    }
 
   /**
    *
@@ -1086,11 +1088,11 @@ class walletRPC
    * }
    *
    */
-  public function get_tx_notes($txids)
-  {
-    $params = array('txids' => $txids);
-    return $this->_run('get_tx_notes', $params);
-  }
+    public function get_tx_notes($txids)
+    {
+        $params = array('txids' => $txids);
+        return $this->_run('get_tx_notes', $params);
+    }
 
   /**
    *
@@ -1102,11 +1104,11 @@ class walletRPC
    * @return none
    *
    */
-  public function set_attribute($key, $value)
-  {
-    $params = array('key' => $key, 'value' => $value);
-    return $this->_run('set_attribute', $params);
-  }
+    public function set_attribute($key, $value)
+    {
+        $params = array('key' => $key, 'value' => $value);
+        return $this->_run('set_attribute', $params);
+    }
 
   /**
    *
@@ -1119,11 +1121,11 @@ class walletRPC
    * }
    *
    */
-  public function get_attribute($key)
-  {
-    $params = array('key' => $key);
-    return $this->_run('get_attribute', $params);
-  }
+    public function get_attribute($key)
+    {
+        $params = array('key' => $key);
+        return $this->_run('get_attribute', $params);
+    }
 
   /**
    *
@@ -1136,11 +1138,11 @@ class walletRPC
    * }
    *
    */
-  public function get_tx_key($txid)
-  {
-    $params = array('txid' => $txid);
-    return $this->_run('get_tx_key', $params);
-  }
+    public function get_tx_key($txid)
+    {
+        $params = array('txid' => $txid);
+        return $this->_run('get_tx_key', $params);
+    }
 
   /**
    *
@@ -1157,11 +1159,11 @@ class walletRPC
    * }
    *
    */
-  public function check_tx_key($address, $txid, $tx_key)
-  {
-    $params = array('address' => $address, 'txid' => $txid, 'tx_key' => $tx_key);
-    return $this->_run('check_tx_key', $params);
-  }
+    public function check_tx_key($address, $txid, $tx_key)
+    {
+        $params = array('address' => $address, 'txid' => $txid, 'tx_key' => $tx_key);
+        return $this->_run('check_tx_key', $params);
+    }
 
   /**
    *
@@ -1175,11 +1177,11 @@ class walletRPC
    * }
    *
    */
-  public function get_tx_proof($address, $txid)
-  {
-    $params = array('address' => $address, 'txid' => $txid);
-    return $this->_run('get_tx_proof', $params);
-  }
+    public function get_tx_proof($address, $txid)
+    {
+        $params = array('address' => $address, 'txid' => $txid);
+        return $this->_run('get_tx_proof', $params);
+    }
 
   /**
    *
@@ -1197,11 +1199,11 @@ class walletRPC
    * }
    *
    */
-  public function check_tx_proof($address, $txid, $signature)
-  {
-    $params = array('address' => $address, 'txid' => $txid, 'signature' => $signature);
-    return $this->_run('check_tx_proof', $params);
-  }
+    public function check_tx_proof($address, $txid, $signature)
+    {
+        $params = array('address' => $address, 'txid' => $txid, 'signature' => $signature);
+        return $this->_run('check_tx_proof', $params);
+    }
 
   /**
    *
@@ -1214,14 +1216,14 @@ class walletRPC
    * }
    *
    */
-  public function get_spend_proof($txid, $message=null)
-  {
-    $params = array('txid' => $txid);
-    if( $message !== null ) {
-      $params['message'] = $message;
+    public function get_spend_proof($txid, $message = null)
+    {
+        $params = array('txid' => $txid);
+        if ($message !== null) {
+            $params['message'] = $message;
+        }
+        return $this->_run('get_spend_proof', $params);
     }
-    return $this->_run('get_spend_proof', $params);
-  }
 
   /**
    *
@@ -1235,14 +1237,14 @@ class walletRPC
    * }
    *
    */
-  public function check_spend_proof($txid, $signature, $message=null)
-  {
-    $params = array('txid' => $txid, 'signature' => $signature);
-    if( $message !== null ) {
-      $params['message'] = $message;
+    public function check_spend_proof($txid, $signature, $message = null)
+    {
+        $params = array('txid' => $txid, 'signature' => $signature);
+        if ($message !== null) {
+            $params['message'] = $message;
+        }
+        return $this->_run('check_spend_proof', $params);
     }
-    return $this->_run('check_spend_proof', $params);
-  }
 
   /**
    *
@@ -1255,16 +1257,16 @@ class walletRPC
    * }
    *
    */
-  public function get_reserve_proof($account_index = 'all')
-  {
-    if ($account_index == 'all') {
-      $params = array('all' => true);
-    } else {
-      $params = array('account_index' => $account_index);
-    }
+    public function get_reserve_proof($account_index = 'all')
+    {
+        if ($account_index == 'all') {
+            $params = array('all' => true);
+        } else {
+            $params = array('account_index' => $account_index);
+        }
 
-    return $this->_run('get_reserve_proof');
-  }
+        return $this->_run('get_reserve_proof');
+    }
 
   /**
    *
@@ -1280,11 +1282,11 @@ class walletRPC
    * }
    *
    */
-  public function check_reserve_proof($address, $signature)
-  {
-    $params = array('address' => $address, 'signature' => $signature);
-    return $this->_run('check_reserve_proof', $params);
-  }
+    public function check_reserve_proof($address, $signature)
+    {
+        $params = array('address' => $address, 'signature' => $signature);
+        return $this->_run('check_reserve_proof', $params);
+    }
 
   /**
    *
@@ -1314,61 +1316,61 @@ class walletRPC
    * }
    *
    */
-  public function get_transfers($input_types = ['all'], $account_index = 0, $subaddr_indices = '', $min_height = 0, $max_height = 4206931337)
-  {
-    if (is_string($input_types)) { // If user is using old method
-        $params = array('subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height);
-      if (is_bool($account_index)) { // If user passed eg. get_transfers('in', true)
-        $params['account_index'] = 0;
-        $params[$input_types] = $account_index; // $params = array($input_type => $input_value);
-      } else { // If user passed eg. get_transfers('in')
-        $params['account_index'] = $account_index;
-        $params[$input_types] = true;
-      }
-    } else {
-      if (is_object($input_types) || is_array($input_types)) { // Parameters passed in as object/dictionary
-        $params = $input_types;
-
-        if (array_key_exists('input_types', $params)) {
-          $input_types = $params['input_types'];
+    public function get_transfers($input_types = ['all'], $account_index = 0, $subaddr_indices = '', $min_height = 0, $max_height = 4206931337)
+    {
+        if (is_string($input_types)) { // If user is using old method
+            $params = array('subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height);
+            if (is_bool($account_index)) { // If user passed eg. get_transfers('in', true)
+                $params['account_index'] = 0;
+                $params[$input_types] = $account_index; // $params = array($input_type => $input_value);
+            } else { // If user passed eg. get_transfers('in')
+                $params['account_index'] = $account_index;
+                $params[$input_types] = true;
+            }
         } else {
-          $input_types = ['all'];
-        }
-        if (array_key_exists('account_index', $params)) {
-          $account_index = $params['account_index'];
-        }
-        if (array_key_exists('subaddr_indices', $params)) {
-          $subaddr_indices = $params['subaddr_indices'];
-        }
-        if (array_key_exists('min_height', $params)) {
-          $min_height = $params['min_height'];
-        }
-        if (array_key_exists('max_height', $params)) {
-          $max_height = $params['max_height'];
-        }
-      }
+            if (is_object($input_types) || is_array($input_types)) { // Parameters passed in as object/dictionary
+                $params = $input_types;
 
-      $params = array('account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height);
-      for ($i = 0, $iMax = count($input_types); $i < $iMax; $i++) {
-        $params[$input_types[$i]] = true;
-      }
+                if (array_key_exists('input_types', $params)) {
+                    $input_types = $params['input_types'];
+                } else {
+                    $input_types = ['all'];
+                }
+                if (array_key_exists('account_index', $params)) {
+                    $account_index = $params['account_index'];
+                }
+                if (array_key_exists('subaddr_indices', $params)) {
+                    $subaddr_indices = $params['subaddr_indices'];
+                }
+                if (array_key_exists('min_height', $params)) {
+                    $min_height = $params['min_height'];
+                }
+                if (array_key_exists('max_height', $params)) {
+                    $max_height = $params['max_height'];
+                }
+            }
+
+            $params = array('account_index' => $account_index, 'subaddr_indices' => $subaddr_indices, 'min_height' => $min_height, 'max_height' => $max_height);
+            for ($i = 0, $iMax = count($input_types); $i < $iMax; $i++) {
+                $params[$input_types[$i]] = true;
+            }
+        }
+
+        if (array_key_exists('all', $params)) {
+            unset($params['all']);
+            $params['in'] = true;
+            $params['out'] = true;
+            $params['pending'] = true;
+            $params['failed'] = true;
+            $params['pool'] = true;
+        }
+
+        if (($min_height || $max_height) && $max_height != 4206931337) {
+            $params['filter_by_height'] = true;
+        }
+
+        return $this->_run('get_transfers', $params);
     }
-
-    if (array_key_exists('all', $params)) {
-      unset($params['all']);
-      $params['in'] = true;
-      $params['out'] = true;
-      $params['pending'] = true;
-      $params['failed'] = true;
-      $params['pool'] = true;
-    }
-
-    if (($min_height || $max_height) && $max_height != 4206931337) {
-      $params['filter_by_height'] = true;
-    }
-
-    return $this->_run('get_transfers', $params);
-  }
 
   /**
    *
@@ -1391,11 +1393,11 @@ class walletRPC
    * }
    *
    */
-  public function get_transfer_by_txid($txid, $account_index = 0)
-  {
-    $params = array('txid' => $txid, 'account_index' => $account_index);
-    return $this->_run('get_transfer_by_txid', $params);
-  }
+    public function get_transfer_by_txid($txid, $account_index = 0)
+    {
+        $params = array('txid' => $txid, 'account_index' => $account_index);
+        return $this->_run('get_transfer_by_txid', $params);
+    }
 
   /**
    *
@@ -1408,11 +1410,11 @@ class walletRPC
    * }
    *
    */
-  public function sign($data)
-  {
-    $params = array('string' => $data);
-    return $this->_run('sign', $params);
-  }
+    public function sign($data)
+    {
+        $params = array('string' => $data);
+        return $this->_run('sign', $params);
+    }
 
   /**
    *
@@ -1427,11 +1429,11 @@ class walletRPC
    * }
    *
    */
-  public function verify($data, $address, $signature)
-  {
-    $params = array('data' => $data, 'address' => $address, 'signature' => $signature);
-    return $this->_run('verify', $params);
-  }
+    public function verify($data, $address, $signature)
+    {
+        $params = array('data' => $data, 'address' => $address, 'signature' => $signature);
+        return $this->_run('verify', $params);
+    }
 
   /**
    *
@@ -1444,10 +1446,10 @@ class walletRPC
    * }
    *
    */
-  public function export_key_images()
-  {
-    return $this->_run('export_key_images');
-  }
+    public function export_key_images()
+    {
+        return $this->_run('export_key_images');
+    }
 
   /**
    *
@@ -1463,11 +1465,11 @@ class walletRPC
    * }
    *
    */
-  public function import_key_images($signed_key_images)
-  {
-    $params = array('signed_key_images' => $signed_key_images);
-    return $this->_run('import_key_images', $params);
-  }
+    public function import_key_images($signed_key_images)
+    {
+        $params = array('signed_key_images' => $signed_key_images);
+        return $this->_run('import_key_images', $params);
+    }
 
   /**
    *
@@ -1484,11 +1486,11 @@ class walletRPC
    * }
    *
    */
-  public function make_uri($address, $amount, $payment_id = null, $recipient_name = null, $tx_description = null)
-  {
-    $params = array('address' => $address, 'amount' => $this->_transform($amount), 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description);
-    return $this->_run('make_uri', $params);
-  }
+    public function make_uri($address, $amount, $payment_id = null, $recipient_name = null, $tx_description = null)
+    {
+        $params = array('address' => $address, 'amount' => $this->_transform($amount), 'payment_id' => $payment_id, 'recipient_name' => $recipient_name, 'tx_description' => $tx_description);
+        return $this->_run('make_uri', $params);
+    }
 
   /**
    *
@@ -1507,11 +1509,11 @@ class walletRPC
    * }
    *
    */
-  public function parse_uri($uri)
-  {
-    $params = array('uri' => $uri);
-    return $this->_run('parse_uri', $params);
-  }
+    public function parse_uri($uri)
+    {
+        $params = array('uri' => $uri);
+        return $this->_run('parse_uri', $params);
+    }
 
   /**
    *
@@ -1524,11 +1526,11 @@ class walletRPC
    * }
    *
    */
-  public function get_address_book($entries)
-  {
-    $params = array('entries' => $entries);
-    return $this->_run('get_address_book', $params);
-  }
+    public function get_address_book($entries)
+    {
+        $params = array('entries' => $entries);
+        return $this->_run('get_address_book', $params);
+    }
 
   /**
    *
@@ -1543,11 +1545,11 @@ class walletRPC
    * }
    *
    */
-  public function add_address_book($address, $payment_id, $description)
-  {
-    $params = array('address' => $address, 'payment_id' => $payment_id, 'description' => $description);
-    return $this->_run('add_address_book', $params);
-  }
+    public function add_address_book($address, $payment_id, $description)
+    {
+        $params = array('address' => $address, 'payment_id' => $payment_id, 'description' => $description);
+        return $this->_run('add_address_book', $params);
+    }
 
   /**
    *
@@ -1558,11 +1560,11 @@ class walletRPC
    * @return none
    *
    */
-  public function delete_address_book($index)
-  {
-    $params = array('index' => $index);
-    return $this->_run('delete_address_book', $params);
-  }
+    public function delete_address_book($index)
+    {
+        $params = array('index' => $index);
+        return $this->_run('delete_address_book', $params);
+    }
 
   /**
    *
@@ -1575,21 +1577,21 @@ class walletRPC
    * }
    *
    */
-  public function refresh($start_height = null)
-  {
-    $params = array('start_height' => $start_height);
-    return $this->_run('refresh', $params);
-  }
+    public function refresh($start_height = null)
+    {
+        $params = array('start_height' => $start_height);
+        return $this->_run('refresh', $params);
+    }
 
   /**
    *
    * Rescan the blockchain for spent outputs
    *
    */
-  public function rescan_spent()
-  {
-    return $this->_run('rescan_spent');
-  }
+    public function rescan_spent()
+    {
+        return $this->_run('rescan_spent');
+    }
 
   /**
    *
@@ -1602,11 +1604,11 @@ class walletRPC
    * @return none
    *
    */
-  public function start_mining($threads_count, $do_background_mining, $ignore_battery)
-  {
-    $params = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
-    return $this->_run('start_mining', $params);
-  }
+    public function start_mining($threads_count, $do_background_mining, $ignore_battery)
+    {
+        $params = array('threads_count' => $threads_count, 'do_background_mining' => $do_background_mining, 'ignore_battery' => $ignore_battery);
+        return $this->_run('start_mining', $params);
+    }
 
   /**
    *
@@ -1617,10 +1619,10 @@ class walletRPC
    * @return none
    *
    */
-  public function stop_mining()
-  {
-    return $this->_run('stop_mining');
-  }
+    public function stop_mining()
+    {
+        return $this->_run('stop_mining');
+    }
 
   /**
    *
@@ -1633,10 +1635,10 @@ class walletRPC
    * }
    *
    */
-  public function get_languages()
-  {
-    return $this->_run('get_languages');
-  }
+    public function get_languages()
+    {
+        return $this->_run('get_languages');
+    }
 
   /**
    *
@@ -1649,11 +1651,11 @@ class walletRPC
    * @return none
    *
    */
-  public function create_wallet($filename = 'monero_wallet', $password = null, $language = 'English')
-  {
-    $params = array('filename' => $filename, 'password' => $password, 'language' => $language);
-    return $this->_run('create_wallet', $params);
-  }
+    public function create_wallet($filename = 'monero_wallet', $password = null, $language = 'English')
+    {
+        $params = array('filename' => $filename, 'password' => $password, 'language' => $language);
+        return $this->_run('create_wallet', $params);
+    }
 
   /**
    *
@@ -1665,11 +1667,11 @@ class walletRPC
    * @return none
    *
    */
-  public function open_wallet($filename = 'monero_wallet', $password = null)
-  {
-    $params = array('filename' => $filename, 'password' => $password);
-    return $this->_run('open_wallet', $params);
-  }
+    public function open_wallet($filename = 'monero_wallet', $password = null)
+    {
+        $params = array('filename' => $filename, 'password' => $password);
+        return $this->_run('open_wallet', $params);
+    }
 
   /**
    *
@@ -1685,10 +1687,10 @@ class walletRPC
    * } // TODO multisig wallet example
    *
    */
-  public function is_multisig()
-  {
-    return $this->_run('is_multisig');
-  }
+    public function is_multisig()
+    {
+        return $this->_run('is_multisig');
+    }
 
   /**
    *
@@ -1701,10 +1703,10 @@ class walletRPC
    * }
    *
    */
-  public function prepare_multisig()
-  {
-    return $this->_run('prepare_multisig');
-  }
+    public function prepare_multisig()
+    {
+        return $this->_run('prepare_multisig');
+    }
 
   /**
    *
@@ -1719,11 +1721,11 @@ class walletRPC
    * }
    *
    */
-  public function make_multisig($multisig_info, $threshold, $password = '')
-  {
-    $params = array('multisig_info' => $multisig_info, 'threshold' => $threshold, 'password' => $password);
-    return $this->_run('make_multisig', $params);
-  }
+    public function make_multisig($multisig_info, $threshold, $password = '')
+    {
+        $params = array('multisig_info' => $multisig_info, 'threshold' => $threshold, 'password' => $password);
+        return $this->_run('make_multisig', $params);
+    }
 
   /**
    *
@@ -1736,10 +1738,10 @@ class walletRPC
    * }
    *
    */
-  public function export_multisig_info()
-  {
-    return $this->_run('export_multisig_info');
-  }
+    public function export_multisig_info()
+    {
+        return $this->_run('export_multisig_info');
+    }
 
   /**
    *
@@ -1752,11 +1754,11 @@ class walletRPC
    * }
    *
    */
-  public function import_multisig_info($info)
-  {
-    $params = array('info' => $info);
-    return $this->_run('import_multisig_info', $params);
-  }
+    public function import_multisig_info($info)
+    {
+        $params = array('info' => $info);
+        return $this->_run('import_multisig_info', $params);
+    }
 
   /**
    *
@@ -1770,11 +1772,11 @@ class walletRPC
    * }
    *
    */
-  public function finalize_multisig($multisig_info, $password = '')
-  {
-    $params = array('multisig_info' => $multisig_info, 'password' => $password);
-    return $this->_run('finalize_multisig', $params);
-  }
+    public function finalize_multisig($multisig_info, $password = '')
+    {
+        $params = array('multisig_info' => $multisig_info, 'password' => $password);
+        return $this->_run('finalize_multisig', $params);
+    }
 
   /**
    *
@@ -1787,11 +1789,11 @@ class walletRPC
    * }
    *
    */
-  public function sign_multisig($tx_data_hex)
-  {
-    $params = array('tx_data_hex' => $tx_data_hex);
-    return $this->_run('sign_multisig', $params);
-  }
+    public function sign_multisig($tx_data_hex)
+    {
+        $params = array('tx_data_hex' => $tx_data_hex);
+        return $this->_run('sign_multisig', $params);
+    }
 
   /**
    *
@@ -1804,57 +1806,57 @@ class walletRPC
    * }
    *
    */
-  public function submit_multisig($tx_data_hex)
-  {
-    $params = array('tx_data_hex' => $tx_data_hex);
-    return $this->_run('submit_multisig', $params);
-  }
+    public function submit_multisig($tx_data_hex)
+    {
+        $params = array('tx_data_hex' => $tx_data_hex);
+        return $this->_run('submit_multisig', $params);
+    }
 
   /**
    * @return jsonRPCClient
    */
-  public function get_client()
-  {
-      return $this->client;
-  }
+    public function get_client()
+    {
+        return $this->client;
+    }
 
   /**
    * @return jsonRPCClient
    */
-  public function getClient()
-  {
-      return $this->client;
-  }
+    public function getClient()
+    {
+        return $this->client;
+    }
 
   /**
    *
    * Validate a wallet address
    *
-   * @param  address - string; The address to validate. 
-   *         any_net_type - boolean (Optional); If true, consider addresses belonging to any of the three Monero networks (mainnet, stagenet, and testnet) valid. Otherwise, only consider an address valid if it belongs to the network on which the rpc-wallet's current daemon is running (Defaults to false). 
+   * @param  address - string; The address to validate.
+   *         any_net_type - boolean (Optional); If true, consider addresses belonging to any of the three Monero networks (mainnet, stagenet, and testnet) valid. Otherwise, only consider an address valid if it belongs to the network on which the rpc-wallet's current daemon is running (Defaults to false).
    *         allow_openalias - boolean (Optional); If true, consider OpenAlias-formatted addresses valid (Defaults to false).
    *
-   * @return valid - boolean; True if the input address is a valid Monero address. 
-   *         integrated - boolean; True if the given address is an integrated address. 
-   *         subaddress - boolean; True if the given address is a subaddress 
-   *         nettype - string; Specifies which of the three Monero networks (mainnet, stagenet, and testnet) the address belongs to. 
+   * @return valid - boolean; True if the input address is a valid Monero address.
+   *         integrated - boolean; True if the given address is an integrated address.
+   *         subaddress - boolean; True if the given address is a subaddress
+   *         nettype - string; Specifies which of the three Monero networks (mainnet, stagenet, and testnet) the address belongs to.
    *         openalias_address - boolean; True if the address is OpenAlias-formatted.
    *
    */
-  public function validate_address($address, $strict_nettype = false, $allow_openalias = false)
-  {
-    $params = array(
-      'address' => $address,
-      'any_net_type' => $strict_nettype,
-      'allow_openalias' => $allow_openalias
-    );
-    return $this->_run('validate_address', $params);
-  }
+    public function validate_address($address, $strict_nettype = false, $allow_openalias = false)
+    {
+        $params = array(
+        'address' => $address,
+        'any_net_type' => $strict_nettype,
+        'allow_openalias' => $allow_openalias
+        );
+        return $this->_run('validate_address', $params);
+    }
 
   /**
    *
    * Create a wallet on the RPC server from an address, view key, and (optionally) spend key.
-   * 
+   *
    * @param filename is the name of the wallet to create on the RPC server
    * @param password is the password encrypt the wallet
    * @param address is the address of the wallet to construct
@@ -1867,20 +1869,20 @@ class walletRPC
    * @return TODO
    *
    */
-  public function generate_from_keys($filename, $password, $address, $viewKey, $spendKey = '', $language = 'English', $restoreHeight = 0, $saveCurrent = true)
-  {
-    $params = array(
-      'filename'          => $filename,
-      'password'          => $password,
-      'address'           => $address,
-      'viewkey'           => $viewKey,
-      'spendkey'          => $spendKey,
-      'language'          => $language,
-      'restore_height'    => $restoreHeight,
-      'autosave_current'  => $saveCurrent
-    );
-    return $this->_run('generate_from_keys', $params);
-  }
+    public function generate_from_keys($filename, $password, $address, $viewKey, $spendKey = '', $language = 'English', $restoreHeight = 0, $saveCurrent = true)
+    {
+        $params = array(
+        'filename'          => $filename,
+        'password'          => $password,
+        'address'           => $address,
+        'viewkey'           => $viewKey,
+        'spendkey'          => $spendKey,
+        'language'          => $language,
+        'restore_height'    => $restoreHeight,
+        'autosave_current'  => $saveCurrent
+        );
+        return $this->_run('generate_from_keys', $params);
+    }
 
   /**
    *
@@ -1890,14 +1892,14 @@ class walletRPC
    * @param  multisig_info info (from eg. prepare_multisig)
    *
    */
-  public function exchange_multisig_keys($password, $multisig_info)
-  {
-    $params = array(
-      'password' => $password,
-      'multisig_info' => $multisig_info
-    );
-    return $this->_run('exchange_multisig_keys', $params);
-  }
+    public function exchange_multisig_keys($password, $multisig_info)
+    {
+        $params = array(
+        'password' => $password,
+        'multisig_info' => $multisig_info
+        );
+        return $this->_run('exchange_multisig_keys', $params);
+    }
 
   /**
    *
@@ -1906,21 +1908,21 @@ class walletRPC
    * @param  txinfo txinfo
    *
    */
-  public function describe_transfer($txinfo)
-  {
-    $params = array(
-      'multisig_txset' => $txinfo,
-    );
-    return $this->_run('describe_transfer', $params);
-  }
+    public function describe_transfer($txinfo)
+    {
+        $params = array(
+        'multisig_txset' => $txinfo,
+        );
+        return $this->_run('describe_transfer', $params);
+    }
 
   /**
    * Export all outputs in hex format
    */
-  public function export_outputs()
-  {
-    return $this->_run('export_outputs');
-  }
+    public function export_outputs()
+    {
+        return $this->_run('export_outputs');
+    }
 
   /**
    *
@@ -1930,58 +1932,58 @@ class walletRPC
    *
    *
    */
-  public function import_outputs($outputs_data_hex)
-  {
-    $params = array(
-      'outputs_data_hex' => $outputs_data_hex,
-    );
-    return $this->_run('import_outputs', $params);
-  }
+    public function import_outputs($outputs_data_hex)
+    {
+        $params = array(
+        'outputs_data_hex' => $outputs_data_hex,
+        );
+        return $this->_run('import_outputs', $params);
+    }
 
   /**
    * Set whether and how often to automatically refresh the current wallet
-   * 
+   *
    * @param enable Enable or disable automatic refreshing (default = true)
    * @param period The period of the wallet refresh cycle (i.e. time between refreshes) in seconds
-   * 
+   *
    */
-  public function auto_refresh($enable = true, $period = 10)
-  {
-    $params = array(
-      'enable' => $enable,
-      'period' => $period
-    );
-    return $this->_run('auto_refresh', $params);
-  }
+    public function auto_refresh($enable = true, $period = 10)
+    {
+        $params = array(
+        'enable' => $enable,
+        'period' => $period
+        );
+        return $this->_run('auto_refresh', $params);
+    }
 
   /**
    * Change a wallet password
-   * 
+   *
    * @param old_password old password or blank
    * @param new_password new password or blank
    */
-  public function change_wallet_password($old_password = '', $new_password = '')
-  {
-    $params = array(
-      'old_password' => $old_password,
-      'new_password' => $new_password
-    );
-    return $this->_run('change_wallet_password', $params);
-  }
+    public function change_wallet_password($old_password = '', $new_password = '')
+    {
+        $params = array(
+        'old_password' => $old_password,
+        'new_password' => $new_password
+        );
+        return $this->_run('change_wallet_password', $params);
+    }
 
   /**
    * Close wallet
    */
-  public function close_wallet()
-  {
-    return $this->_run('close_wallet');
-  }
+    public function close_wallet()
+    {
+        return $this->_run('close_wallet');
+    }
 
   /**
    * Get RPC version Major & Minor integer-format, where Major is the first 16 bits and Minor the last 16 bits.
    */
-  public function get_version()
-  {
-    return $this->_run('get_version');
-  }
+    public function get_version()
+    {
+        return $this->_run('get_version');
+    }
 }

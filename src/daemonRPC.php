@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * monerophp/daemonRPC
@@ -31,19 +32,20 @@
  */
 
 namespace MoneroIntegrations\MoneroPhp;
+
 use Exception;
 
 class daemonRPC
 {
-  private $client;
+    private $client;
 
-  private $protocol;
-  private $host;
-  private $port;
-  private $url;
-  private $user;
-  private $password;
-  private $check_SSL;
+    private $protocol;
+    private $host;
+    private $port;
+    private $url;
+    private $user;
+    private $password;
+    private $check_SSL;
 
   /**
    *
@@ -56,46 +58,46 @@ class daemonRPC
    * @param  string  $password  Monero daemon RPC passphrase         (optional)
    *
    */
-   function __construct($host = '127.0.0.1', $port = 18081, $SSL = true, $user = null, $password = null)
-  {
-    if (is_array($host)) { // Parameters passed in as object/dictionary
-      $params = $host;
+    function __construct($host = '127.0.0.1', $port = 18081, $SSL = true, $user = null, $password = null)
+    {
+        if (is_array($host)) { // Parameters passed in as object/dictionary
+            $params = $host;
 
-      if (array_key_exists('host', $params)) {
-        $host = $params['host'];
-      } else {
-        $host = '127.0.0.1';
-      }
-      if (array_key_exists('port', $params)) {
-        $port = $params['port'];
-      }
-      if (array_key_exists('protocol', $params)) {
-        $protocol = $params['protocol'];
-      }
-      if (array_key_exists('user', $params)) {
-        $user = $params['user'];
-      }
-      if (array_key_exists('password', $params)) {
-        $password = $params['password'];
-      }
+            if (array_key_exists('host', $params)) {
+                $host = $params['host'];
+            } else {
+                $host = '127.0.0.1';
+            }
+            if (array_key_exists('port', $params)) {
+                $port = $params['port'];
+            }
+            if (array_key_exists('protocol', $params)) {
+                $protocol = $params['protocol'];
+            }
+            if (array_key_exists('user', $params)) {
+                $user = $params['user'];
+            }
+            if (array_key_exists('password', $params)) {
+                $password = $params['password'];
+            }
+        }
+
+        if ($SSL) {
+            $protocol = 'https';
+        } else {
+            $protocol = 'http';
+        }
+
+        $this->host = $host;
+        $this->port = $port;
+        $this->protocol = $protocol;
+        $this->user = $user;
+        $this->password = $password;
+        $this->check_SSL = $SSL;
+
+        $this->url = $protocol . '://' . $host . ':' . $port . '/';
+        $this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
     }
-      
-      if ($SSL) {
-          $protocol = 'https';
-      } else {
-          $protocol = 'http';
-      }
-    
-    $this->host = $host;
-    $this->port = $port;
-    $this->protocol = $protocol;
-    $this->user = $user;
-    $this->password = $password;
-    $this->check_SSL = $SSL;
-
-    $this->url = $protocol.'://'.$host.':'.$port.'/';
-    $this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
-  }
 
   /**
    *
@@ -108,10 +110,10 @@ class daemonRPC
    * @return string  Call result
    *
    */
-  protected function _run($method, $params = null, $path = 'json_rpc')
-  {
-    return $this->client->_run($method, $params, $path);
-  }
+    protected function _run($method, $params = null, $path = 'json_rpc')
+    {
+        return $this->client->_run($method, $params, $path);
+    }
 
   /**
    *
@@ -125,10 +127,10 @@ class daemonRPC
    * }
    *
    */
-  public function getblockcount()
-  {
-    return $this->_run('getblockcount');
-  }
+    public function getblockcount()
+    {
+        return $this->_run('getblockcount');
+    }
 
   /**
    *
@@ -139,12 +141,12 @@ class daemonRPC
    * @return string  Example: 'e22cf75f39ae720e8b71b3d120a5ac03f0db50bba6379e2850975b4859190bc6'
    *
    */
-  public function on_getblockhash($height)
-  {
-    $params = array($height);
+    public function on_getblockhash($height)
+    {
+        $params = array($height);
 
-    return $this->_run('on_getblockhash', $params);
-  }
+        return $this->_run('on_getblockhash', $params);
+    }
 
   /**
    *
@@ -163,12 +165,12 @@ class daemonRPC
    * }
    *
    */
-  public function getblocktemplate($wallet_address, $reserve_size)
-  {
-    $params = array('wallet_address' => $wallet_address, 'reserve_size' => $reserve_size);
+    public function getblocktemplate($wallet_address, $reserve_size)
+    {
+        $params = array('wallet_address' => $wallet_address, 'reserve_size' => $reserve_size);
 
-    return $this->client->_run('getblocktemplate', $params, null);
-  }
+        return $this->client->_run('getblocktemplate', $params, null);
+    }
 
   /**
    *
@@ -179,10 +181,10 @@ class daemonRPC
    * @return // TODO: example
    *
    */
-  public function submitblock($block)
-  {
-    return $this->_run('submitblock', $block);
-  }
+    public function submitblock($block)
+    {
+        return $this->_run('submitblock', $block);
+    }
 
   /**
    *
@@ -208,10 +210,10 @@ class daemonRPC
    * }
    *
    */
-  public function getlastblockheader()
-  {
-    return $this->_run('getlastblockheader');
-  }
+    public function getlastblockheader()
+    {
+        return $this->_run('getlastblockheader');
+    }
 
   /**
    *
@@ -237,12 +239,12 @@ class daemonRPC
    * }
    *
    */
-  public function getblockheaderbyhash($hash)
-  {
-    $params = array('hash' => $hash);
+    public function getblockheaderbyhash($hash)
+    {
+        $params = array('hash' => $hash);
 
-    return $this->_run('getblockheaderbyhash', $params);
-  }
+        return $this->_run('getblockheaderbyhash', $params);
+    }
 
   /**
    *
@@ -268,10 +270,10 @@ class daemonRPC
    * }
    *
    */
-  public function getblockheaderbyheight($height)
-  {
-    return $this->_run('getblockheaderbyheight', $height);
-  }
+    public function getblockheaderbyheight($height)
+    {
+        return $this->_run('getblockheaderbyheight', $height);
+    }
 
   /**
    *
@@ -299,12 +301,12 @@ class daemonRPC
    * }
    *
    */
-  public function getblock_by_hash($hash)
-  {
-    $params = array('hash' => $hash);
+    public function getblock_by_hash($hash)
+    {
+        $params = array('hash' => $hash);
 
-    return $this->_run('getblock', $params);
-  }
+        return $this->_run('getblock', $params);
+    }
 
   /**
    *
@@ -332,12 +334,12 @@ class daemonRPC
    * }
    *
    */
-  public function getblock_by_height($height)
-  {
-    $params = array('height' => $height);
+    public function getblock_by_height($height)
+    {
+        $params = array('height' => $height);
 
-    return $this->_run('getblock', $params);
-  }
+        return $this->_run('getblock', $params);
+    }
 
   /**
    *
@@ -370,10 +372,10 @@ class daemonRPC
    * }
    *
    */
-  public function get_connections()
-  {
-    return $this->_run('get_connections');
-  }
+    public function get_connections()
+    {
+        return $this->_run('get_connections');
+    }
 
   /**
    *
@@ -399,10 +401,10 @@ class daemonRPC
    * }
    *
    */
-  public function get_info()
-  {
-    return $this->_run('get_info');
-  }
+    public function get_info()
+    {
+        return $this->_run('get_info');
+    }
 
   /**
    *
@@ -439,10 +441,10 @@ class daemonRPC
    * }
    *
    */
-  public function hardfork_info()
-  {
-    return $this->_run('hard_fork_info');
-  }
+    public function hardfork_info()
+    {
+        return $this->_run('hard_fork_info');
+    }
 
   /**
    *
@@ -455,15 +457,15 @@ class daemonRPC
    * }
    *
    */
-  public function set_bans($bans)
-  {
-    if (is_string($bans)) {
-      $bans = array($bans);
-    }
-    $params = array('bans' => $bans);
+    public function set_bans($bans)
+    {
+        if (is_string($bans)) {
+            $bans = array($bans);
+        }
+        $params = array('bans' => $bans);
 
-    return $this->_run('set_bans', $params);
-  }
+        return $this->_run('set_bans', $params);
+    }
 
   /**
    *
@@ -471,10 +473,10 @@ class daemonRPC
    * }
    *
    */
-  public function setbans($bans)
-  {
-    return $this->set_bans($bans);
-  }
+    public function setbans($bans)
+    {
+        return $this->set_bans($bans);
+    }
 
   /**
    *
@@ -491,20 +493,20 @@ class daemonRPC
    * }
    *
    */
-  public function get_bans()
-  {
-    return $this->_run('get_bans');
-  }
+    public function get_bans()
+    {
+        return $this->_run('get_bans');
+    }
 
   /**
    *
    * Alias of get_bans
    *
    */
-  public function getbans()
-  {
-    return $this->get_bans();
-  }
+    public function getbans()
+    {
+        return $this->get_bans();
+    }
 
   /**
    *
@@ -517,15 +519,15 @@ class daemonRPC
    */
     public function flush_txpool($txids)
     {
-        return $this->_run('flush_txpool', $txids);    
+        return $this->_run('flush_txpool', $txids);
     }
- 
+
     /**
     * Alias of flush_txpool
     */
     public function flushtxpool($txids)
     {
-        return $this->flush_txpool($txids);    
+        return $this->flush_txpool($txids);
     }
 
     /**
@@ -533,65 +535,65 @@ class daemonRPC
    * Get height
    *
    */
-   public function get_height()
-   {
-       return $this->_run(null, null, 'getheight');
-   }
+    public function get_height()
+    {
+        return $this->_run(null, null, 'getheight');
+    }
 
    /**
     *
     * Get transactions
     *
     */
-    public function get_transactions($txs_hashes = NULL)
+    public function get_transactions($txs_hashes = null)
     {
         $params = array('txs_hashes' => $txs_hashes, 'decode_as_json' => true);
         return $this->_run(null, null, 'gettransactions');
     }
-    
-  
+
+
     public function get_alt_blocks_hashes()
     {
         return $this->_run(null, null, 'get_alt_blocks_hashes');
     }
-    
+
     public function is_key_image_spent($key_images)
     {
         if (is_string($key_images)) {
             $key_images = array($key_images);
         }
-        if(!is_array($key_images)){
+        if (!is_array($key_images)) {
             throw new Exception('Error: key images must be an array or a string');
         }
         $params = array('key_images' => $key_images);
         return $this->_run(null, $params, 'is_key_image_spent');
     }
-    
+
     public function send_raw_transaction($tx_as_hex, $do_not_relay = false, $do_sanity_checks = true)
     {
         $params = array('tx_as_hex' => $tx_as_hex, 'do_not_relay' => $do_not_relay, 'do_sanity_checks' => $do_sanity_checks);
         return $this->_run(null, $params, 'send_raw_transaction');
     }
-    
+
     public function start_mining($background_mining, $ignore_battery = false, $miner_address, $threads_count = 1)
     {
-        if($threads_count < 0){
+        if ($threads_count < 0) {
             throw new Exception('Error: threads_count must be a positive integer');
         }
         $params = array('do_background_mining' => $background_mining, 'ignore_battery' => $ignore_battery, 'miner_address' => $miner_address, 'threads_count' => $threads_count);
         return $this->_run(null, $params, 'start_mining');
     }
-    
+
     public function stop_mining()
     {
         return $this->_run(null, null, 'stop_mining');
     }
-    
+
     public function mining_status()
     {
         return $this->_run(null, null, 'mining_status');
     }
-    
+
     public function save_bc()
     {
         return $this->_run(null, null, 'save_bc');
@@ -602,77 +604,77 @@ class daemonRPC
         $params = array('public_only' => $public_only);
         return $this->_run(null, $params, 'get_peer_list');
     }
-    
+
     public function set_log_hash_rate($visible = true)
     {
         $params = array('visible' => $visible);
         return $this->_run(null, $params, 'set_log_hash_rate');
     }
-    
+
     public function set_log_level($log_level = 0)
     {
-        if(!is_int($log_level)){
+        if (!is_int($log_level)) {
             throw new Exception('Error: log_level must be an integer');
         }
         $params = array('level' => $log_level);
         return $this->_run(null, $params, 'set_log_level');
     }
-    
+
     public function set_log_categories($category)
     {
         $params = array('categories' => $category);
         return $this->_run(null, $params, 'set_log_categories');
     }
-    
+
     public function get_transaction_pool()
     {
-        return $this->_run(null, null, 'get_transaction_pool');   
+        return $this->_run(null, null, 'get_transaction_pool');
     }
-    
-    public function get_transaction_pool_stats(){
+
+    public function get_transaction_pool_stats()
+    {
         return $this->_run(null, null, 'get_transaction_pool_stats');
     }
-    
+
     public function stop_daemon()
     {
         return $this->_run(null, null, 'stop_daemon');
     }
-    
+
     public function get_limit()
     {
         return $this->_run(null, null, 'get_limit');
     }
-    
+
     public function set_limit($limit_down, $limit_up)
     {
         $params = array('limit_down' => $limit_down, 'limit_up' => $limit_up);
         return $this->_run(null, $params, 'set_limit');
     }
-    
+
     public function out_peers()
     {
         return $this->_run(null, null, 'out_peers');
     }
-    
+
     public function in_peers()
     {
         return $this->_run(null, null, 'in_peers');
     }
-    
+
     public function start_save_graph()
     {
         return $this->_run(null, null, 'start_save_graph');
     }
-    
+
     public function stop_save_graph()
     {
         return $this->_run(null, null, 'stop_save_graph');
     }
-    
+
     public function get_outs($outputs)
     {
         $params = array('outputs' => $outputs);
         return $this->_run(null, null, 'get_outs');
     }
-
 }
