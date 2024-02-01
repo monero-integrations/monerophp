@@ -2,6 +2,8 @@
 
 namespace MoneroIntegrations\MoneroPhp\mnemonic;
 
+use MoneroIntegrations\MoneroPhp\wordset;
+
 class english implements wordset {
 
     /* Returns name of wordset in the wordset's native language.
@@ -12,11 +14,11 @@ class english implements wordset {
         return "English";
     }
 
-    /* Returns name of wordset in english.    
+    /* Returns name of wordset in english.
      * This is a human-readable string, and should be capitalized
      */
     static public function english_name() : string {
-        return "English";        
+        return "English";
     }
 
     /* Returns integer indicating length of unique prefix,
@@ -25,13 +27,13 @@ class english implements wordset {
      *
      * A value of 0 indicates that there is no unique prefix
      * and the entire word must be used instead.
-     */    
+     */
     static public function prefix_length() : int {
         return 3;  // first 3 letters of each word in wordset is unique.
     }
-    
+
     /* Returns an array of all words in the wordset.
-     */    
+     */
     static public function words() : array {
         return [
             "abbey",
