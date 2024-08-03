@@ -1,7 +1,7 @@
 {
-    "name": "monero-integrations/monerophp",
-    "description": "A Monero library written in PHP by the Monero-Integrations team.",
-    "keywords": ["Monero", "XMR", "monerod", "monero-wallet-rpc", "cryptonote", "JSONRPC", "JSON-RPC", "cryptocurrency"],
+    "name": "monero-integrations/monero-crypto",
+    "description": "Monero library for low-level cryptography functions.",
+    "keywords": ["Monero", "XMR", "cryptonote", "cryptocurrency", "crypto", "cryptography"],
     "homepage": "https://github.com/monero-integrations/monerophp",
     "type": "library",
     "version" : "1.0.1",
@@ -21,46 +21,56 @@
         }
     ],
     "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "phpstan/extension-installer": true
         }
     },
     "require": {
-        "php": ">=7.3",
+        "php": "^8.1.0",
         "ext-bcmath": "*",
-        "ext-curl": "*",
-        "ext-json": "*",
         "kornrunner/keccak": "^1.1"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "*",
         "phpstan/extension-installer": "*",
-        "brainmaestro/composer-git-hooks": "^2.8",
-        "squizlabs/php_codesniffer": "*"
+        "squizlabs/php_codesniffer": "*",
+        "phpstan/phpstan": "^1.10.25",
+        "phpunit/phpunit": "^10.3.3",
+        "laravel/pint": "^1.10.3"
     },
     "suggest": {
-        "ext-gmp": "Used to have a multiple math precision for generating address"
+        "ext-gmp": "For much faster elliptic curve operations, install the GMP extension."
     },
     "autoload": {
         "psr-4": {
-            "MoneroIntegrations\\MoneroPhp\\": "src/"
+            "MoneroIntegrations\\MoneroCrypto\\": "src/"
         }
     },
-    "extra": {
-        "hooks": {
-            "pre-commit": [
-                "vendor/bin/phpcbf"
-            ]
+    "autoload-dev": {
+        "psr-4": {
+            "MoneroIntegrations\\MoneroCrypto\\Tests\\": "tests/"
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "scripts": {
-        "post-install-cmd": "cghooks add --ignore-lock",
-        "post-update-cmd": "cghooks update",
-        "lint": [
-            "phpcbf || true",
-            "phpcs || true",
-            "phpstan analyse --memory-limit 1G"
+        "lint": "pint --preset psr12 -v",
+        "test:lint": "pint --preset psr12 --test -v",
+        "test:phpstan": "phpstan analyse --ansi --memory-limit=1G",
+        "test:unit": "phpunit --testsuite unit",
+        "test": [
+            "@test:lint",
+            "@test:phpstan",
+            "@test:unit"
         ]
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/monero-integrations/monerophp.git"
+        }
+    ]
 }

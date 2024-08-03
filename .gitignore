@@ -1,2 +1,4 @@
 vendor/
 build
+.phpunit.cache
+tests/_reports

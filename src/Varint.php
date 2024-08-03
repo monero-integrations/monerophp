@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
   Copyright (c) 2018, Monero Integrations
 
@@ -20,81 +22,89 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 */
-namespace MoneroIntegrations\MoneroPhp;
 
-    class Varint
+namespace MoneroIntegrations\MoneroCrypto;
+
+/**
+ * Varint class for encoding and decoding variable-length integers.
+ */
+class Varint
+{
+    /**
+     * Encodes an integer into a varint format.
+     * @return array<int> The encoded varint.
+     */
+    public static function encodeVarint(int $value): array
     {
-        public function encode_varint($data)
-        {
-            $orig = $data;
+        $data = array_fill(0, 8, 0);
+        $pos = 0;
 
-            if ($data < 0x80)
-            {
-               return bin2hex(pack('C', $data));
-            }
+        while (($value & 0xFFFFFF80) !== 0) {
+            $data[$pos] = ($value & 0x7F) | 0x80;
+            $pos++;
+            $value >>= 7;
+        }
+        $data[$pos] = $value & 0x7F;
+        $pos++;
 
-            $encodedBytes = [];
-            while ($data > 0)
-            {
-               $encodedBytes[] = 0x80 | ($data & 0x7f);
-               $data >>= 7;
-            }
-
-            $encodedBytes[count($encodedBytes)-1] &= 0x7f;
-            $bytes = call_user_func_array('pack', array_merge(array('C*'), $encodedBytes));;
-            return bin2hex($bytes);
-        }
-        
-        // https://github.com/monero-project/research-lab/blob/master/source-code/StringCT-java/src/how/monero/hodl/util/VarInt.java
-        public function decode_varint($data)
-        {
-            $result = 0;
-            $c = 0;
-            $pos = 0;
-            
-            while (true)
-            {
-                $isLastByteInVarInt = true;
-                $i = hexdec($data[$pos]);
-		        if ($i >= 128)
-		        {
-                    $isLastByteInVarInt = false;
-                    $i -= 128;
-                }
-                $result += ($i * (pow(128, $c)));
-                $c += 1;
-                $pos += 1;
-                
-                if ($isLastByteInVarInt)
-                    break;
-            }
-            return $result;
-        }
-        
-        public function pop_varint($data)
-        {
-            $result = 0;
-            $c = 0;
-            $pos = 0;
-            
-            while (true)
-            {
-                $isLastByteInVarInt = true;
-                $i = hexdec($data[$pos]);
-		        if ($i >= 128)
-		        {
-                    $isLastByteInVarInt = false;
-                    $i -= 128;
-                }
-                $result += ($i * (pow(128, $c)));
-                $c += 1;
-                $pos += 1;
-                
-                if ($isLastByteInVarInt)
-                    break;
-            }
-            for ($x = 0; $x < $pos; $x++)
-               array_shift($data);
-            return $data;
-        }
+        return array_slice($data, 0, $pos);
     }
+
+    /**
+     * Decodes a varint from a hexadecimal string.
+     * @param array<int> $data The data to decode.
+     */
+    public static function decodeVarint(array $data): int
+    {
+        $result = 0;
+        $c = 0;
+        $pos = 0;
+
+        while (true) {
+            $isLastByteInVarInt = true;
+            $i = $data[$pos] & 0xFF; // Ensure we're working with an unsigned integer
+            if ($i >= 128) {
+                $isLastByteInVarInt = false;
+                $i -= 128;
+            }
+            $result += $i * pow(128, $c);
+            $c++;
+            $pos++;
+            if ($isLastByteInVarInt) {
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @todo: Fix this function
+     */
+    public function pop_varint($data)
+    {
+        $result = 0;
+        $c = 0;
+        $pos = 0;
+
+        while (true) {
+            $isLastByteInVarInt = true;
+            $i = hexdec($data[$pos]);
+            if ($i >= 128) {
+                $isLastByteInVarInt = false;
+                $i -= 128;
+            }
+            $result += ($i * (pow(128, $c)));
+            $c += 1;
+            $pos += 1;
+
+            if ($isLastByteInVarInt) {
+                break;
+            }
+        }
+        for ($x = 0; $x < $pos; $x++) {
+            array_shift($data);
+        }
+        return $data;
+    }
+}

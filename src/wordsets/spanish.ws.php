@@ -1,40 +1,52 @@
 <?php
 
-namespace MoneroIntegrations\MoneroPhp\mnemonic;
+declare(strict_types=1);
 
-class spanish implements wordset {
+namespace MoneroIntegrations\MoneroCrypto\Mnemonic;
 
-    /* Returns name of wordset in the wordset's native language.
+use MoneroIntegrations\MoneroCrypto\Wordset;
+
+class spanish implements Wordset
+{
+    /**
+     * Returns name of wordset in the wordset's native language.
      * This is a human-readable string, and should be capitalized
      * if the language supports it.
      */
-    static public function name() : string {
+    public static function name(): string
+    {
         return "Español";
-        
     }
 
-    /* Returns name of wordset in english.    
+    /**
+     * Returns name of wordset in English.
      * This is a human-readable string, and should be capitalized
      */
-    static public function english_name() : string {
+    public static function englishName(): string
+    {
         return "Spanish";
     }
 
 
-    /* Returns integer indicating length of unique prefix,
+    /**
+     * Returns integer indicating length of unique prefix,
      * such that each prefix of this length is unique across
      * the entire set of words.
      *
      * A value of 0 indicates that there is no unique prefix
      * and the entire word must be used instead.
-     */    
-    static public function prefix_length() : int {
+     */
+    public static function prefixLength(): int
+    {
         return 4;  // first 4 letters of each word in wordset is unique.
     }
-    
-    /* Returns an array of all words in the wordset.
-     */    
-    static public function words() : array {
+
+    /**
+     * Returns an array of all words in the wordset.
+     * @return array<string>
+     */
+    public static function words(): array
+    {
         return [
             "ábaco",
             "abdomen",
@@ -1661,7 +1673,7 @@ class spanish implements wordset {
             "riqueza",
             "risa",
             "ritmo",
-            "rito"            
+            "rito"
         ];
     }
 }
