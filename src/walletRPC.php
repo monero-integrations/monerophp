@@ -1363,7 +1363,7 @@ class walletRPC
       $params['pool'] = true;
     }
 
-    if (($min_height || $max_height) && $max_height != 4206931337) {
+    if ($min_height || $max_height != 4206931337) {
       $params['filter_by_height'] = true;
     }
 
