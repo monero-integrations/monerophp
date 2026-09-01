@@ -41,12 +41,13 @@ class base58
    *
    * Convert a hexadecimal string to a binary array
    *
-   * @param    string  $hex  A hexadecimal string to convert to a binary array
+   * @param  string  $hex  A hexadecimal string to convert to a binary array
    *
    * @return   array
    *
+   * @throws Exception
    */
-  private function hex_to_bin($hex)
+  private function hex_to_bin($hex): array
   {
     if (!is_string($hex)) {
       throw new Exception('base58->hex_to_bin(): Invalid input type (must be a string)');
@@ -320,7 +321,7 @@ class base58
     if ($res_size < self::$full_block_size && bcpow(2, 8 * $res_size) <= 0) {
       throw new Exception('base58->decode_block(): Integer overflow (bcpow(2, 8 * $res_size) exceeds the maximum 64bit integer)');
     }
-  
+
     $tmp_buf = self::uint64_to_8_be($res_num, $res_size);
     for ($i = 0, $iMax = count($tmp_buf); $i < $iMax; $i++) {
       $buf[$i + $index] = $tmp_buf[$i];
