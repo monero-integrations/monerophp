@@ -350,6 +350,9 @@ use kornrunner\Keccak as keccak;
 	
 	public function generate_subaddress($major_index, $minor_index, $view_secret_key, $spend_public_key)
 	{
+        if ($major_index == 0 && $minor_index == 0) {
+            return $this->encode_address($spend_public_key, $this->pk_from_sk($view_secret_key));
+        }
 		$subaddr_secret_key = $this->generate_subaddr_secret_key($major_index, $minor_index, $view_secret_key);
 		$subaddr_public_spend_key = $this->generate_subaddress_spend_public_key($spend_public_key, $subaddr_secret_key);
 		$subaddr_public_view_key = $this->generate_subaddr_view_public_key($subaddr_public_spend_key, $view_secret_key);
