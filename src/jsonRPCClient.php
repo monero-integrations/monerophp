@@ -76,26 +76,33 @@ class jsonRPCClient
         } else {
             $request = json_encode($pParams ?? new \stdClass());
         }
-        // if is_debug mode is true then add url and request to is_debug
-        $this->debug('Url: ' . $this->url . "\r\n", false);
-        $this->debug('Request: ' . $request . "\r\n", false);
+        $this->validate(false === $request, 'Unable to encode RPC request: ' . json_last_error_msg());
+        // Payloads and URLs can contain wallet secrets, including in unknown fields.
+        $this->debug('Request bytes: ' . strlen($request) . "\r\n", false);
         $responseMessage = $this->getResponse($request, $path);
-        // if is_debug mode is true then add response to is_debug and display it
-        $this->debug('Response: ' . $responseMessage . "\r\n", true);
+        $this->debug('Response bytes: ' . strlen($responseMessage) . "\r\n", true);
         // decode and create array ( can be object, just set to false )
-        $responseDecoded = json_decode($responseMessage, true);
+        $responseDecoded = json_decode($responseMessage, true, 512, JSON_BIGINT_AS_STRING);
         // check if decoding json generated any errors
         $jsonErrorMsg = json_last_error_msg();
         $this->validate( !is_null($jsonErrorMsg) && $jsonErrorMsg !== 'No error' , $jsonErrorMsg . ': ' . $responseMessage);
         $this->validate(!is_array($responseDecoded), 'Invalid RPC response');
         if (isset($responseDecoded['error']))
         {
-            $errorMessage = 'Request have return error: ' . $responseDecoded['error']['message'] . '; ';
-            if (isset($responseDecoded['error']['data']))
+            $error = $responseDecoded['error'];
+            $this->validate(!is_array($error) || !isset($error['message']) || !is_string($error['message']), 'Invalid RPC error');
+            $errorMessage = 'Request have return error: ' . $error['message'] . '; ';
+            if (isset($error['data']))
             {
-                $errorMessage .= "\n" . 'Error data: ' . $responseDecoded['error']['data'];
+                $errorData = $error['data'];
+                if (is_array($errorData))
+                {
+                    $errorData = json_encode($errorData);
+                    $this->validate(false === $errorData, 'Unable to encode RPC error data: ' . json_last_error_msg());
+                }
+                $errorMessage .= "\n" . 'Error data: ' . $errorData;
             }
-            $this->validate( !is_null($responseDecoded['error']), $errorMessage);
+            $this->validate(true, $errorMessage);
         }
         if ('json_rpc' === $path) {
             $this->validate(!array_key_exists('result', $responseDecoded), 'Missing RPC result');
@@ -179,7 +186,7 @@ class jsonRPCClient
             $endTime = array_sum(explode(' ', microtime()));
             // performance summary
             $debug .= 'Request time: ' . round($endTime - $startTime, 3) . ' s Memory usage: ' . round(memory_get_usage() / 1024) . " kb\r\n";
-            echo nl2br($debug);
+            echo nl2br(htmlspecialchars($debug, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
             // send output immediately
             flush();
             // clean static
