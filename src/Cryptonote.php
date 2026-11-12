@@ -29,6 +29,8 @@ use kornrunner\Keccak as keccak;
     {
         // https://github.com/monero-project/monero/blob/master/src/cryptonote_config.h#L222
         private $network_prefixes;
+        /** @var array<int|string, int> */
+        private $address_lengths;
         protected $ed25519;
         protected $base58;
         protected $varint;
@@ -52,6 +54,12 @@ use kornrunner\Keccak as keccak;
                     "SUBADDRESS" => dechex(63),
                 ]
             ];
+            $this->address_lengths = [];
+            foreach ($networks_prefixes as $prefixes) {
+                $this->address_lengths[$prefixes["STANDARD"]] = 138;
+                $this->address_lengths[$prefixes["SUBADDRESS"]] = 138;
+                $this->address_lengths[$prefixes["INTEGRATED"]] = 154;
+            }
             if (array_key_exists($network, $networks_prefixes)) {
                 $this->network_prefixes = $networks_prefixes[$network];
             } else {
@@ -282,6 +290,12 @@ use kornrunner\Keccak as keccak;
         }
 
         $network_byte = substr($decoded, 0, 2);
+        if (
+            !isset($this->address_lengths[$network_byte])
+            || strlen($decoded) !== $this->address_lengths[$network_byte]
+        ) {
+            throw new Exception("Error: Invalid address prefix or length");
+        }
         $public_spendKey = substr($decoded, 2, 64);
         $public_viewKey = substr($decoded, 66, 64);
 
