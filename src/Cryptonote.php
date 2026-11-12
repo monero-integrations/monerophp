@@ -29,6 +29,8 @@ use kornrunner\Keccak as keccak;
     {
         // https://github.com/monero-project/monero/blob/master/src/cryptonote_config.h#L222
         private $network_prefixes;
+        /** @var array<int|string, int> */
+        private $address_lengths;
         protected $ed25519;
         protected $base58;
         protected $varint;
@@ -52,6 +54,12 @@ use kornrunner\Keccak as keccak;
                     "SUBADDRESS" => dechex(63),
                 ]
             ];
+            $this->address_lengths = [];
+            foreach ($networks_prefixes as $prefixes) {
+                $this->address_lengths[$prefixes["STANDARD"]] = 138;
+                $this->address_lengths[$prefixes["SUBADDRESS"]] = 138;
+                $this->address_lengths[$prefixes["INTEGRATED"]] = 154;
+            }
             if (array_key_exists($network, $networks_prefixes)) {
                 $this->network_prefixes = $networks_prefixes[$network];
             } else {
@@ -190,24 +198,55 @@ use kornrunner\Keccak as keccak;
         }
 
         // takes transaction extra field as hex string and returns transaction public key 'R' as hex string
-        public function txpub_from_extra($extra)
-        {
-            $parsed = array_map("hexdec", str_split($extra, 2));
+    public function txpub_from_extra($extra)
+    {
+        if (!is_string($extra) || strlen($extra) % 2 !== 0 || preg_match('/\A[0-9a-f]*\z/i', $extra) !== 1) {
+            return null;
+        }
 
-            if($parsed[0] == 1)
-            {
-                return substr($extra, 2, 64);
+        $data = hex2bin($extra);
+        $size = strlen($data);
+        $offset = 0;
+        while ($offset < $size) {
+            $tag = ord($data[$offset++]);
+            if ($tag === 1) {
+                return $size - $offset >= 32 ? substr($extra, $offset * 2, 64) : null;
+            }
+            if (!in_array($tag, [2, 3, 4, 0xde], true)) {
+                return null;
             }
 
-            if($parsed[0] == 2)
-            {
-                if($parsed[0] == 2 || $parsed[2] == 1)
-                {
-                    //$offset = (($parsed[1] + 2) *2) + 2;
-                    return substr($extra, (($parsed[1] + 2) *2) + 2, 64);
+            try {
+                $length = $this->read_varint($data, $offset, 64, "transaction extra");
+            } catch (Exception $exception) {
+                return null;
+            }
+            $remaining = $size - $offset;
+            if (is_string($length) || $length > $remaining || ($tag === 2 && $length > 255)) {
+                return null;
+            }
+            if ($tag === 4) {
+                if ($length > intdiv($remaining, 32)) {
+                    return null;
+                }
+                $length *= 32;
+            }
+            if ($tag === 3) {
+                $field = substr($data, $offset, $length);
+                $field_offset = 0;
+                try {
+                    $this->read_varint($field, $field_offset, 64, "merge mining depth");
+                } catch (Exception $exception) {
+                    return null;
+                }
+                if ($length - $field_offset !== 32) {
+                    return null;
                 }
             }
+            $offset += $length;
         }
+        return null;
+    }
 
         public function derive_public_key($der, $index, $pub)
         {
@@ -282,6 +321,12 @@ use kornrunner\Keccak as keccak;
         }
 
         $network_byte = substr($decoded, 0, 2);
+        if (
+            !isset($this->address_lengths[$network_byte])
+            || strlen($decoded) !== $this->address_lengths[$network_byte]
+        ) {
+            throw new Exception("Error: Invalid address prefix or length");
+        }
         $public_spendKey = substr($decoded, 2, 64);
         $public_viewKey = substr($decoded, 66, 64);
 
@@ -350,6 +395,9 @@ use kornrunner\Keccak as keccak;
 	
 	public function generate_subaddress($major_index, $minor_index, $view_secret_key, $spend_public_key)
 	{
+        if ($major_index == 0 && $minor_index == 0) {
+            return $this->encode_address($spend_public_key, $this->pk_from_sk($view_secret_key));
+        }
 		$subaddr_secret_key = $this->generate_subaddr_secret_key($major_index, $minor_index, $view_secret_key);
 		$subaddr_public_spend_key = $this->generate_subaddress_spend_public_key($spend_public_key, $subaddr_secret_key);
 		$subaddr_public_view_key = $this->generate_subaddr_view_public_key($subaddr_public_spend_key, $view_secret_key);
@@ -361,24 +409,51 @@ use kornrunner\Keccak as keccak;
 
     public function deserialize_block_header($block)
     {
-      $data = str_split($block, 2);
-      
-      $major_version = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      $minor_version = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      $timestamp = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      $nonce = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      return array("major_version" => $major_version,
-                   "minor_version" => $minor_version,
-                   "timestamp" => $timestamp,
-                   "nonce" => $nonce);
+        if (!is_string($block) || strlen($block) % 2 !== 0 || preg_match('/\A[0-9a-f]+\z/i', $block) !== 1) {
+            throw new Exception("Error: Invalid block header hex");
+        }
+
+        $data = hex2bin($block);
+        $offset = 0;
+        $major_version = $this->read_varint($data, $offset, 8);
+        $minor_version = $this->read_varint($data, $offset, 8);
+        $timestamp = $this->read_varint($data, $offset, 64);
+        if (strlen($data) - $offset < 36) {
+            throw new Exception("Error: Truncated block header");
+        }
+
+        // The previous block hash occupies 32 bytes before the little-endian nonce.
+        $nonce = unpack('Vnonce', substr($data, $offset + 32, 4));
+        return array("major_version" => $major_version,
+                     "minor_version" => $minor_version,
+                     "timestamp" => $timestamp,
+                     "nonce" => $nonce['nonce']);
+    }
+
+    /** @return int|string */
+    private function read_varint(string $data, int &$offset, int $bits, string $context = "block header")
+    {
+        $value = '0';
+        $factor = '1';
+        for ($shift = 0; $shift < $bits; $shift += 7) {
+            if ($offset >= strlen($data)) {
+                throw new Exception("Error: Truncated " . $context . " varint");
+            }
+            $byte = ord($data[$offset++]);
+            if ($bits - $shift < 7 && $byte >= (1 << ($bits - $shift))) {
+                throw new Exception("Error: " . ucfirst($context) . " varint overflow");
+            }
+            if ($shift > 0 && $byte === 0) {
+                throw new Exception("Error: Noncanonical " . $context . " varint");
+            }
+
+            $value = bcadd($value, bcmul((string) ($byte & 0x7f), $factor, 0), 0);
+            if (($byte & 0x80) === 0) {
+                return bccomp($value, (string) PHP_INT_MAX, 0) <= 0 ? (int) $value : $value;
+            }
+            $factor = bcmul($factor, '128', 0);
+        }
+        throw new Exception("Error: " . ucfirst($context) . " varint overflow");
     }
       
     }

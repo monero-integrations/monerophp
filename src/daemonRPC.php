@@ -51,13 +51,14 @@ class daemonRPC
    *
    * @param  string  $host      Monero daemon IP hostname            (optional)
    * @param  int     $port      Monero daemon port                   (optional)
-   * @param  string  $protocol  Monero daemon protocol (eg. 'http')  (optional)
+   * @param  bool|string|null  $SSL  HTTPS validation or protocol    (optional)
    * @param  string  $user      Monero daemon RPC username           (optional)
    * @param  string  $password  Monero daemon RPC passphrase         (optional)
    *
    */
-   function __construct($host = '127.0.0.1', $port = 18081, $SSL = true, $user = null, $password = null)
+   function __construct($host = '127.0.0.1', $port = 18081, $SSL = null, $user = null, $password = null)
   {
+    $protocol = null;
     if (is_array($host)) { // Parameters passed in as object/dictionary
       $params = $host;
 
@@ -70,7 +71,10 @@ class daemonRPC
         $port = $params['port'];
       }
       if (array_key_exists('protocol', $params)) {
-        $protocol = $params['protocol'];
+        $protocol = strtolower($params['protocol']);
+      }
+      if (array_key_exists('ssl', $params)) {
+        $SSL = $params['ssl'];
       }
       if (array_key_exists('user', $params)) {
         $user = $params['user'];
@@ -80,10 +84,20 @@ class daemonRPC
       }
     }
       
-      if ($SSL) {
-          $protocol = 'https';
-      } else {
-          $protocol = 'http';
+    if (is_string($SSL)) {
+      $protocol = strtolower($SSL);
+      $SSL = null;
+    }
+    if (null === $SSL) {
+      $host_name = strtolower(trim($host, '[]'));
+      $is_loopback = in_array($host_name, array('localhost', '::1'), true)
+        || (false !== filter_var($host_name, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
+          && 0 === strpos($host_name, '127.'));
+      $SSL = null === $protocol ? !$is_loopback : 'https' === $protocol;
+    }
+    $SSL = (bool) $SSL;
+    if (null === $protocol) {
+      $protocol = $SSL ? 'https' : 'http';
       }
     
     $this->host = $host;
@@ -93,7 +107,8 @@ class daemonRPC
     $this->password = $password;
     $this->check_SSL = $SSL;
 
-    $this->url = $protocol.'://'.$host.':'.$port.'/';
+    $host_for_url = false !== strpos($host, ':') && '[' !== $host[0] ? '['.$host.']' : $host;
+    $this->url = $protocol.'://'.$host_for_url.':'.$port.'/';
     $this->client = new jsonRPCClient($this->url, $this->user, $this->password, $this->check_SSL);
   }
 
@@ -101,11 +116,11 @@ class daemonRPC
    *
    * Execute command via jsonRPCClient
    *
-   * @param  string  $method  RPC method to call
-   * @param  string  $params  Parameters to pass  (optional)
+   * @param  string|null  $method  RPC method, or null for direct HTTP endpoints
+   * @param  array<mixed>|object|null  $params  JSON request parameters (optional)
    * @param  string  $path    Path of API (by default json_rpc)
    *
-   * @return string  Call result
+   * @return array<mixed>|bool|float|int|string|null Decoded response or JSON-RPC result
    *
    */
   protected function _run($method, $params = null, $path = 'json_rpc')
@@ -167,7 +182,7 @@ class daemonRPC
   {
     $params = array('wallet_address' => $wallet_address, 'reserve_size' => $reserve_size);
 
-    return $this->client->_run('getblocktemplate', $params, null);
+    return $this->_run('getblocktemplate', $params);
   }
 
   /**
@@ -181,7 +196,7 @@ class daemonRPC
    */
   public function submitblock($block)
   {
-    return $this->_run('submitblock', $block);
+    return $this->_run('submitblock', is_array($block) ? $block : array($block));
   }
 
   /**
@@ -270,7 +285,7 @@ class daemonRPC
    */
   public function getblockheaderbyheight($height)
   {
-    return $this->_run('getblockheaderbyheight', $height);
+    return $this->_run('getblockheaderbyheight', array('height' => $height));
   }
 
   /**
@@ -546,7 +561,7 @@ class daemonRPC
     public function get_transactions($txs_hashes = NULL)
     {
         $params = array('txs_hashes' => $txs_hashes, 'decode_as_json' => true);
-        return $this->_run(null, null, 'gettransactions');
+        return $this->_run(null, $params, 'gettransactions');
     }
     
   
@@ -573,7 +588,7 @@ class daemonRPC
         return $this->_run(null, $params, 'send_raw_transaction');
     }
     
-    public function start_mining($background_mining, $ignore_battery = false, $miner_address, $threads_count = 1)
+    public function start_mining($background_mining, $ignore_battery, $miner_address, $threads_count = 1)
     {
         if($threads_count < 0){
             throw new Exception('Error: threads_count must be a positive integer');
@@ -672,7 +687,7 @@ class daemonRPC
     public function get_outs($outputs)
     {
         $params = array('outputs' => $outputs);
-        return $this->_run(null, null, 'get_outs');
+        return $this->_run(null, $params, 'get_outs');
     }
 
 }

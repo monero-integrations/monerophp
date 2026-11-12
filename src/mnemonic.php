@@ -41,7 +41,13 @@ class mnemonic {
      */
     static function checksum($words, $prefix_len) {
         $plen = $prefix_len;
-        $words = array_slice($words, null, count($words) > 13 ? 24 : 12);
+        $word_count = count($words);
+        if ($word_count < 3 || $word_count % 3 === 2) {
+            throw new \InvalidArgumentException('Invalid mnemonic length');
+        }
+        if ($word_count % 3 === 1) {
+            $words = array_slice($words, 0, -1);
+        }
         
         $wstr = '';
         foreach($words as $word) {
@@ -58,7 +64,14 @@ class mnemonic {
      * Returns boolean value.
      */
     static function validate_checksum($words, $prefix_len) {
-        return (self::checksum($words, $prefix_len) == $words[count($words)-1]) ? true : false;
+        if (count($words) < 4 || count($words) % 3 !== 1) {
+            return false;
+        }
+        $expected = self::checksum($words, $prefix_len);
+        $actual = $words[count($words)-1];
+        return $prefix_len > 0
+            ? mb_substr($expected, 0, $prefix_len) === mb_substr($actual, 0, $prefix_len)
+            : $expected === $actual;
     }
 
     /**
@@ -79,22 +92,35 @@ class mnemonic {
      * pull request.
      */
     static function encode($seed, $wordset_name = null) {
-        assert(mb_strlen($seed) % 8 == 0);
+        if (!is_string($seed) || strlen($seed) % 8 !== 0 || preg_match('/\A[0-9a-f]+\z/i', $seed) !== 1) {
+            throw new \InvalidArgumentException('Seed must contain complete four-byte hexadecimal groups');
+        }
         $out = [];
         
         $wordset = self::get_wordset_by_name( $wordset_name );
         $words = $wordset['words'];
         
         $ng = count($words);
+        $use_gmp = extension_loaded('gmp');
         for($i = 0; $i < mb_strlen($seed) / 8; $i ++) {
             $word = self::swap_endian(mb_substr($seed, 8*$i, (8*$i+8) - (8*$i) ));
-            $x = gmp_init($word, 16);
-            $w1 = gmp_mod($x,$ng);
-            $w2 = gmp_mod(gmp_add(gmp_div($x, $ng), $w1), $ng);
-            $w3 = gmp_mod(gmp_add(gmp_div(gmp_div($x, $ng), $ng), $w2), $ng);
-            $out[] = $words[gmp_strval($w1)];
-            $out[] = $words[gmp_strval($w2)];
-            $out[] = $words[gmp_strval($w3)];
+            if ($use_gmp) {
+                $x = gmp_init($word, 16);
+                $w1 = gmp_mod($x,$ng);
+                $w2 = gmp_mod(gmp_add(gmp_div($x, $ng), $w1), $ng);
+                $w3 = gmp_mod(gmp_add(gmp_div(gmp_div($x, $ng), $ng), $w2), $ng);
+                $out[] = $words[gmp_strval($w1)];
+                $out[] = $words[gmp_strval($w2)];
+                $out[] = $words[gmp_strval($w3)];
+            } else {
+                $x = base_convert($word, 16, 10);
+                $w1 = bcmod($x, $ng, 0);
+                $w2 = bcmod(bcadd(bcdiv($x, $ng, 0), $w1, 0), $ng, 0);
+                $w3 = bcmod(bcadd(bcdiv(bcdiv($x, $ng, 0), $ng, 0), $w2, 0), $ng, 0);
+                $out[] = $words[(int) $w1];
+                $out[] = $words[(int) $w2];
+                $out[] = $words[(int) $w3];
+            }
         }
         return $out;
     }
@@ -126,14 +152,16 @@ class mnemonic {
         $tw = $wordset['trunc_words'];
         $wcount = count($tw);
 
-        if (($plen === 0 && ($wcount % 3 !== 0)) || ($plen > 0 && ($wcount % 3 === 2))) {
-            throw new \Exception("too few words");
+        $word_count = count($wlist);
+        if ($word_count < 3 || $word_count % 3 === 2 || ($plen > 0 && $word_count % 3 !== 1)) {
+            throw new \Exception("invalid mnemonic length");
         }
-        if ($plen > 0 && (count($wlist) % 3 === 0)) {
-            throw new \Exception("last word missing");
+        if (count($wlist) % 3 === 1 && !self::validate_checksum($wlist, $plen)) {
+            throw new \Exception("invalid mnemonic checksum");
         }
-        
+
         $out = '';
+        $use_gmp = extension_loaded('gmp');
 
         for ($i = 0; $i < count($wlist)-1; $i += 3) {
         
@@ -152,8 +180,22 @@ class mnemonic {
                 throw new \Exception("invalid word in mnemonic");
             }
             // $x = (($w1 + ($n * (($w2 - $w1) % $n))) + (($n * $n) * (($w3 - $w2) % $n)));
-            $x = gmp_add(gmp_add($w1, gmp_mul($wcount, (gmp_mod(gmp_sub($w2, $w1), $wcount)))), gmp_mul((gmp_mul($wcount,$wcount)), (gmp_mod(gmp_sub($w3, $w2), $wcount))));
-            $out .= self::swap_endian(gmp_strval($x, 16));
+            if ($use_gmp) {
+                $x = gmp_add(gmp_add($w1, gmp_mul($wcount, (gmp_mod(gmp_sub($w2, $w1), $wcount)))), gmp_mul((gmp_mul($wcount,$wcount)), (gmp_mod(gmp_sub($w3, $w2), $wcount))));
+                if (gmp_cmp($x, '4294967295') > 0) {
+                    throw new \Exception("invalid mnemonic word group");
+                }
+                $out .= self::swap_endian(gmp_strval($x, 16));
+            } else {
+                $delta12 = bcmod(bcadd(bcsub($w2, $w1, 0), $wcount, 0), $wcount, 0);
+                $delta23 = bcmod(bcadd(bcsub($w3, $w2, 0), $wcount, 0), $wcount, 0);
+                $x = bcadd($w1, bcmul($wcount, $delta12, 0), 0);
+                $x = bcadd($x, bcmul(bcmul($wcount, $wcount, 0), $delta23, 0), 0);
+                if (bccomp($x, '4294967295', 0) > 0) {
+                    throw new \Exception("invalid mnemonic word group");
+                }
+                $out .= self::swap_endian(base_convert($x, 10, 16));
+            }
         }
         return $out;
     }
@@ -229,12 +271,12 @@ class mnemonic {
         }
         
         $wordsets = [];
-        $files = glob(__DIR__ . 'wordsets/*.ws.php');
+        $files = glob(__DIR__ . '/wordsets/*.ws.php');
         foreach($files as $f) {
             require_once($f);
     
             list($wordset) = explode('.', basename($f));
-            $classname = __NAMESPACE__ . '\\' . $wordset;
+            $classname = __NAMESPACE__ . '\\mnemonic\\' . $wordset;
             
             $wordsets[$wordset] = [
                 'name' => $classname::name(),
@@ -295,3 +337,8 @@ interface wordset {
      */
     static public function words() : array;    
 };
+
+namespace MoneroIntegrations\MoneroPhp\mnemonic;
+
+interface wordset extends \MoneroIntegrations\MoneroPhp\wordset {
+}

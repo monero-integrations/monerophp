@@ -115,6 +115,12 @@ class subaddress
 	
 	public function generate_subaddress($major_index, $minor_index, $view_secret_key, $spend_public_key)
 	{
+        if ($major_index == 0 && $minor_index == 0) {
+            $view_public_key = $this->ge_scalarmult_base($view_secret_key);
+            $data = "12" . $spend_public_key . $view_public_key;
+            $checksum = substr($this->keccak_256($data), 0, 8);
+            return $this->base58->encode($data . $checksum);
+        }
 		$subaddr_secret_key = $this->generate_subaddr_secret_key($major_index, $minor_index, $view_secret_key);
 		$subaddr_public_spend_key = $this->generate_subaddress_spend_public_key($spend_public_key, $subaddr_secret_key);
 		$subaddr_public_view_key = $this->generate_subaddr_view_public_key($subaddr_public_spend_key, $view_secret_key);

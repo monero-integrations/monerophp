@@ -19,12 +19,19 @@ In addition to these features, there are other lower-level libraries included fo
 
 Documentation can be found in the [`/docs`](https://github.com/sneurlax/monerophp/tree/master/docs) folder.
 
+RPC responses and decoded block-header timestamps retain integers outside PHP's native range as decimal strings; in-range integers remain PHP integers. RPC debug output includes only byte counts, timing and memory usage.
+
+Subaddress index `(0, 0)` returns the primary address. Address decoding checks the known prefix, exact payload length and checksum; it does not validate curve points or ownership. Transaction-extra key extraction returns the first complete primary public-key field, or `null` when no key can be read.
+
 ## Configuration
 ### Requirements
  - Monero daemon (`monerod`)
  - Webserver with PHP, for example XMPP, Apache, or NGINX
+    - PHP 7.3 or newer
     - cURL PHP extension for JSON RPC API(s)
-    - GMP PHP extension for about 100x faster calculations (as opposed to BCMath)
+    - BCMath PHP extension for arbitrary-precision calculations
+    - Mbstring PHP extension for mnemonic wordsets
+    - Optional GMP PHP extension for about 100x faster calculations
 
 Debian (or Ubuntu) are recommended.
  

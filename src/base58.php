@@ -54,6 +54,9 @@ class base58
     if (strlen($hex) % 2 != 0) {
       throw new Exception('base58->hex_to_bin(): Invalid input length (must be even)');
     }
+    if (preg_match('/\A[0-9a-fA-F]*\z/', $hex) !== 1) {
+      throw new Exception('base58->hex_to_bin(): Invalid hexadecimal input');
+    }
 
     $res = array_fill(0, strlen($hex) / 2, 0);
     for ($i = 0; $i < strlen($hex) / 2; $i++) {
@@ -125,7 +128,7 @@ class base58
     for ($i = 0, $iMax = count($bin); $i < $iMax; $i++) {
       $res[$i] = chr($bin[$i]);
     }
-    return preg_replace('/[[:^print:]]/', '', join($res)); // preg_replace necessary to strip errant non-ASCII characters eg. ''
+    return join($res);
   }
 
   /**
@@ -143,29 +146,13 @@ class base58
       throw new Exception ('base58->uint8_be_to_64(): Invalid input type (must be an array)');
     }
 
-    $res = 0;
-    $i = 0;
-    switch (9 - count($data)) {
-      case 1:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-      case 2:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-      case 3:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-      case 4:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-      case 5:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-      case 6:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-      case 7:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-      case 8:
-        $res = bcadd(bcmul($res, bcpow(2, 8)), $data[$i++]);
-        break;
-      default:
-        throw new Exception('base58->uint8_be_to_64: Invalid input length (1 <= count($data) <= 8)');
-      }
+    if (count($data) < 1 || count($data) > self::$full_block_size) {
+      throw new Exception('base58->uint8_be_to_64: Invalid input length (1 <= count($data) <= 8)');
+    }
+    $res = '0';
+    foreach ($data as $byte) {
+      $res = bcadd(bcmul($res, '256', 0), $byte, 0);
+    }
     return $res;
   }
 
@@ -193,8 +180,8 @@ class base58
 
     $res = array_fill(0, $size, 0);
     for ($i = $size - 1; $i >= 0; $i--) {
-      $res[$i] = bcmod($num, bcpow(2, 8));
-      $num = bcdiv($num, bcpow(2, 8));
+      $res[$i] = bcmod($num, '256', 0);
+      $num = bcdiv($num, '256', 0);
     }
     return $res;
   }
@@ -228,8 +215,8 @@ class base58
     $num = self::uint8_be_to_64($data);
     $i = self::$encoded_block_sizes[count($data)] - 1;
     while ($num > 0) {
-      $remainder = bcmod($num, 58);
-      $num = bcdiv($num, 58);
+      $remainder = (int) bcmod($num, '58', 0);
+      $num = bcdiv($num, '58', 0);
       $buf[$index + $i] = ord(self::$alphabet[$remainder]);
       $i--;
     }
@@ -256,7 +243,7 @@ class base58
       return '';
     }
 
-    $full_block_count = floor(count($data) / self::$full_block_size);
+    $full_block_count = intdiv(count($data), self::$full_block_size);
     $last_block_size = count($data) % self::$full_block_size;
     $res_size = $full_block_count * self::$full_encoded_block_size + self::$encoded_block_sizes[$last_block_size];
 
@@ -305,19 +292,19 @@ class base58
     $order = 1;
     for ($i = count($data) - 1; $i >= 0; $i--) {
       $digit = strpos(self::$alphabet, chr($data[$i]));
-      if ($digit < 0) {
+      if ($digit === false) {
         throw new Exception("base58->decode_block(): Invalid character ($digit \"{$digit}\" not found in base58::\$alphabet)");
       }
 
-      $product = bcadd(bcmul($order, $digit), $res_num);
-      if ($product > bcpow(2, 64)) {
+      $product = bcadd(bcmul($order, (string) $digit, 0), $res_num, 0);
+      if (bccomp($product, '18446744073709551616', 0) >= 0) {
         throw new Exception('base58->decode_block(): Integer overflow ($product exceeds the maximum 64bit integer)');
       }
 
       $res_num = $product;
-      $order = bcmul($order, 58);
+      $order = bcmul($order, '58', 0);
     }
-    if ($res_size < self::$full_block_size && bcpow(2, 8 * $res_size) <= 0) {
+    if ($res_size < self::$full_block_size && bccomp($res_num, bcpow('2', 8 * $res_size, 0), 0) >= 0) {
       throw new Exception('base58->decode_block(): Integer overflow (bcpow(2, 8 * $res_size) exceeds the maximum 64bit integer)');
     }
   
@@ -347,18 +334,18 @@ class base58
     if (count($enc) == 0) {
       return '';
     }
-    $full_block_count = floor(bcdiv(count($enc), self::$full_encoded_block_size));
-    $last_block_size = bcmod(count($enc), self::$full_encoded_block_size);
+    $full_block_count = intdiv(count($enc), self::$full_encoded_block_size);
+    $last_block_size = count($enc) % self::$full_encoded_block_size;
     $last_block_decoded_size = self::index_of(self::$encoded_block_sizes, $last_block_size);
 
     $data_size = $full_block_count * self::$full_block_size + $last_block_decoded_size;
 
-    if ($data_size == -1) {
-      return '';
+    if ($last_block_decoded_size < 0) {
+      throw new Exception('base58->decode(): Invalid encoded block length');
     }
 
     $data = array_fill(0, $data_size, 0);
-    for ($i = 0; $i <= $full_block_count; $i++) {
+    for ($i = 0; $i < $full_block_count; $i++) {
       $data = self::decode_block(array_slice($enc, $i * self::$full_encoded_block_size, ($i * self::$full_encoded_block_size + self::$full_encoded_block_size) - ($i * self::$full_encoded_block_size)), $data, $i * self::$full_block_size);
     }
 
@@ -375,7 +362,7 @@ class base58
    * Source: https://stackoverflow.com/a/30994678
    *
    * @param    array   $haystack  An array to search
-   * @param    string  $needle    A string to search for
+   * @param    int     $needle    A block size to search for
    *)
    * @return   number             The index of the element found (or -1 for no match)
    *
