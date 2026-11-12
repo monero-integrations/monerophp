@@ -198,24 +198,55 @@ use kornrunner\Keccak as keccak;
         }
 
         // takes transaction extra field as hex string and returns transaction public key 'R' as hex string
-        public function txpub_from_extra($extra)
-        {
-            $parsed = array_map("hexdec", str_split($extra, 2));
+    public function txpub_from_extra($extra)
+    {
+        if (!is_string($extra) || strlen($extra) % 2 !== 0 || preg_match('/\A[0-9a-f]*\z/i', $extra) !== 1) {
+            return null;
+        }
 
-            if($parsed[0] == 1)
-            {
-                return substr($extra, 2, 64);
+        $data = hex2bin($extra);
+        $size = strlen($data);
+        $offset = 0;
+        while ($offset < $size) {
+            $tag = ord($data[$offset++]);
+            if ($tag === 1) {
+                return $size - $offset >= 32 ? substr($extra, $offset * 2, 64) : null;
+            }
+            if (!in_array($tag, [2, 3, 4, 0xde], true)) {
+                return null;
             }
 
-            if($parsed[0] == 2)
-            {
-                if($parsed[0] == 2 || $parsed[2] == 1)
-                {
-                    //$offset = (($parsed[1] + 2) *2) + 2;
-                    return substr($extra, (($parsed[1] + 2) *2) + 2, 64);
+            try {
+                $length = $this->read_varint($data, $offset, 64, "transaction extra");
+            } catch (Exception $exception) {
+                return null;
+            }
+            $remaining = $size - $offset;
+            if (is_string($length) || $length > $remaining || ($tag === 2 && $length > 255)) {
+                return null;
+            }
+            if ($tag === 4) {
+                if ($length > intdiv($remaining, 32)) {
+                    return null;
+                }
+                $length *= 32;
+            }
+            if ($tag === 3) {
+                $field = substr($data, $offset, $length);
+                $field_offset = 0;
+                try {
+                    $this->read_varint($field, $field_offset, 64, "merge mining depth");
+                } catch (Exception $exception) {
+                    return null;
+                }
+                if ($length - $field_offset !== 32) {
+                    return null;
                 }
             }
+            $offset += $length;
         }
+        return null;
+    }
 
         public function derive_public_key($der, $index, $pub)
         {

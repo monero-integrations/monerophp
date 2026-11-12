@@ -21,7 +21,7 @@ Documentation can be found in the [`/docs`](https://github.com/sneurlax/moneroph
 
 RPC responses and decoded block-header timestamps retain integers outside PHP's native range as decimal strings; in-range integers remain PHP integers. RPC debug output includes only byte counts, timing and memory usage.
 
-Subaddress index `(0, 0)` returns the primary address. Address decoding checks the known prefix, exact payload length and checksum; it does not validate curve points or ownership.
+Subaddress index `(0, 0)` returns the primary address. Address decoding checks the known prefix, exact payload length and checksum; it does not validate curve points or ownership. Transaction-extra key extraction returns the first complete primary public-key field, or `null` when no key can be read.
 
 ## Configuration
 ### Requirements
