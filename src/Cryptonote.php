@@ -361,24 +361,51 @@ use kornrunner\Keccak as keccak;
 
     public function deserialize_block_header($block)
     {
-      $data = str_split($block, 2);
-      
-      $major_version = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      $minor_version = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      $timestamp = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      $nonce = $this->varint->decode_varint($data);
-      $data = $this->varint->pop_varint($data);
-      
-      return array("major_version" => $major_version,
-                   "minor_version" => $minor_version,
-                   "timestamp" => $timestamp,
-                   "nonce" => $nonce);
+        if (!is_string($block) || strlen($block) % 2 !== 0 || preg_match('/\A[0-9a-f]+\z/i', $block) !== 1) {
+            throw new Exception("Error: Invalid block header hex");
+        }
+
+        $data = hex2bin($block);
+        $offset = 0;
+        $major_version = $this->read_varint($data, $offset, 8);
+        $minor_version = $this->read_varint($data, $offset, 8);
+        $timestamp = $this->read_varint($data, $offset, 64);
+        if (strlen($data) - $offset < 36) {
+            throw new Exception("Error: Truncated block header");
+        }
+
+        // The previous block hash occupies 32 bytes before the little-endian nonce.
+        $nonce = unpack('Vnonce', substr($data, $offset + 32, 4));
+        return array("major_version" => $major_version,
+                     "minor_version" => $minor_version,
+                     "timestamp" => $timestamp,
+                     "nonce" => $nonce['nonce']);
+    }
+
+    /** @return int|string */
+    private function read_varint(string $data, int &$offset, int $bits, string $context = "block header")
+    {
+        $value = '0';
+        $factor = '1';
+        for ($shift = 0; $shift < $bits; $shift += 7) {
+            if ($offset >= strlen($data)) {
+                throw new Exception("Error: Truncated " . $context . " varint");
+            }
+            $byte = ord($data[$offset++]);
+            if ($bits - $shift < 7 && $byte >= (1 << ($bits - $shift))) {
+                throw new Exception("Error: " . ucfirst($context) . " varint overflow");
+            }
+            if ($shift > 0 && $byte === 0) {
+                throw new Exception("Error: Noncanonical " . $context . " varint");
+            }
+
+            $value = bcadd($value, bcmul((string) ($byte & 0x7f), $factor, 0), 0);
+            if (($byte & 0x80) === 0) {
+                return bccomp($value, (string) PHP_INT_MAX, 0) <= 0 ? (int) $value : $value;
+            }
+            $factor = bcmul($factor, '128', 0);
+        }
+        throw new Exception("Error: " . ucfirst($context) . " varint overflow");
     }
       
     }

@@ -19,6 +19,8 @@ In addition to these features, there are other lower-level libraries included fo
 
 Documentation can be found in the [`/docs`](https://github.com/sneurlax/monerophp/tree/master/docs) folder.
 
+RPC responses and decoded block-header timestamps retain integers outside PHP's native range as decimal strings; in-range integers remain PHP integers. RPC debug output includes only byte counts, timing and memory usage.
+
 ## Configuration
 ### Requirements
  - Monero daemon (`monerod`)
