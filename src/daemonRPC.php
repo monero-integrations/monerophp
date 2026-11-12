@@ -116,11 +116,11 @@ class daemonRPC
    *
    * Execute command via jsonRPCClient
    *
-   * @param  string  $method  RPC method to call
-   * @param  string  $params  Parameters to pass  (optional)
+   * @param  string|null  $method  RPC method, or null for direct HTTP endpoints
+   * @param  array<mixed>|object|null  $params  JSON request parameters (optional)
    * @param  string  $path    Path of API (by default json_rpc)
    *
-   * @return string  Call result
+   * @return array<mixed>|bool|float|int|string|null Decoded response or JSON-RPC result
    *
    */
   protected function _run($method, $params = null, $path = 'json_rpc')
